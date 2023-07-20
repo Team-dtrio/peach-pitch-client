@@ -10,11 +10,13 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@vitejs/plugin-react": "^4.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-query": "^3.39.3",
-    "vite": "^4.4.0",
-    "@vitejs/plugin-react": "^4.0.1"
+    "react-router-dom": "^6.14.2",
+    "styled-components": "^6.0.4",
+    "vite": "^4.4.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.14",
@@ -33,6 +35,6 @@
     "prettier": "^3.0.0"
   },
   "lint-staged": {
-    "*.js": "eslint --cache --fix"
+    "**/*.{js,jsx}": "eslint --cache --fix"
   }
 }
