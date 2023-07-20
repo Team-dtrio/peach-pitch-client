@@ -1,5 +1,5 @@
-import React from "react";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled, { ThemeProvider } from "styled-components";
 import { firebaseAuth } from "../../services/firebase";
@@ -9,17 +9,20 @@ import peachLoginLogoUrl from "../../assets/pp-logo-login.svg";
 import googleLogoUrl from "../../assets/google-logo.svg";
 
 function Login() {
+  const navigate = useNavigate();
   const googleProvider = new GoogleAuthProvider();
 
   async function signInWithGoogle() {
     const { VITE_PEACHPITCH_SERVER_URI } = import.meta.env;
     const { user } = await signInWithPopup(firebaseAuth, googleProvider);
     const idToken = await user.getIdToken();
-    await axios.post(`${VITE_PEACHPITCH_SERVER_URI}/login`, null, {
+    const { data } = await axios.post(`${VITE_PEACHPITCH_SERVER_URI}/login`, null, {
       headers: {
         Authorization: `Bearer ${idToken}`,
       },
     });
+
+    navigate("/", { state: data.user });
   }
 
   return (

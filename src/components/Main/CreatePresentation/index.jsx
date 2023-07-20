@@ -5,10 +5,9 @@ function CreatePresentation() {
   return (
     <MainArticle>
       <h2>새 프레젠테이션</h2>
-      <SlideThumbnail>
-        <SlideCanvas spec={{ w: 250, h: 150 }} />
-        <SlideCanvas spec={{ w: 250, h: 150 }} />
-      </SlideThumbnail>
+      <SlideCanvas
+        canvasSpec={{ w: 250, h: 150, scaleX: 1, scaleY: 1 }}
+        objSpec={{ x: 50, y: 50, w: 250, h: 200, scaleX: 1, scaleY: 1 }} />
     </MainArticle>
   );
 }
@@ -16,9 +15,6 @@ function CreatePresentation() {
 const MainArticle = styled.article`
   padding: 15px 0;
   padding-left: 30px;
-`;
-const SlideThumbnail = styled.div`
-  display: flex;
 `;
 
 export default CreatePresentation;
