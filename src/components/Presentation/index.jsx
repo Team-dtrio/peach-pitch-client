@@ -4,11 +4,10 @@ import SlideNavigator from "./SlideNavigator";
 import SlideCanvasLayout from "./SlideCanvasLayout";
 import ObjectEditor from "../ObjectEditor";
 
-
 function Presentation() {
   return (
     <Wrapper>
-      <MainHeader />
+      <MainHeader userInfo={{ name: "noop", email: "noop" }} />
       <Section>
         <SlideNavigator />
         <SlideCanvasLayout />
