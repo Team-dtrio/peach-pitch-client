@@ -2,15 +2,12 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { ThemeProvider, styled } from "styled-components";
 import appTheme from "../../../styles/appTheme";
-import Modal from "../../Modal";
+
+import NewPresentationModal from "../../Shared/Modal/NewPresentationModal";
 
 function CreatePresentation() {
-  const [ showModal, setShowModal ] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const portal = document.getElementById("modal");
-
-  function onModalClick() {
-    setShowModal(false);
-  }
 
   return (
     <>
@@ -20,7 +17,11 @@ function CreatePresentation() {
           <NewCanvas onClick={() => setShowModal(true)}>+ new</NewCanvas>
         </ThemeProvider>
       </MainArticle>
-      { showModal && createPortal(<Modal onModalClick={onModalClick} />, portal) }
+      {showModal &&
+        createPortal(
+          <NewPresentationModal toggleModal={() => setShowModal(false)} />,
+          portal,
+        )}
     </>
   );
 }

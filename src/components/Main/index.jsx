@@ -1,30 +1,27 @@
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import CreatePresentation from "./CreatePresentation";
+
 import MainHeader from "./MainHeader";
+import CreatePresentation from "./CreatePresentation";
 import MyPresentation from "./MyPresentation";
+import useGetPresentationsQuery from "../../hooks/queries/useGetPresentationsQuery";
 
 function Main() {
-  const location = useLocation();
-  const user = location.state;
-  const { data } = useQuery({
-    queryKey: ["userPresentations"],
-    queryFn: async () => {
-      const { VITE_PEACHPITCH_SERVER_URI } = import.meta.env;
-      const response = await axios.get(
-        `${VITE_PEACHPITCH_SERVER_URI}/users/${user._id}/presentations`,
-      );
+  const [presentations, setPresentations] = useState([]);
+  const { state: user } = useLocation();
+  const { data } = useGetPresentationsQuery(user._id);
 
-      return response;
-    },
-  });
+  useEffect(() => {
+    if (data) {
+      setPresentations(data.data.presentations);
+    }
+  }, [data]);
 
   return (
     <>
       <MainHeader userInfo={user} />
       <CreatePresentation />
-      <MyPresentation presentations={data} />
+      <MyPresentation presentations={presentations} />
     </>
   );
 }

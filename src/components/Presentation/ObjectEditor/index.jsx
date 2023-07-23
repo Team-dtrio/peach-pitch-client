@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { styled } from "styled-components";
 import StyleEditor from "./StyleEditor";
-import brushIconUrl from "../../assets/brush-icon.svg";
-import aniIconUrl from "../../assets/animation-icon.svg";
+import brushIconUrl from "../../../assets/brush-icon.svg";
+import aniIconUrl from "../../../assets/animation-icon.svg";
 import AnimationEditor from "./AnimationEditor";
 
 function ObjectEditor() {

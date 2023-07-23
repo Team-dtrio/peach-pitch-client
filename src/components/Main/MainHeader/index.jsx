@@ -9,11 +9,9 @@ function MainHeader({ userInfo }) {
         <AppLogo src={peachHomeLogoUrl} />
       </Link>
       <UserProfile>
-        <div>
-          <h3>{ userInfo.name }</h3>
-          <p>{ userInfo.email }</p>
-        </div>
-          <UserImage src={userInfo.picture} alt="user" />
+        <UserNameTitle>{userInfo.name}</UserNameTitle>
+        <UserEmailParagraph>{userInfo.email}</UserEmailParagraph>
+        <UserImage src={userInfo.picture} alt="user" />
       </UserProfile>
     </Header>
   );
@@ -24,15 +22,20 @@ const Header = styled.header`
   justify-content: space-between;
   padding-top: 20px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #D9D9D9;
+  border-bottom: 1px solid #d9d9d9;
 `;
 const AppLogo = styled.img`
   padding-left: 10px;
   cursor: pointer;
 `;
 const UserProfile = styled.section`
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
+  display: flex;
+`;
+const UserNameTitle = styled.h4`
+  font-size: 1rem;
+`;
+const UserEmailParagraph = styled.p`
+  font-size: 0.7rem;
 `;
 const UserImage = styled.img`
   width: 42px;

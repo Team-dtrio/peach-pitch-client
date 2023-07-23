@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { styled } from "styled-components";
-import ColorEditor from "../ColorEditor";
-import TextEditor from "../TextEditor";
-import ArrangeEditor from "../ArrangeEditor";
+import ColorEditor from "./ColorEditor";
+import TextEditor from "./TextEditor";
+import ArrangeEditor from "./ArrangeEditor";
 
 function StyleEditor() {
   const [ mode, setMode ] = useState("style");

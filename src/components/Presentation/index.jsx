@@ -1,13 +1,17 @@
+import { useLocation } from "react-router-dom";
 import { styled } from "styled-components";
+
 import MainHeader from "../Main/MainHeader";
 import SlideNavigator from "./SlideNavigator";
 import SlideCanvasLayout from "./SlideCanvasLayout";
-import ObjectEditor from "../ObjectEditor";
+import ObjectEditor from "./ObjectEditor";
 
 function Presentation() {
+  const { state: user } = useLocation();
+
   return (
     <Wrapper>
-      <MainHeader userInfo={{ name: "noop", email: "noop" }} />
+      <MainHeader userInfo={user} />
       <Section>
         <SlideNavigator />
         <SlideCanvasLayout />
