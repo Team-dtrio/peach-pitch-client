@@ -1,27 +1,47 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
+import axiosInstance from "../../services/axios";
 
 import MainHeader from "./MainHeader";
 import CreatePresentation from "./CreatePresentation";
 import MyPresentation from "./MyPresentation";
-import useGetPresentationsQuery from "../../hooks/queries/useGetPresentationsQuery";
+import LoadingModal from "../Shared/Modal/LoadingModal";
+
+function useGetPresentationsQuery(userId, callback) {
+  const query = useQuery({
+    queryKey: ["presentations"],
+    queryFn: async () => {
+      const response = await axiosInstance.get(
+        `/users/${userId}/presentations`,
+      );
+
+      return response;
+    },
+    onSuccess: ({ data }) => {
+      callback(data.presentations);
+    },
+  });
+
+  return query;
+}
 
 function Main() {
   const [presentations, setPresentations] = useState([]);
   const { state: user } = useLocation();
-  const { data } = useGetPresentationsQuery(user._id);
+  const { isLoading } = useGetPresentationsQuery(user._id, setPresentations);
 
-  useEffect(() => {
-    if (data) {
-      setPresentations(data.data.presentations);
-    }
-  }, [data]);
+  if (isLoading) {
+    return <LoadingModal />;
+  }
 
   return (
     <>
       <MainHeader userInfo={user} />
-      <CreatePresentation />
-      <MyPresentation presentations={presentations} />
+      <main>
+        <CreatePresentation />
+        <MyPresentation presentations={presentations} />
+      </main>
     </>
   );
 }

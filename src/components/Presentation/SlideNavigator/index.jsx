@@ -1,63 +1,43 @@
 import { useState } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import SlideCanvas from "../SlideCanvasLayout/SlideCanvas";
 
-function SlideNavigator() {
+function SlideNavigator({ slides }) {
+  const { presentationId } = useParams();
+  const { state } = useLocation();
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
     y: 0,
   });
-  const handleContextMenu = event => {
-    event.preventDefault();
 
+  function handleContextMenu(event) {
     setContextMenu({
       visible: true,
       x: event.clientX,
       y: event.clientY,
     });
-  };
-  const handleCloseContextMenu = () => {
+  }
+  function handleCloseContextMenu() {
     setContextMenu({ visible: false, x: 0, y: 0 });
-  };
+  }
 
   return (
     <Wrapper>
-      <List>
-        <Item
-          onContextMenu={handleContextMenu}
-          onClick={handleCloseContextMenu}
-        >
-          <SlideCanvas
-            canvasSpec={{ w: 250, h: 130, scaleX: 1, scaleY: 1 }}
-            objSpec={{ x: 50, y: 50, w: 150, h: 100, scaleX: 1, scaleY: 1 }}
-          />
-        </Item>
-        <Item>
-          <SlideCanvas
-            canvasSpec={{ w: 250, h: 130, scaleX: 1, scaleY: 1 }}
-            objSpec={{ x: 50, y: 50, w: 150, h: 100, scaleX: 1, scaleY: 1 }}
-          />
-        </Item>
-        <Item>
-          <SlideCanvas
-            canvasSpec={{ w: 250, h: 130, scaleX: 1, scaleY: 1 }}
-            objSpec={{ x: 50, y: 50, w: 150, h: 100, scaleX: 1, scaleY: 1 }}
-          />
-        </Item>
-        <Item>
-          <SlideCanvas
-            canvasSpec={{ w: 250, h: 130, scaleX: 1, scaleY: 1 }}
-            objSpec={{ x: 50, y: 50, w: 150, h: 100, scaleX: 1, scaleY: 1 }}
-          />
-        </Item>
-        <Item>
-          <SlideCanvas
-            canvasSpec={{ w: 250, h: 130, scaleX: 1, scaleY: 1 }}
-            objSpec={{ x: 50, y: 50, w: 150, h: 100, scaleX: 1, scaleY: 1 }}
-          />
-        </Item>
-      </List>
+      {slides.map((slide) => {
+        return (
+          <Link
+            key={slide._id}
+            to={`/presentations/${presentationId}/${slide.slideId}`}
+            state={{ user: state }}
+          >
+            <SlideCanvas
+              canvasSpec={{ w: 250, h: 150, scaleX: 1, scaleY: 1 }}
+            />
+          </Link>
+        );
+      })}
       {contextMenu.visible && (
         <ContextMenu style={{ top: contextMenu.y, left: contextMenu.x }}>
           <MenuItem>추가</MenuItem>
@@ -73,17 +53,6 @@ const Wrapper = styled.section`
   background-color: #f1efef;
   max-height: 95%;
   overflow-y: auto;
-`;
-const List = styled.ul`
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  padding: 0;
-  padding-left: 20px;
-`;
-const Item = styled.li`
-  margin: 10px 0;
-  list-style: none;
 `;
 const ContextMenu = styled.div`
   position: absolute;

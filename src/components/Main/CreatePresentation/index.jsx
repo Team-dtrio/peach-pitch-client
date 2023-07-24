@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { ThemeProvider, styled } from "styled-components";
-import appTheme from "../../../styles/appTheme";
+import { styled } from "styled-components";
 
-import NewPresentationModal from "../../Shared/Modal/NewPresentationModal";
+import NewPresentationModal from "./components/NewPresentationModal";
 
 function CreatePresentation() {
   const [showModal, setShowModal] = useState(false);
@@ -11,12 +10,12 @@ function CreatePresentation() {
 
   return (
     <>
-      <MainArticle>
+      <Section>
         <h2>새 프레젠테이션</h2>
-        <ThemeProvider theme={appTheme}>
-          <NewCanvas onClick={() => setShowModal(true)}>+ new</NewCanvas>
-        </ThemeProvider>
-      </MainArticle>
+        <NewCanvas onClick={() => setShowModal(true)}>
+          <span>+ new</span>
+        </NewCanvas>
+      </Section>
       {showModal &&
         createPortal(
           <NewPresentationModal toggleModal={() => setShowModal(false)} />,
@@ -26,15 +25,15 @@ function CreatePresentation() {
   );
 }
 
-const MainArticle = styled.article`
+const Section = styled.section`
   padding: 15px 0;
   padding-left: 30px;
 `;
 const NewCanvas = styled.div`
   width: 250px;
   height: 150px;
-  color: ${({ theme }) => theme.color};
-  border: 2px solid ${({ theme }) => theme.color};
+  color: ${({ theme }) => theme.color.app};
+  border: 2px solid ${({ theme }) => theme.color.app};
   font-size: 1.5rem;
   text-align: center;
   border-radius: 10px;

@@ -3,10 +3,9 @@ import { styled } from "styled-components";
 import StyleEditor from "./StyleEditor";
 import brushIconUrl from "../../../assets/brush-icon.svg";
 import aniIconUrl from "../../../assets/animation-icon.svg";
-import AnimationEditor from "./AnimationEditor";
 
 function ObjectEditor() {
-  const [ editMode, setEditMode ] = useState("style");
+  const [editMode, setEditMode] = useState("style");
 
   return (
     <Wrapper>
@@ -18,14 +17,13 @@ function ObjectEditor() {
           <img src={aniIconUrl} alt="animation" />
         </AniButton>
       </Header>
-      { editMode === "style" && <StyleEditor /> }
-      { editMode === "anim" && <AnimationEditor /> }
+      {editMode === "style" && <StyleEditor />}
     </Wrapper>
   );
 }
 
 const Wrapper = styled.div`
-  background-color: #F1EFEF;
+  background-color: #f1efef;
 `;
 const Header = styled.header`
   display: flex;
@@ -39,7 +37,7 @@ const Header = styled.header`
   }
 `;
 const StyleButton = styled.button`
-  background-color: #B8B8B8;
+  background-color: #b8b8b8;
   width: 68px;
   height: 30px;
   border: 0;
@@ -51,7 +49,7 @@ const StyleButton = styled.button`
   }
 `;
 const AniButton = styled.button`
-  background-color: #D9D9D9;
+  background-color: #d9d9d9;
   width: 68px;
   height: 30px;
   border: 0;
