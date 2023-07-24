@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { styled } from "styled-components";
 
 import MainHeader from "../Main/MainHeader";
@@ -7,23 +8,36 @@ import SlideNavigator from "./SlideNavigator";
 import SlideCanvasLayout from "./SlideCanvasLayout";
 import ObjectEditor from "./ObjectEditor";
 import PresentationHeader from "./PresentationHeader";
-import useGetAllSlidesQuery from "../../hooks/queries/useGetAllSlidesQuery";
 import LoadingModal from "../Shared/Modal/LoadingModal";
+import axiosInstance from "../../services/axios";
+
+function useGetAllSlidesQuery(userId, presentationId, callback) {
+  const query = useQuery({
+    queryKey: ["slides"],
+    queryFn: async () => {
+      const response = await axiosInstance.get(
+        `/users/${userId}/presentations/${presentationId}/slides`,
+      );
+
+      return response;
+    },
+    onSuccess: ({ data }) => {
+      callback(data.slides);
+    },
+  });
+
+  return query;
+}
 
 function Presentation() {
   const [slides, setSlides] = useState([]);
   const { state } = useLocation();
   const { presentationId } = useParams();
-  const { data, isLoading } = useGetAllSlidesQuery(
+  const { isLoading } = useGetAllSlidesQuery(
     state.user._id,
     presentationId,
+    setSlides,
   );
-
-  useEffect(() => {
-    if (data) {
-      setSlides(data.data.slides);
-    }
-  }, [data]);
 
   if (isLoading) {
     return <LoadingModal />;

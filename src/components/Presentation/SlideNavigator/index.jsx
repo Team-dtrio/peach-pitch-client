@@ -5,7 +5,7 @@ import SlideCanvas from "../SlideCanvasLayout/SlideCanvas";
 
 function SlideNavigator({ slides }) {
   const { presentationId } = useParams();
-  const { state: user } = useLocation();
+  const { state } = useLocation();
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
@@ -13,8 +13,6 @@ function SlideNavigator({ slides }) {
   });
 
   function handleContextMenu(event) {
-    event.preventDefault();
-
     setContextMenu({
       visible: true,
       x: event.clientX,
@@ -32,7 +30,7 @@ function SlideNavigator({ slides }) {
           <Link
             key={slide._id}
             to={`/presentations/${presentationId}/${slide.slideId}`}
-            state={{ user }}
+            state={{ user: state }}
           >
             <SlideCanvas
               canvasSpec={{ w: 250, h: 150, scaleX: 1, scaleY: 1 }}

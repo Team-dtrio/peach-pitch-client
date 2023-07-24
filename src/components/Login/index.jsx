@@ -1,27 +1,43 @@
-import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import styled from "styled-components";
 import { firebaseAuth } from "../../services/firebase";
+import axiosInstance from "../../services/axios";
 
 import Loading from "../Shared/Modal/LoadingModal";
 
 import peachLoginLogoUrl from "../../assets/pp-logo-login.svg";
 import googleLogoUrl from "../../assets/google-logo.svg";
-import useCreateUserMutation from "../../hooks/mutations/useCreateUserMutation";
+
+function useCreateUserMutation(callback) {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: async (userToken) => {
+      const { data } = await axiosInstance.post("login", null, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+
+      return data;
+    },
+    onSuccess: ({ user }) => {
+      queryClient.invalidateQueries("user");
+
+      callback("/", { state: user });
+    },
+  });
+
+  return mutation;
+}
 
 function Login() {
-  const { mutate, data, isLoading } = useCreateUserMutation();
   const navigate = useNavigate();
+  const { mutate, isLoading } = useCreateUserMutation(navigate);
   const googleProvider = new GoogleAuthProvider();
   const portal = document.getElementById("modal");
-
-  useEffect(() => {
-    if (data) {
-      navigate("/", { state: data.user });
-    }
-  }, [data]);
 
   async function signInWithGoogle() {
     const { user } = await signInWithPopup(firebaseAuth, googleProvider);

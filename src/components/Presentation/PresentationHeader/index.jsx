@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { styled } from "styled-components";
 import ObjectCreator from "./ObjectCreator";
-import DropDownMenu from "../../Shared/DropDownMenu";
+import DropDownMenu from "./ObjectCreator/components/DropDownMenu";
 
 function PresentationHeader() {
   const [isOpen, setIsOpen] = useState(false);

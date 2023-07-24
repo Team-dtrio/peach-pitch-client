@@ -10,7 +10,7 @@ function MyPresentation({ presentations }) {
       <h2>내 프레젠테이션</h2>
       <Container>
         {presentations.map((presentation, index) => {
-          const objects = presentation.slides[index].objects;
+          const objects = presentation.slides[index]?.objects;
 
           return (
             <StyledLink

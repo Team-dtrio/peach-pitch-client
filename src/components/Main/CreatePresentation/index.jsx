@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { styled } from "styled-components";
 
-import NewPresentationModal from "../../Shared/Modal/NewPresentationModal";
+import NewPresentationModal from "./components/NewPresentationModal";
 
 function CreatePresentation() {
   const [showModal, setShowModal] = useState(false);
