@@ -1,20 +1,42 @@
-import { useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import { styled } from "styled-components";
 
 import MainHeader from "../Main/MainHeader";
 import SlideNavigator from "./SlideNavigator";
 import SlideCanvasLayout from "./SlideCanvasLayout";
 import ObjectEditor from "./ObjectEditor";
+import PresentationHeader from "./PresentationHeader";
+import useGetAllSlidesQuery from "../../hooks/queries/useGetAllSlidesQuery";
+import LoadingModal from "../Shared/Modal/LoadingModal";
 
 function Presentation() {
-  const { state: user } = useLocation();
+  const [slides, setSlides] = useState([]);
+  const { state } = useLocation();
+  const { presentationId } = useParams();
+  const { data, isLoading } = useGetAllSlidesQuery(
+    state.user._id,
+    presentationId,
+  );
+
+  useEffect(() => {
+    if (data) {
+      setSlides(data.data.slides);
+    }
+  }, [data]);
+
+  if (isLoading) {
+    return <LoadingModal />;
+  }
 
   return (
     <Wrapper>
-      <MainHeader userInfo={user} />
+      <MainHeader userInfo={state.user}>
+        <PresentationHeader />
+      </MainHeader>
       <Section>
-        <SlideNavigator />
-        <SlideCanvasLayout />
+        <SlideNavigator slides={slides} />
+        <SlideCanvasLayout objects={state.objects} />
         <ObjectEditor />
       </Section>
     </Wrapper>

@@ -20,8 +20,10 @@ function Main() {
   return (
     <>
       <MainHeader userInfo={user} />
-      <CreatePresentation />
-      <MyPresentation presentations={presentations} />
+      <main>
+        <CreatePresentation />
+        <MyPresentation presentations={presentations} />
+      </main>
     </>
   );
 }
