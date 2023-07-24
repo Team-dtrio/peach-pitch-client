@@ -5,7 +5,9 @@ function SlideCanvasLayout() {
   return (
     <Wrapper>
       <EntireLayout>
-        <SlideCanvas spec={{ w: 800, h: 500 }} />
+        <SlideCanvas
+          canvasSpec={{ w: 800, h: 500, scaleX: 1, scaleY: 1 }}
+          objSpec={{ x: 50, y: 50, w: 250, h: 200, scaleX: 1, scaleY: 1 }} />
       </EntireLayout>
     </Wrapper>
   );
