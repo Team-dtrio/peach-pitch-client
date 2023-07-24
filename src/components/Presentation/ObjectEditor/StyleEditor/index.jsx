@@ -2,7 +2,6 @@ import { useState } from "react";
 import { styled } from "styled-components";
 import ColorEditor from "./ColorEditor";
 import TextEditor from "./TextEditor";
-import ArrangeEditor from "./ArrangeEditor";
 
 function StyleEditor() {
   const [mode, setMode] = useState("style");
@@ -16,7 +15,6 @@ function StyleEditor() {
       </Nav>
       {mode === "style" && <ColorEditor />}
       {mode === "text" && <TextEditor />}
-      {mode === "arrange" && <ArrangeEditor />}
     </>
   );
 }
