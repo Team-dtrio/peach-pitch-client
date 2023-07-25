@@ -26,6 +26,19 @@ function SlideNavigator({ slides }) {
   return (
     <Wrapper>
       {slides.map((slide) => {
+        const thumbnailObjects = slide.objects.map(
+          ({ type, _id, coordinates, dimensions }) => {
+            return {
+              type,
+              _id,
+              x: coordinates.x,
+              y: coordinates.y,
+              width: dimensions.width,
+              height: dimensions.height,
+            };
+          },
+        );
+
         return (
           <Link
             key={slide._id}
@@ -40,7 +53,7 @@ function SlideNavigator({ slides }) {
                 scaleY: 150 / 500,
                 translate: "-100%, -100%",
               }}
-              objects={slide.objects}
+              objects={thumbnailObjects}
             />
           </Link>
         );

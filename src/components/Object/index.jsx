@@ -1,7 +1,6 @@
 import { styled } from "styled-components";
 
-function Object({ type, objectSpec }) {
-  console.log(objectSpec, "spec");
+function Object({ type, objectSpec, onObjectMouseDown, onObjectMouseMove }) {
   switch (type) {
     case "Textbox":
       return <Textbox spec={objectSpec} />;
@@ -10,7 +9,14 @@ function Object({ type, objectSpec }) {
     case "Triangle":
       return <Triangle spec={objectSpec} />;
     case "Circle":
-      return <Circle spec={objectSpec} />;
+      return (
+        <Circle
+          spec={objectSpec}
+          draggable="true"
+          onMouseDown={onObjectMouseDown}
+          onMouseMove={onObjectMouseMove}
+        />
+      );
     default:
       return <div />;
   }
@@ -38,13 +44,10 @@ const Triangle = styled.div`
   position: absolute;
   left: ${({ spec }) => spec.x}px;
   top: ${({ spec }) => spec.y}px;
-  width: ${({ spec }) => spec.width}px;
   height: ${({ spec }) => spec.height}px;
   border-left: 50px solid transparent;
   border-right: 50px solid transparent;
   border-bottom: 50px solid green;
-  margin: 2rem;
-  background-color: #222;
   cursor: pointer;
 `;
 const Circle = styled.div`
