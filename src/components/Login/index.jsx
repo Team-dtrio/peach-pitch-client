@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,10 +11,8 @@ import Loading from "../Shared/Modal/LoadingModal";
 
 import peachLoginLogoUrl from "../../assets/pp-logo-login.svg";
 import googleLogoUrl from "../../assets/google-logo.svg";
-import { AuthContext } from "../../contexts/AuthContext";
 
 function useCreateUserMutation(callback) {
-  const { firebaseUser, setFirebaseUser } = useContext(AuthContext);
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (userToken) => {
@@ -30,7 +27,7 @@ function useCreateUserMutation(callback) {
     onSuccess: ({ user }) => {
       queryClient.invalidateQueries("user");
 
-      setFirebaseUser({ ...firebaseUser, _id: user._id });
+      localStorage.setItem("userInfo", JSON.stringify(user));
       callback("/");
     },
   });

@@ -1,10 +1,8 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { styled } from "styled-components";
 import axiosInstance from "../../../../../services/axios";
-
-import { AuthContext } from "../../../../../contexts/AuthContext";
 
 import rectangleUrl from "../../../../../assets/icon-rectangle.svg";
 import squareUrl from "../../../../../assets/icon-square.svg";
@@ -27,8 +25,14 @@ function useCreateObjectMutation() {
   return mutation;
 }
 
+function getUser() {
+  const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
+
+  return loggedInUser;
+}
+
 function DropDownMenu() {
-  const { firebaseUser } = useContext(AuthContext);
+  const user = getUser();
   const [_, setType] = useState("");
   const { mutate } = useCreateObjectMutation();
   const { presentationId, slideId } = useParams();
@@ -36,7 +40,7 @@ function DropDownMenu() {
   function onButtonClick(type) {
     setType(type);
 
-    mutate({ userId: firebaseUser?._id, presentationId, slideId, type });
+    mutate({ userId: user._id, presentationId, slideId, type });
   }
 
   return (

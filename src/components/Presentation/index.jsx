@@ -1,10 +1,9 @@
-import { useContext, useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { styled } from "styled-components";
 
 import axiosInstance from "../../services/axios";
-import { AuthContext } from "../../contexts/AuthContext";
 
 import MainHeader from "../Main/MainHeader";
 import SlideNavigator from "./SlideNavigator";
@@ -12,6 +11,7 @@ import SlideCanvasLayout from "./SlideCanvasLayout";
 import ObjectEditor from "./ObjectEditor";
 import PresentationHeader from "./PresentationHeader";
 import LoadingModal from "../Shared/Modal/LoadingModal";
+import useAuthRedirect from "../../hooks/useAuthRedirect";
 
 function useGetAllSlidesQuery(userId, presentationId, callback) {
   const query = useQuery({
@@ -31,39 +31,32 @@ function useGetAllSlidesQuery(userId, presentationId, callback) {
   return query;
 }
 
+function getUser() {
+  const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
+
+  return loggedInUser;
+}
+
 function Presentation() {
-  const { firebaseUser, isUserLoading } = useContext(AuthContext);
+  const user = getUser();
   const [slides, setSlides] = useState([]);
-  const { state, currentPath } = useLocation();
+  const { state } = useLocation();
   const { presentationId } = useParams();
-  const navigate = useNavigate();
   const { isLoading } = useGetAllSlidesQuery(
-    firebaseUser?._id,
+    user._id,
     presentationId,
     setSlides,
   );
 
-  console.log(state, "state on ppt");
+  useAuthRedirect(user);
 
-  useEffect(() => {
-    if (isUserLoading) {
-      return;
-    }
-
-    if (!firebaseUser) {
-      navigate("/login");
-    }
-
-    navigate(currentPath);
-  }, [firebaseUser, navigate]);
-
-  if (isUserLoading || isLoading) {
+  if (isLoading) {
     return <LoadingModal />;
   }
 
   return (
     <Wrapper>
-      <MainHeader userInfo={firebaseUser}>
+      <MainHeader userInfo={user}>
         <PresentationHeader />
       </MainHeader>
       <Section>
