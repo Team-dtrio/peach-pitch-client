@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 
-function Object({ type, objectSpec, onObjectMouseDown, onObjectMouseMove }) {
+function Object({ type, objectSpec }) {
   switch (type) {
     case "Textbox":
       return <Textbox spec={objectSpec} />;
@@ -9,14 +9,7 @@ function Object({ type, objectSpec, onObjectMouseDown, onObjectMouseMove }) {
     case "Triangle":
       return <Triangle spec={objectSpec} />;
     case "Circle":
-      return (
-        <Circle
-          spec={objectSpec}
-          draggable="true"
-          onMouseDown={onObjectMouseDown}
-          onMouseMove={onObjectMouseMove}
-        />
-      );
+      return <Circle spec={objectSpec} />;
     default:
       return <div />;
   }

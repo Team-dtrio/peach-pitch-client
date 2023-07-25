@@ -8,7 +8,19 @@ function MyPresentation({ presentations }) {
       <h2>내 프레젠테이션</h2>
       <Container>
         {presentations.map((presentation, index) => {
-          const objects = presentation.slides[index]?.objects;
+          const { objects } = presentation.slides[0];
+          const thumbnailObjects = objects.map(
+            ({ type, _id, coordinates, dimensions }) => {
+              return {
+                type,
+                _id,
+                x: coordinates.x,
+                y: coordinates.y,
+                width: dimensions.width,
+                height: dimensions.height,
+              };
+            },
+          );
 
           return (
             <StyledLink
@@ -25,6 +37,7 @@ function MyPresentation({ presentations }) {
                     scaleY: 150 / 500,
                     translate: "-100%, -100%",
                   }}
+                  objects={thumbnailObjects}
                 />
                 <h3>{presentation.title}</h3>
               </Thumbnail>

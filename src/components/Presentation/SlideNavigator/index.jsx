@@ -1,27 +1,76 @@
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import SlideCanvas from "../SlideCanvasLayout/SlideCanvas";
+import axiosInstance from "../../../services/axios";
+
+function getUser() {
+  const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
+
+  return loggedInUser;
+}
+const user = getUser();
+const userId = user._id;
 
 function SlideNavigator({ slides }) {
   const { presentationId } = useParams();
-  const { state } = useLocation();
+  const [selectedSlideId, setSelectedSlideId] = useState(null);
+
+  const addSlideMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axiosInstance.post(
+        `/users/${userId}/presentations/${presentationId}/slides`,
+      );
+      return response.data;
+    },
+  });
+
+  const deleteSlideMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axiosInstance.delete(
+        `/users/${userId}/presentations/${presentationId}/slides/${selectedSlideId}`,
+      );
+      return response.data;
+    },
+  });
+
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
     y: 0,
   });
 
-  function handleContextMenu(event) {
+  function handleContextMenu(event, id) {
+    setSelectedSlideId(id);
     setContextMenu({
       visible: true,
       x: event.clientX,
       y: event.clientY,
     });
   }
+
   function handleCloseContextMenu() {
     setContextMenu({ visible: false, x: 0, y: 0 });
   }
+
+  const handleAddSlide = async () => {
+    try {
+      await addSlideMutation.mutateAsync();
+      handleCloseContextMenu();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDeleteSlide = async () => {
+    try {
+      await deleteSlideMutation.mutateAsync();
+      handleCloseContextMenu();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Wrapper>
@@ -43,7 +92,8 @@ function SlideNavigator({ slides }) {
           <Link
             key={slide._id}
             to={`/presentations/${presentationId}/${slide._id}`}
-            state={{ user: state }}
+            onContextMenu={(event) => handleContextMenu(event, slide._id)}
+            onClick={handleCloseContextMenu}
           >
             <SlideCanvas
               canvasSpec={{
@@ -60,8 +110,8 @@ function SlideNavigator({ slides }) {
       })}
       {contextMenu.visible && (
         <ContextMenu style={{ top: contextMenu.y, left: contextMenu.x }}>
-          <MenuItem>추가</MenuItem>
-          <MenuItem>삭제</MenuItem>
+          <MenuItem onClick={handleAddSlide}>추가</MenuItem>
+          <MenuItem onClick={handleDeleteSlide}>삭제</MenuItem>
         </ContextMenu>
       )}
     </Wrapper>

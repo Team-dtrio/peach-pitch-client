@@ -47,33 +47,11 @@ function getUser() {
   return loggedInUser;
 }
 
-function SlideCanvasLayout({ objects }) {
+function SlideCanvasLayout() {
   const user = getUser();
   const { presentationId, slideId } = useParams();
   const [currentObjects, setCurrentObjects] = useState([]);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [dragging, setDragging] = useState(false);
-  const { isFetched } = useGetPresentationQuery(
-    user._id,
-    presentationId,
-    slideId,
-    setCurrentObjects,
-  );
-
-  function handleMouseDown() {
-    setDragging(true);
-  }
-
-  function handleMouseMove(event) {
-    if (dragging) {
-      if (dragging) {
-        setPosition({
-          x: position.x + event.movementX,
-          y: position.y + event.movementY,
-        });
-      }
-    }
-  }
+  useGetPresentationQuery(user._id, presentationId, slideId, setCurrentObjects);
 
   return (
     <Wrapper>
@@ -86,8 +64,6 @@ function SlideCanvasLayout({ objects }) {
             scaleY: 1,
           }}
           objects={currentObjects}
-          onObjectMouseDown={handleMouseDown}
-          onObjectMouseMove={handleMouseMove}
         />
       </EntireLayout>
     </Wrapper>
