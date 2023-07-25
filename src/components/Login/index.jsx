@@ -1,8 +1,10 @@
+import { useContext } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import styled from "styled-components";
+
 import { firebaseAuth } from "../../services/firebase";
 import axiosInstance from "../../services/axios";
 
@@ -10,8 +12,10 @@ import Loading from "../Shared/Modal/LoadingModal";
 
 import peachLoginLogoUrl from "../../assets/pp-logo-login.svg";
 import googleLogoUrl from "../../assets/google-logo.svg";
+import { AuthContext } from "../../contexts/AuthContext";
 
 function useCreateUserMutation(callback) {
+  const { firebaseUser, setFirebaseUser } = useContext(AuthContext);
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (userToken) => {
@@ -26,7 +30,8 @@ function useCreateUserMutation(callback) {
     onSuccess: ({ user }) => {
       queryClient.invalidateQueries("user");
 
-      callback("/", { state: user });
+      setFirebaseUser({ ...firebaseUser, _id: user._id });
+      callback("/");
     },
   });
 
@@ -72,14 +77,14 @@ const PeachLogo = styled.img`
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
+  font-family: ${({ theme }) => theme.font.main};
   flex-flow: column;
   align-items: center;
   padding: 150px 0;
 `;
 const LoginTitle = styled.h1`
   position: relative;
-  color: ${({ theme }) => theme.color};
-  font-family: ${({ theme }) => theme.font};
+  color: ${({ theme }) => theme.color.app};
   font-size: 100px;
   text-transform: uppercase;
 `;
@@ -90,7 +95,6 @@ const LoginButton = styled.button`
   border: 4px solid #a4d473;
   border-radius: 15px;
   font-size: 1.2rem;
-  font-family: ${({ theme }) => theme.font};
   text-transform: uppercase;
 `;
 const GoogleLogo = styled.img`
