@@ -2,7 +2,6 @@ import { styled } from "styled-components";
 import SlideCanvas from "./SlideCanvas";
 
 function SlideCanvasLayout({ objects }) {
-  console.log(objects, "objects");
   return (
     <Wrapper>
       <EntireLayout>
