@@ -23,6 +23,7 @@ const Textbox = styled.input`
   width: 100px;
   height: 100px;
   border: 1px dashed #222;
+  cursor: pointer;
 `;
 const Square = styled.div`
   position: absolute;
@@ -31,6 +32,7 @@ const Square = styled.div`
   width: ${({ spec }) => spec.width}px;
   height: ${({ spec }) => spec.height}px;
   background-color: #222;
+  cursor: pointer;
 `;
 const Triangle = styled.div`
   position: absolute;
@@ -43,6 +45,7 @@ const Triangle = styled.div`
   border-bottom: 50px solid green;
   margin: 2rem;
   background-color: #222;
+  cursor: pointer;
 `;
 const Circle = styled.div`
   position: absolute;
@@ -52,6 +55,7 @@ const Circle = styled.div`
   height: ${({ spec }) => spec.height}px;
   border-radius: 100%;
   background-color: #222;
+  cursor: pointer;
 `;
 
 export default Object;

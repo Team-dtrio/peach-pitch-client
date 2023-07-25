@@ -1,10 +1,17 @@
+import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import { firebaseAuth } from "../../../../services/firebase";
 
 function DropDownLogout() {
+  const navigate = useNavigate();
+
+  function logOut() {
+    localStorage.removeItem("userInfo");
+    navigate("/login");
+  }
+
   return (
     <Wrapper>
-      <Button onClick={() => firebaseAuth.signOut()}>Log Out</Button>
+      <Button onClick={logOut}>Log Out</Button>
     </Wrapper>
   );
 }
@@ -12,6 +19,7 @@ function DropDownLogout() {
 const Wrapper = styled.div`
   position: absolute;
   display: flex;
+  z-index: 1;
   justify-content: center;
   top: 10%;
   right: 1%;

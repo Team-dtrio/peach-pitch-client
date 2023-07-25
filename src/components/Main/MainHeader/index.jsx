@@ -17,10 +17,10 @@ function MainHeader({ userInfo, children }) {
         </div>
         <UserProfile onClick={() => setIsOpen(!isOpen)}>
           <div>
-            <h3>{userInfo.displayName}</h3>
+            <h3>{userInfo.name}</h3>
             <p>{userInfo.email}</p>
           </div>
-          <UserImage src={userInfo.photoURL} alt="user" />
+          <UserImage src={userInfo.picture} alt="user" />
         </UserProfile>
         {isOpen && <DropDownLogout />}
       </Wrapper>

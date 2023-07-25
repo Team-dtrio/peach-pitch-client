@@ -25,7 +25,6 @@ function MyPresentation({ presentations }) {
                     scaleY: 150 / 500,
                     translate: "-100%, -100%",
                   }}
-                  objects={objects}
                 />
                 <h3>{presentation.title}</h3>
               </Thumbnail>
