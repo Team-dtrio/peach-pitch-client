@@ -1,14 +1,19 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { styled } from "styled-components";
-import { AuthContext } from "../../../contexts/AuthContext";
 import SlideCanvas from "../SlideCanvasLayout/SlideCanvas";
 import axiosInstance from "../../../services/axios";
 
+function getUser() {
+  const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
+
+  return loggedInUser;
+}
+const user = getUser();
+const userId = user._id;
+
 function SlideNavigator({ slides }) {
-  const { firebaseUser } = useContext(AuthContext);
-  const userId = firebaseUser._id;
   const { presentationId } = useParams();
   const { state } = useLocation();
   const [selectedSlideId, setSelectedSlideId] = useState(null);

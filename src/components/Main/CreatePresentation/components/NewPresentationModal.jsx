@@ -1,11 +1,10 @@
-import { useContext, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { styled } from "styled-components";
 import axiosInstance from "../../../../services/axios";
 
 import LoadingModal from "../../../Shared/Modal/LoadingModal";
-import { AuthContext } from "../../../../contexts/AuthContext";
 
 function useCreatePresentationMutation(user, callback) {
   const mutation = useMutation({
@@ -29,13 +28,16 @@ function useCreatePresentationMutation(user, callback) {
   return mutation;
 }
 
+function getUser() {
+  const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
+
+  return loggedInUser;
+}
+
 function NewPresentationModal({ toggleModal }) {
-  const { firebaseUser } = useContext(AuthContext);
+  const user = getUser();
   const navigate = useNavigate();
-  const { mutate, isLoading } = useCreatePresentationMutation(
-    firebaseUser,
-    navigate,
-  );
+  const { mutate, isLoading } = useCreatePresentationMutation(user, navigate);
   const [title, setTitle] = useState("");
 
   if (isLoading) {
@@ -53,7 +55,7 @@ function NewPresentationModal({ toggleModal }) {
         />
         <ButtonContainer>
           <button onClick={toggleModal}>닫기</button>
-          <button onClick={() => mutate({ userId: firebaseUser._id, title })}>
+          <button onClick={() => mutate({ userId: user._id, title })}>
             생성
           </button>
         </ButtonContainer>

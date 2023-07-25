@@ -1,15 +1,14 @@
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useLocation, useNavigate } from "react-router-dom";
 import axiosInstance from "../../services/axios";
 
 import MainHeader from "./MainHeader";
 import CreatePresentation from "./CreatePresentation";
 import MyPresentation from "./MyPresentation";
 import LoadingModal from "../Shared/Modal/LoadingModal";
-import { AuthContext } from "../../contexts/AuthContext";
+import useAuthRedirect from "../../hooks/useAuthRedirect";
 
-function useGetPresentationsQuery(userId, isUserLoading, callback) {
+function useGetPresentationsQuery(userId, callback) {
   const query = useQuery({
     queryKey: ["presentations"],
     queryFn: async () => {
@@ -22,48 +21,34 @@ function useGetPresentationsQuery(userId, isUserLoading, callback) {
     onSuccess: ({ data }) => {
       callback(data.presentations);
     },
-    onError: (error) => {
-      console.log("err", error);
-    },
     enabled: !!userId,
   });
 
   return query;
 }
 
+function getUser() {
+  const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
+
+  return loggedInUser;
+}
+
 function Main() {
-  const { firebaseUser, isUserLoading } = useContext(AuthContext);
+  const user = getUser();
   const [presentations, setPresentations] = useState([]);
-  const { isFetched, isLoading } = useGetPresentationsQuery(
-    firebaseUser?._id,
-    isUserLoading,
-    setPresentations,
-  );
-  const navigate = useNavigate();
+  const { isLoading } = useGetPresentationsQuery(user._id, setPresentations);
 
-  useEffect(() => {
-    if (isUserLoading) {
-      return;
-    }
+  useAuthRedirect(user);
 
-    if (!firebaseUser) {
-      navigate("/login");
-
-      return;
-    }
-
-    navigate("/");
-  }, [isUserLoading, firebaseUser, navigate]);
-
-  if (isUserLoading || isLoading) {
+  if (isLoading) {
     return <LoadingModal />;
   }
 
   return (
     <>
-      <MainHeader userInfo={isFetched && firebaseUser} />
+      <MainHeader userInfo={user} />
       <main>
-        <CreatePresentation userInfo={isFetched && firebaseUser} />
+        <CreatePresentation userInfo={user} />
         <MyPresentation presentations={presentations} />
       </main>
     </>
