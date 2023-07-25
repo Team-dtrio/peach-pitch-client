@@ -2,11 +2,17 @@ import { styled } from "styled-components";
 import SlideCanvas from "./SlideCanvas";
 
 function SlideCanvasLayout({ objects }) {
+  console.log(objects, "objects");
   return (
     <Wrapper>
       <EntireLayout>
         <SlideCanvas
-          canvasSpec={{ w: 800, h: 500, scaleX: 1, scaleY: 1 }}
+          canvasSpec={{
+            width: 800,
+            height: 500,
+            scaleX: 1,
+            scaleY: 1,
+          }}
           objects={objects}
         />
       </EntireLayout>

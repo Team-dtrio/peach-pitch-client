@@ -1,8 +1,12 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import peachHomeLogoUrl from "../../../assets/pp-logo-home.svg";
+import DropDownLogout from "./components/DropDownLogout";
 
 function MainHeader({ userInfo, children }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <Header>
       <Wrapper>
@@ -11,13 +15,14 @@ function MainHeader({ userInfo, children }) {
             <AppLogo src={peachHomeLogoUrl} />
           </StyledLink>
         </div>
-        <UserProfile>
+        <UserProfile onClick={() => setIsOpen(!isOpen)}>
           <div>
-            <h3>{userInfo.name}</h3>
+            <h3>{userInfo.displayName}</h3>
             <p>{userInfo.email}</p>
           </div>
-          <UserImage src={userInfo.picture} alt="user" />
+          <UserImage src={userInfo.photoURL} alt="user" />
         </UserProfile>
+        {isOpen && <DropDownLogout />}
       </Wrapper>
       {children}
     </Header>
@@ -48,12 +53,6 @@ const UserProfile = styled.div`
       color: #666;
     }
   }
-`;
-const UserNameTitle = styled.h4`
-  font-size: 1rem;
-`;
-const UserEmailParagraph = styled.p`
-  font-size: 0.7rem;
 `;
 const UserImage = styled.img`
   width: 48px;

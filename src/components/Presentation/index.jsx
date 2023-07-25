@@ -1,7 +1,10 @@
-import { useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { styled } from "styled-components";
+
+import axiosInstance from "../../services/axios";
+import { AuthContext } from "../../contexts/AuthContext";
 
 import MainHeader from "../Main/MainHeader";
 import SlideNavigator from "./SlideNavigator";
@@ -9,7 +12,6 @@ import SlideCanvasLayout from "./SlideCanvasLayout";
 import ObjectEditor from "./ObjectEditor";
 import PresentationHeader from "./PresentationHeader";
 import LoadingModal from "../Shared/Modal/LoadingModal";
-import axiosInstance from "../../services/axios";
 
 function useGetAllSlidesQuery(userId, presentationId, callback) {
   const query = useQuery({
@@ -30,27 +32,43 @@ function useGetAllSlidesQuery(userId, presentationId, callback) {
 }
 
 function Presentation() {
+  const { firebaseUser, isUserLoading } = useContext(AuthContext);
   const [slides, setSlides] = useState([]);
-  const { state } = useLocation();
+  const { state, currentPath } = useLocation();
   const { presentationId } = useParams();
+  const navigate = useNavigate();
   const { isLoading } = useGetAllSlidesQuery(
-    state.user._id,
+    firebaseUser?._id,
     presentationId,
     setSlides,
   );
 
-  if (isLoading) {
+  console.log(state, "state on ppt");
+
+  useEffect(() => {
+    if (isUserLoading) {
+      return;
+    }
+
+    if (!firebaseUser) {
+      navigate("/login");
+    }
+
+    navigate(currentPath);
+  }, [firebaseUser, navigate]);
+
+  if (isUserLoading || isLoading) {
     return <LoadingModal />;
   }
 
   return (
     <Wrapper>
-      <MainHeader userInfo={state.user}>
+      <MainHeader userInfo={firebaseUser}>
         <PresentationHeader />
       </MainHeader>
       <Section>
         <SlideNavigator slides={slides} />
-        <SlideCanvasLayout objects={state.objects} />
+        <SlideCanvasLayout objects={state?.objects} />
         <ObjectEditor />
       </Section>
     </Wrapper>

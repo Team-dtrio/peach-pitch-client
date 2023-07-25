@@ -1,10 +1,8 @@
 import { styled } from "styled-components";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import SlideCanvas from "../../Presentation/SlideCanvasLayout/SlideCanvas";
 
 function MyPresentation({ presentations }) {
-  const { state: user } = useLocation();
-
   return (
     <Section>
       <h2>내 프레젠테이션</h2>
@@ -16,11 +14,17 @@ function MyPresentation({ presentations }) {
             <StyledLink
               key={presentation._id}
               to={`/presentations/${presentation._id}/${presentation.slides[0]._id}`}
-              state={{ user, objects }}
+              state={{ objects }}
             >
               <Thumbnail>
                 <SlideCanvas
-                  canvasSpec={{ w: 250, h: 150, scaleX: 1, scaleY: 1 }}
+                  canvasSpec={{
+                    width: 250,
+                    height: 150,
+                    scaleX: 250 / 800,
+                    scaleY: 150 / 500,
+                    translate: "-100%, -100%",
+                  }}
                   objects={objects}
                 />
                 <h3>{presentation.title}</h3>
@@ -51,7 +55,12 @@ const Container = styled.div`
   margin-bottom: 10px;
 `;
 const Thumbnail = styled.section`
+  display: relative;
   text-align: center;
+
+  h3 {
+    transform: translate(-100%, -100%);
+  }
 `;
 
 export default MyPresentation;

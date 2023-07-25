@@ -1,15 +1,16 @@
 import { styled } from "styled-components";
 
 function Object({ type, objectSpec }) {
+  console.log(objectSpec, "spec");
   switch (type) {
     case "Textbox":
-      return <Textbox />;
-    case "Rectangle":
-      return <Rectangle />;
+      return <Textbox spec={objectSpec} />;
+    case "Square":
+      return <Square spec={objectSpec} />;
     case "Triangle":
-      return <Triangle />;
+      return <Triangle spec={objectSpec} />;
     case "Circle":
-      return <Circle />;
+      return <Circle spec={objectSpec} />;
     default:
       return <div />;
   }
@@ -23,32 +24,34 @@ const Textbox = styled.input`
   height: 100px;
   border: 1px dashed #222;
 `;
-const Rectangle = styled.div`
+const Square = styled.div`
   position: absolute;
-  left: ${(objectSpec) => objectSpec.x};
-  top: ${(objectSpec) => objectSpec.y};
-  width: ${(objectSpec) => objectSpec.width};
-  height: ${(objectSpec) => objectSpec.height};
+  left: ${({ spec }) => spec.x}px;
+  top: ${({ spec }) => spec.y}px;
+  width: ${({ spec }) => spec.width}px;
+  height: ${({ spec }) => spec.height}px;
+  background-color: #222;
 `;
 const Triangle = styled.div`
   position: absolute;
-  left: ${(objectSpec) => objectSpec.x};
-  top: ${(objectSpec) => objectSpec.y};
-  width: ${(objectSpec) => objectSpec.width};
-  height: ${(objectSpec) => objectSpec.height};
+  left: ${({ spec }) => spec.x}px;
+  top: ${({ spec }) => spec.y}px;
+  width: ${({ spec }) => spec.width}px;
+  height: ${({ spec }) => spec.height}px;
   border-left: 50px solid transparent;
   border-right: 50px solid transparent;
   border-bottom: 50px solid green;
-
   margin: 2rem;
+  background-color: #222;
 `;
 const Circle = styled.div`
   position: absolute;
-  left: ${(objectSpec) => objectSpec.x};
-  top: ${(objectSpec) => objectSpec.y};
-  width: ${(objectSpec) => objectSpec.width};
-  height: ${(objectSpec) => objectSpec.height};
+  left: ${({ spec }) => spec.x}px;
+  top: ${({ spec }) => spec.y}px;
+  width: ${({ spec }) => spec.width}px;
+  height: ${({ spec }) => spec.height}px;
   border-radius: 100%;
+  background-color: #222;
 `;
 
 export default Object;
