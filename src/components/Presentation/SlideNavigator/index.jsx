@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import { AuthContext } from "../../../contexts/AuthContext";
@@ -11,7 +11,7 @@ function SlideNavigator({ slides }) {
   const userId = firebaseUser._id;
   const { presentationId } = useParams();
   const { state } = useLocation();
-  const queryClient = useQueryClient();
+  const [selectedSlideId, setSelectedSlideId] = useState(null);
 
   const addSlideMutation = useMutation({
     mutationFn: async () => {
@@ -20,10 +20,14 @@ function SlideNavigator({ slides }) {
       );
       return response.data;
     },
-    onSuccess: async () => {
-      const response = await axiosInstance.get(
-        `/users/${userId}/presentations/${presentationId}/slides`,
+  });
+
+  const deleteSlideMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axiosInstance.delete(
+        `/users/${userId}/presentations/${presentationId}/slides/${selectedSlideId}`,
       );
+      return response.data;
     },
   });
 
@@ -32,8 +36,6 @@ function SlideNavigator({ slides }) {
     x: 0,
     y: 0,
   });
-
-  const [selectedSlideId, setSelectedSlideId] = useState(null);
 
   function handleContextMenu(event, id) {
     setSelectedSlideId(id);
@@ -58,10 +60,12 @@ function SlideNavigator({ slides }) {
   };
 
   const handleDeleteSlide = async () => {
-    await axiosInstance.delete(
-      `/users/${userId}/presentations/${presentationId}/slides/${selectedSlideId}`,
-    );
-    handleCloseContextMenu();
+    try {
+      await deleteSlideMutation.mutateAsync();
+      handleCloseContextMenu();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
