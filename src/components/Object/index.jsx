@@ -1,7 +1,6 @@
 import { styled } from "styled-components";
 
 function Object({ type, objectSpec }) {
-  console.log(objectSpec, "spec");
   switch (type) {
     case "Textbox":
       return <Textbox spec={objectSpec} />;

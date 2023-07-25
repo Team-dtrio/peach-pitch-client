@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { styled } from "styled-components";
-import StyleEditor from "./StyleEditor";
 import brushIconUrl from "../../../assets/brush-icon.svg";
 import aniIconUrl from "../../../assets/animation-icon.svg";
+
+import StyleEditor from "./StyleEditor";
+import AnimationEditor from "../AnimationEditor";
 
 function ObjectEditor() {
   const [editMode, setEditMode] = useState("style");
@@ -18,6 +20,7 @@ function ObjectEditor() {
         </AniButton>
       </Header>
       {editMode === "style" && <StyleEditor />}
+      {editMode === "anim" && <AnimationEditor />}
     </Wrapper>
   );
 }

@@ -43,8 +43,6 @@ function Presentation() {
     setSlides,
   );
 
-  console.log(state, "state on ppt");
-
   useEffect(() => {
     if (isUserLoading) {
       return;

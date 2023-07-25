@@ -10,8 +10,6 @@ import LoadingModal from "../Shared/Modal/LoadingModal";
 import { AuthContext } from "../../contexts/AuthContext";
 
 function useGetPresentationsQuery(userId, isUserLoading, callback) {
-  console.log("userId", userId);
-
   const query = useQuery({
     queryKey: ["presentations"],
     queryFn: async () => {
