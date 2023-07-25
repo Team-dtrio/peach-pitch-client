@@ -4,7 +4,9 @@ const appTheme = {
     beige: "#F6F6F6",
     gray: "D9D9D9",
   },
-  font: "Orbitron, sans-serif",
+  font: {
+    main: "Orbitron, sans-serif",
+  },
 };
 
 export default appTheme;
