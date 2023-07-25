@@ -29,11 +29,18 @@ function SlideNavigator({ slides }) {
         return (
           <Link
             key={slide._id}
-            to={`/presentations/${presentationId}/${slide.slideId}`}
+            to={`/presentations/${presentationId}/${slide._id}`}
             state={{ user: state }}
           >
             <SlideCanvas
-              canvasSpec={{ w: 250, h: 150, scaleX: 1, scaleY: 1 }}
+              canvasSpec={{
+                width: 250,
+                height: 150,
+                scaleX: 250 / 800,
+                scaleY: 150 / 500,
+                translate: "-100%, -100%",
+              }}
+              objects={slide.objects}
             />
           </Link>
         );
