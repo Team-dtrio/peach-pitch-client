@@ -70,20 +70,19 @@ function Login() {
 
 const PeachLogo = styled.img`
   position: absolute;
-  top: 7%;
-  left: 15%;
-  width: 420px;
-  height: 420px;
+  top: 13%;
+  left: 10%;
+  width: 460px;
+  height: 460px;
 `;
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
-  height: 60vh;
+  height: 100%;
   font-family: ${({ theme }) => theme.font.main};
   background: ${({ theme }) => theme.background.main};
   flex-flow: column;
   align-items: center;
-  padding: 150px 0;
 `;
 const LoginTitle = styled.h1`
   position: relative;

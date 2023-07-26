@@ -36,7 +36,7 @@ function getUser() {
 function Main() {
   const user = getUser();
   const [presentations, setPresentations] = useState([]);
-  const { isLoading } = useGetPresentationsQuery(user._id, setPresentations);
+  const { isLoading } = useGetPresentationsQuery(user?._id, setPresentations);
 
   useAuthRedirect(user);
 
