@@ -56,47 +56,72 @@ function Login() {
     <Wrapper>
       <PeachLogo src={peachLoginLogoUrl} />
       <LoginTitle>peachpitch</LoginTitle>
-      <LoginButton onClick={signInWithGoogle}>
-        <GoogleLogo src={googleLogoUrl} alt="google logo" />
-        sign in with google
-      </LoginButton>
+      <GoogleButton onClick={signInWithGoogle}>
+        <GoogleIconWrapper>
+          <GoogleIcon src={googleLogoUrl} alt="google logo" />
+        </GoogleIconWrapper>
+        <ButtonText>
+          <b>Sign In With Google</b>
+        </ButtonText>
+      </GoogleButton>
     </Wrapper>
   );
 }
 
 const PeachLogo = styled.img`
   position: absolute;
-  top: 7%;
-  left: 12%;
-  width: 374px;
-  height: 384px;
+  top: 13%;
+  left: 10%;
+  width: 460px;
+  height: 460px;
 `;
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
+  height: 100%;
   font-family: ${({ theme }) => theme.font.main};
+  background: ${({ theme }) => theme.background.main};
   flex-flow: column;
   align-items: center;
-  padding: 150px 0;
 `;
 const LoginTitle = styled.h1`
   position: relative;
-  color: ${({ theme }) => theme.color.app};
-  font-size: 100px;
+  color: #fff;
+  font-size: 150px;
   text-transform: uppercase;
 `;
-const LoginButton = styled.button`
-  padding: 20px 15px;
+const GoogleButton = styled.button`
+  box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.25);
+  background-color: #4285f4;
+  color: white;
+  height: 60px;
+  border-radius: 2px;
+  border: thin solid #888;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 16px;
+`;
+const GoogleIconWrapper = styled.div`
   background-color: #fff;
-  color: #a4d473;
-  border: 4px solid #a4d473;
-  border-radius: 15px;
-  font-size: 1.2rem;
-  text-transform: uppercase;
+  color: #4285f4;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+  border-radius: 2px;
+  margin-right: 10px;
+  padding: 10px;
+  align-items: center;
+  display: flex;
 `;
-const GoogleLogo = styled.img`
-  vertical-align: -2px;
-  margin-right: 14px;
+const GoogleIcon = styled.img`
+  width: 32px;
+  height: 32px;
+`;
+const ButtonText = styled.p`
+  font-size: 1.25rem;
+  letter-spacing: 0.2px;
+  font-weight: 500;
+  margin: 10px;
 `;
 
 export default Login;

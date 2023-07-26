@@ -164,16 +164,18 @@ function SlideNavigator({ slides }) {
             onContextMenu={(event) => handleContextMenu(event, slide._id)}
             onClick={handleCloseContextMenu}
           >
-            <SlideCanvas
-              canvasSpec={{
-                width: 250,
-                height: 150,
-                scaleX: 250 / 800,
-                scaleY: 150 / 500,
-                translate: "-100%, -100%",
-              }}
-              objects={thumbnailObjects}
-            />
+            <Thumbnail>
+              <SlideCanvas
+                canvasSpec={{
+                  width: 250,
+                  height: 150,
+                  scaleX: 250 / 800,
+                  scaleY: 150 / 500,
+                  translate: "-100%, -100%",
+                }}
+                objects={thumbnailObjects}
+              />
+            </Thumbnail>
           </Link>
         );
       })}
@@ -200,6 +202,9 @@ const ContextMenu = styled.div`
   border: 1px solid #dfdfdf;
   padding: 10px;
   border-radius: 5px;
+`;
+const Thumbnail = styled.div`
+  margin: -330px 0;
 `;
 const MenuItem = styled.div`
   padding: 5px 10px;

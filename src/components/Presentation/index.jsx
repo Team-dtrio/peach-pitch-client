@@ -70,7 +70,7 @@ function Presentation() {
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-rows: 15vh 85vh;
+  grid-template-rows: 20vh 80vh;
 `;
 const Section = styled.section`
   display: grid;
