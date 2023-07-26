@@ -74,7 +74,7 @@ function SlideNavigator({ slides }) {
     setContextMenu({ visible: false, x: 0, y: 0 });
   }
 
-  const updateSlideOrder = (currentSlides, droppedSlideId, targetSlideId) => {
+  function updateSlideOrder(currentSlides, droppedSlideId, targetSlideId) {
     const droppedIndex = currentSlides.findIndex(
       (slide) => slide._id === droppedSlideId,
     );
@@ -87,35 +87,35 @@ function SlideNavigator({ slides }) {
     newSlides.splice(targetIndex, 0, removed);
 
     return newSlides;
-  };
+  }
 
-  const handleAddSlide = async () => {
+  async function handleAddSlide() {
     try {
       await useAddSlideMutation.mutateAsync();
       handleCloseContextMenu();
     } catch (error) {
       console.error(error);
     }
-  };
+  }
 
-  const handleDeleteSlide = async () => {
+  async function handleDeleteSlide() {
     try {
       await useDeleteSlideMutation.mutateAsync();
       handleCloseContextMenu();
     } catch (error) {
       console.error(error);
     }
-  };
+  }
 
-  const handleDragStart = (event, id) => {
+  function handleDragStart(event, id) {
     event.dataTransfer.setData("text/plain", id);
-  };
+  }
 
-  const handleDragOver = (event) => {
+  function handleDragOver(event) {
     event.preventDefault();
-  };
+  }
 
-  const handleDrop = async (event, id) => {
+  async function handleDrop(event, id) {
     event.preventDefault();
 
     const droppedSlideId = event.dataTransfer.getData("text/plain");
@@ -132,7 +132,7 @@ function SlideNavigator({ slides }) {
     const newOrder = newSlides.map((slide) => slide._id);
 
     await useUpdateSlideOrderMutation.mutateAsync({ newOrder });
-  };
+  }
 
   return (
     <Wrapper>
