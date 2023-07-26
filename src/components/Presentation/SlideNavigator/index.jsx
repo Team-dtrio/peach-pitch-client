@@ -17,6 +17,7 @@ function SlideNavigator({ slides }) {
   const { presentationId } = useParams();
   const [selectedSlideId, setSelectedSlideId] = useState(null);
   const [slidesState, setSlidesState] = useState(slides);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     setSlidesState(slides);
@@ -29,6 +30,9 @@ function SlideNavigator({ slides }) {
       );
       return response.data;
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries("presentations");
+    },
   });
 
   const useDeleteSlideMutation = useMutation({
@@ -38,9 +42,10 @@ function SlideNavigator({ slides }) {
       );
       return response.data;
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries("presentations");
+    },
   });
-
-  const queryClient = useQueryClient();
 
   const useUpdateSlideOrderMutation = useMutation({
     mutationFn: async ({ newOrder }) => {
