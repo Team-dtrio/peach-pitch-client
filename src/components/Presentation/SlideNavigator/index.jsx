@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import SlideCanvas from "../SlideCanvasLayout/SlideCanvas";
 import axiosInstance from "../../../services/axios";

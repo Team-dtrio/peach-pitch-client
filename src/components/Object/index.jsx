@@ -1,15 +1,45 @@
 import { styled } from "styled-components";
 
-function Object({ type, objectSpec }) {
-  switch (type) {
+function Object({ spec, pointedObject, onObjectClick, onObjectMouseDown }) {
+  switch (spec.type) {
     case "Textbox":
-      return <Textbox spec={objectSpec} />;
+      return (
+        <Textbox
+          spec={spec}
+          pointedObject={pointedObject}
+          onClick={() => onObjectClick(spec)}
+          onMouseDown={onObjectMouseDown}
+        />
+      );
     case "Square":
-      return <Square spec={objectSpec} />;
+      return (
+        <Square
+          spec={spec}
+          pointedObject={pointedObject}
+          onClick={() => onObjectClick(spec)}
+          onMouseDown={onObjectMouseDown}
+        />
+      );
     case "Triangle":
-      return <Triangle spec={objectSpec} />;
+      return (
+        <Triangle
+          spec={spec}
+          pointedObject={pointedObject}
+          onClick={() => onObjectClick(spec)}
+          onMouseDown={onObjectMouseDown}
+        />
+      );
     case "Circle":
-      return <Circle spec={objectSpec} />;
+      return (
+        <Circle
+          id="object"
+          className="object"
+          spec={spec}
+          pointedObject={pointedObject}
+          onClick={() => onObjectClick(spec)}
+          onMouseDown={() => onObjectMouseDown(spec)}
+        />
+      );
     default:
       return <div />;
   }
