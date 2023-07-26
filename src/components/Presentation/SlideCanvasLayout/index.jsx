@@ -59,7 +59,6 @@ function SlideCanvasLayout() {
   }
 
   function handleMouseDown(object) {
-    console.log("Selected object ID:", object._id);
     setCurrentObject(object);
     setDragging(true);
   }
