@@ -37,13 +37,10 @@ const Triangle = styled.div`
   position: absolute;
   left: ${({ spec }) => spec.x}px;
   top: ${({ spec }) => spec.y}px;
-  width: ${({ spec }) => spec.width}px;
   height: ${({ spec }) => spec.height}px;
   border-left: 50px solid transparent;
   border-right: 50px solid transparent;
   border-bottom: 50px solid green;
-  margin: 2rem;
-  background-color: #222;
   cursor: pointer;
 `;
 const Circle = styled.div`

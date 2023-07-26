@@ -15,7 +15,6 @@ const userId = user._id;
 
 function SlideNavigator({ slides }) {
   const { presentationId } = useParams();
-  const { state } = useLocation();
   const [selectedSlideId, setSelectedSlideId] = useState(null);
 
   const addSlideMutation = useMutation({
@@ -75,27 +74,40 @@ function SlideNavigator({ slides }) {
 
   return (
     <Wrapper>
-      {slides.map((slide) => (
-        <Link
-          draggable="true"
-          key={slide._id}
-          to={`/presentations/${presentationId}/${slide._id}`}
-          state={{ user: state }}
-          onContextMenu={(event) => handleContextMenu(event, slide._id)}
-          onClick={handleCloseContextMenu}
-        >
-          <SlideCanvas
-            canvasSpec={{
-              width: 250,
-              height: 150,
-              scaleX: 250 / 800,
-              scaleY: 150 / 500,
-              translate: "-100%, -100%",
-            }}
-            objects={slide.objects}
-          />
-        </Link>
-      ))}
+      {slides.map((slide) => {
+        const thumbnailObjects = slide.objects.map(
+          ({ type, _id, coordinates, dimensions }) => {
+            return {
+              type,
+              _id,
+              x: coordinates.x,
+              y: coordinates.y,
+              width: dimensions.width,
+              height: dimensions.height,
+            };
+          },
+        );
+
+        return (
+          <Link
+            key={slide._id}
+            to={`/presentations/${presentationId}/${slide._id}`}
+            onContextMenu={(event) => handleContextMenu(event, slide._id)}
+            onClick={handleCloseContextMenu}
+          >
+            <SlideCanvas
+              canvasSpec={{
+                width: 250,
+                height: 150,
+                scaleX: 250 / 800,
+                scaleY: 150 / 500,
+                translate: "-100%, -100%",
+              }}
+              objects={thumbnailObjects}
+            />
+          </Link>
+        );
+      })}
       {contextMenu.visible && (
         <ContextMenu style={{ top: contextMenu.y, left: contextMenu.x }}>
           <MenuItem onClick={handleAddSlide}>추가</MenuItem>
