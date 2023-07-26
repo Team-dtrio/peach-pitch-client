@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import SlideCanvas from "../SlideCanvasLayout/SlideCanvas";
@@ -40,20 +40,20 @@ function SlideNavigator({ slides }) {
     },
   });
 
-  const useUpdateSlideOrderMutation = useMutation(
-    async ({ newOrder }) => {
+  const queryClient = useQueryClient();
+
+  const useUpdateSlideOrderMutation = useMutation({
+    mutationFn: async ({ newOrder }) => {
       const response = await axiosInstance.put(
         `/users/${userId}/presentations/${presentationId}/slides`,
         { newOrder },
       );
       return response.data;
     },
-    {
-      onSuccess: () => {
-        useUpdateSlideOrderMutation.invalidateQueries();
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries("presentations");
     },
-  );
+  });
 
   const [contextMenu, setContextMenu] = useState({
     visible: false,
