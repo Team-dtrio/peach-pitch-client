@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import SlideCanvas from "../SlideCanvasLayout/SlideCanvas";
 import axiosInstance from "../../../services/axios";
@@ -16,6 +16,11 @@ const userId = user._id;
 function SlideNavigator({ slides }) {
   const { presentationId } = useParams();
   const [selectedSlideId, setSelectedSlideId] = useState(null);
+  const [slidesState, setSlidesState] = useState(slides);
+
+  useEffect(() => {
+    setSlidesState(slides);
+  }, [slides]);
 
   const addSlideMutation = useMutation({
     mutationFn: async () => {
@@ -34,6 +39,21 @@ function SlideNavigator({ slides }) {
       return response.data;
     },
   });
+
+  const updateSlideOrderMutation = useMutation(
+    async ({ newOrder }) => {
+      const response = await axiosInstance.put(
+        `/users/${userId}/presentations/${presentationId}/slides`,
+        { newOrder },
+      );
+      return response.data;
+    },
+    {
+      onSuccess: () => {
+        updateSlideOrderMutation.invalidateQueries();
+      },
+    },
+  );
 
   const [contextMenu, setContextMenu] = useState({
     visible: false,
@@ -54,6 +74,21 @@ function SlideNavigator({ slides }) {
     setContextMenu({ visible: false, x: 0, y: 0 });
   }
 
+  const updateSlideOrder = (currentSlides, droppedSlideId, targetSlideId) => {
+    const droppedIndex = currentSlides.findIndex(
+      (slide) => slide._id === droppedSlideId,
+    );
+    const targetIndex = currentSlides.findIndex(
+      (slide) => slide._id === targetSlideId,
+    );
+
+    const newSlides = [...currentSlides];
+    const [removed] = newSlides.splice(droppedIndex, 1);
+    newSlides.splice(targetIndex, 0, removed);
+
+    return newSlides;
+  };
+
   const handleAddSlide = async () => {
     try {
       await addSlideMutation.mutateAsync();
@@ -72,26 +107,55 @@ function SlideNavigator({ slides }) {
     }
   };
 
+  const handleDragStart = (event, id) => {
+    event.dataTransfer.setData("text/plain", id);
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
+  const handleDrop = async (event, id) => {
+    event.preventDefault();
+
+    const droppedSlideId = event.dataTransfer.getData("text/plain");
+    const targetSlideId = id;
+
+    const newSlides = updateSlideOrder(
+      slidesState,
+      droppedSlideId,
+      targetSlideId,
+    );
+
+    setSlidesState(newSlides);
+
+    const newOrder = newSlides.map((slide) => slide._id);
+
+    await updateSlideOrderMutation.mutateAsync({ newOrder });
+  };
+
   return (
     <Wrapper>
       {slides.map((slide) => {
         const thumbnailObjects = slide.objects.map(
-          ({ type, _id, coordinates, dimensions }) => {
-            return {
-              type,
-              _id,
-              x: coordinates.x,
-              y: coordinates.y,
-              width: dimensions.width,
-              height: dimensions.height,
-            };
-          },
+          ({ type, _id, coordinates, dimensions }) => ({
+            type,
+            _id,
+            x: coordinates.x,
+            y: coordinates.y,
+            width: dimensions.width,
+            height: dimensions.height,
+          }),
         );
 
         return (
           <Link
             key={slide._id}
             to={`/presentations/${presentationId}/${slide._id}`}
+            draggable="true"
+            onDragStart={(event) => handleDragStart(event, slide._id)}
+            onDragOver={handleDragOver}
+            onDrop={(event) => handleDrop(event, slide._id)}
             onContextMenu={(event) => handleContextMenu(event, slide._id)}
             onClick={handleCloseContextMenu}
           >
