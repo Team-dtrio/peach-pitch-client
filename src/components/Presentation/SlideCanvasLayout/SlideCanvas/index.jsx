@@ -1,15 +1,25 @@
 import { styled } from "styled-components";
 import Object from "../../../Object";
 
-function SlideCanvas({ canvasSpec, objects }) {
+function SlideCanvas({
+  canvasSpec,
+  objects,
+  pointedObject,
+  pointObject,
+  handleMouseDown,
+}) {
   return (
     <Canvas spec={canvasSpec}>
       {objects &&
-        objects.map((object) => {
-          return (
-            <Object key={object._id} type={object.type} objectSpec={object} />
-          );
-        })}
+        objects.map((object) => (
+          <Object
+            key={object._id}
+            spec={object}
+            pointedObject={pointedObject}
+            onObjectClick={pointObject}
+            onObjectMouseDown={handleMouseDown}
+          />
+        ))}
     </Canvas>
   );
 }
