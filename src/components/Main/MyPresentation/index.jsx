@@ -52,6 +52,7 @@ function MyPresentation({ presentations }) {
 const StyledLink = styled(Link)`
   margin-bottom: 10px;
   text-decoration: none;
+  margin-right: -400px;
 
   &:visited {
     color: #222;
@@ -62,8 +63,8 @@ const Section = styled.section`
   padding-left: 30px;
 `;
 const Container = styled.div`
-  display: flex;
-  flex: 4;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   margin-bottom: 10px;
 `;
 const Thumbnail = styled.section`
@@ -71,7 +72,8 @@ const Thumbnail = styled.section`
   text-align: center;
 
   h3 {
-    transform: translate(-100%, -100%);
+    margin-left: -570px;
+    margin-top: -300px;
   }
 `;
 

@@ -27,7 +27,7 @@ function CreatePresentation() {
 
 const Section = styled.section`
   padding: 15px 0;
-  padding-left: 30px;
+  padding-left: 50px;
 `;
 const NewCanvas = styled.div`
   width: 250px;
