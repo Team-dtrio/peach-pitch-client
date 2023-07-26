@@ -107,13 +107,20 @@ const StyledCircle = styled.div`
   cursor: pointer;
 `;
 
+function getBorderStyle(spec, pointedObject) {
+  return pointedObject && pointedObject._id === spec._id
+    ? "2px solid red"
+    : "1px dashed #222";
+}
+
 function Object({ spec, pointedObject, onObjectClick, onObjectMouseDown }) {
+  const borderStyle = getBorderStyle(spec, pointedObject);
   switch (spec.type) {
     case "Textbox":
       return (
         <Textbox
           spec={spec}
-          pointedObject={pointedObject}
+          borderStyle={borderStyle}
           onClick={() => onObjectClick(spec)}
           onMouseDown={onObjectMouseDown}
         />
@@ -122,7 +129,7 @@ function Object({ spec, pointedObject, onObjectClick, onObjectMouseDown }) {
       return (
         <Square
           spec={spec}
-          pointedObject={pointedObject}
+          borderStyle={borderStyle}
           onClick={() => onObjectClick(spec)}
           onMouseDown={onObjectMouseDown}
         />
@@ -131,7 +138,7 @@ function Object({ spec, pointedObject, onObjectClick, onObjectMouseDown }) {
       return (
         <Triangle
           spec={spec}
-          pointedObject={pointedObject}
+          borderStyle={borderStyle}
           onClick={() => onObjectClick(spec)}
           onMouseDown={onObjectMouseDown}
         />
@@ -140,7 +147,7 @@ function Object({ spec, pointedObject, onObjectClick, onObjectMouseDown }) {
       return (
         <Circle
           spec={spec}
-          pointedObject={pointedObject}
+          borderStyle={borderStyle}
           onClick={() => onObjectClick(spec)}
           onMouseDown={onObjectMouseDown}
         />
