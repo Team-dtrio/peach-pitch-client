@@ -22,7 +22,7 @@ function SlideNavigator({ slides }) {
     setSlidesState(slides);
   }, [slides]);
 
-  const addSlideMutation = useMutation({
+  const useAddSlideMutation = useMutation({
     mutationFn: async () => {
       const response = await axiosInstance.post(
         `/users/${userId}/presentations/${presentationId}/slides`,
@@ -31,7 +31,7 @@ function SlideNavigator({ slides }) {
     },
   });
 
-  const deleteSlideMutation = useMutation({
+  const useDeleteSlideMutation = useMutation({
     mutationFn: async () => {
       const response = await axiosInstance.delete(
         `/users/${userId}/presentations/${presentationId}/slides/${selectedSlideId}`,
@@ -40,7 +40,7 @@ function SlideNavigator({ slides }) {
     },
   });
 
-  const updateSlideOrderMutation = useMutation(
+  const useUpdateSlideOrderMutation = useMutation(
     async ({ newOrder }) => {
       const response = await axiosInstance.put(
         `/users/${userId}/presentations/${presentationId}/slides`,
@@ -50,7 +50,7 @@ function SlideNavigator({ slides }) {
     },
     {
       onSuccess: () => {
-        updateSlideOrderMutation.invalidateQueries();
+        useUpdateSlideOrderMutation.invalidateQueries();
       },
     },
   );
@@ -91,7 +91,7 @@ function SlideNavigator({ slides }) {
 
   const handleAddSlide = async () => {
     try {
-      await addSlideMutation.mutateAsync();
+      await useAddSlideMutation.mutateAsync();
       handleCloseContextMenu();
     } catch (error) {
       console.error(error);
@@ -100,7 +100,7 @@ function SlideNavigator({ slides }) {
 
   const handleDeleteSlide = async () => {
     try {
-      await deleteSlideMutation.mutateAsync();
+      await useDeleteSlideMutation.mutateAsync();
       handleCloseContextMenu();
     } catch (error) {
       console.error(error);
@@ -131,7 +131,7 @@ function SlideNavigator({ slides }) {
 
     const newOrder = newSlides.map((slide) => slide._id);
 
-    await updateSlideOrderMutation.mutateAsync({ newOrder });
+    await useUpdateSlideOrderMutation.mutateAsync({ newOrder });
   };
 
   return (
