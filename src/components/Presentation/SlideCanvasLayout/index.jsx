@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { styled } from "styled-components";
@@ -18,23 +18,23 @@ function useGetPresentationQuery(userId, presentationId, slideId, callback) {
     },
     onSuccess: ({ data }) => {
       const { presentation } = data;
-      const currentSlide = presentation.slides.find((slide) => {
-        return slide._id === slideId;
-      });
+      const currentSlide = presentation.slides.find(
+        (slide) => slide._id === slideId,
+      );
       const currentObjects = currentSlide.objects.map(
-        ({ type, _id, coordinates, dimensions }) => {
-          return {
-            type,
-            _id,
-            x: coordinates.x,
-            y: coordinates.y,
-            width: dimensions.width,
-            height: dimensions.height,
-          };
-        },
+        ({ type, _id, coordinates, dimensions }) => ({
+          type,
+          _id,
+          x: coordinates.x,
+          y: coordinates.y,
+          width: dimensions.width,
+          height: dimensions.height,
+        }),
       );
 
       callback(currentObjects);
+
+      query.refetch();
     },
   });
 
@@ -53,7 +53,6 @@ function SlideCanvasLayout() {
   const [currentObjects, setCurrentObjects] = useState([]);
   const [currentObject, setCurrentObject] = useState({});
   const [dragging, setDragging] = useState(false);
-  const [isEventDone, setIsEventDone] = useState(false);
 
   useGetPresentationQuery(user._id, presentationId, slideId, setCurrentObjects);
   useUpdateObjectMutation();
@@ -84,6 +83,42 @@ function SlideCanvasLayout() {
   function handleMouseUp() {
     setDragging(false);
   }
+
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [handleMouseMove, handleMouseUp]);
+
+  function pointObject(object) {
+    setCurrentObject(object);
+  }
+
+  function handleMouseDown(object) {
+    setCurrentObject(object);
+    setDragging(true);
+  }
+
+  const handleMouseMove = useCallback(
+    (event) => {
+      if (dragging) {
+        setCurrentObject((prev) => ({
+          ...prev,
+          x: currentObject.x + event.movementX,
+          y: currentObject.y + event.movementY,
+        }));
+      }
+    },
+    [dragging, currentObject],
+  );
+
+  const handleMouseUp = useCallback(() => {
+    setDragging(false);
+  }, []);
 
   useEffect(() => {
     window.addEventListener("mousemove", handleMouseMove);
