@@ -33,7 +33,8 @@ function useGetPresentationQuery(userId, presentationId, slideId, callback) {
       );
 
       callback(currentObjects);
-      return query.refetch();
+
+      query.refetch();
     },
   });
 
