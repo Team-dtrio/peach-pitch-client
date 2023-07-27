@@ -51,7 +51,49 @@ function SlideCanvasLayout() {
   const user = getUser();
   const { presentationId, slideId } = useParams();
   const [currentObjects, setCurrentObjects] = useState([]);
+  const [currentObject, setCurrentObject] = useState({});
+  const [dragging, setDragging] = useState(false);
+  const [isEventDone, setIsEventDone] = useState(false);
+
   useGetPresentationQuery(user._id, presentationId, slideId, setCurrentObjects);
+  useUpdateObjectMutation();
+
+  function pointObject(object) {
+    setCurrentObject(object);
+  }
+
+  function handleMouseDown(object) {
+    setCurrentObject(object);
+    setIsEventDone(true);
+    setDragging(true);
+    setIsEventDone(false);
+  }
+
+  function handleMouseMove(event) {
+    if (dragging) {
+      setCurrentObject((prev) => {
+        return {
+          ...prev,
+          x: currentObject.x + event.movementX,
+          y: currentObject.y + event.movementY,
+        };
+      });
+    }
+  }
+
+  function handleMouseUp() {
+    setDragging(false);
+  }
+
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [handleMouseMove, handleMouseUp]);
 
   return (
     <Wrapper>
@@ -64,6 +106,10 @@ function SlideCanvasLayout() {
             scaleY: 1,
           }}
           objects={currentObjects}
+          pointedObject={currentObject}
+          pointObject={pointObject}
+          handleMouseDown={handleMouseDown}
+          handleMouseUp={handleMouseUp}
         />
       </EntireLayout>
     </Wrapper>
