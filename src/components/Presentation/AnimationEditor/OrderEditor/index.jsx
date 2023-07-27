@@ -44,7 +44,10 @@ function OrderEditor() {
   return (
     <div>
       {animationSequence?.map((animation) => (
-        <li key={animation.objectId} />
+        <li key={animation.objectId}>
+          {animation.animationEffect}
+          {animation.objectId}
+        </li>
       ))}
     </div>
   );
