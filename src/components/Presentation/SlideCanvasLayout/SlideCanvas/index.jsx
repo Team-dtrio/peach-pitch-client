@@ -20,6 +20,7 @@ function SlideCanvas({
             onObjectMouseDown={handleMouseDown}
           />
         ))}
+
     </Canvas>
   );
 }
