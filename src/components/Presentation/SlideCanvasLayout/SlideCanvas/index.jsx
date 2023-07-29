@@ -5,18 +5,15 @@ function SlideCanvas({ canvasSpec, objects, selectObject, selectedObjectId }) {
   return (
     <Canvas spec={canvasSpec}>
       {objects &&
-        objects.map((object) => {
-          console.log(`Object id: ${object._id}, type: ${object.type}`);
-          return (
-            <Object
-              key={object._id}
-              id={object._id}
-              type={object.type}
-              selectObject={selectObject}
-              selectedObjectId={selectedObjectId}
-            />
-          );
-        })}
+        objects.map((object) => (
+          <Object
+            key={object._id}
+            id={object._id}
+            type={object.type}
+            selectObject={selectObject}
+            selectedObjectId={selectedObjectId}
+          />
+        ))}
     </Canvas>
   );
 }
