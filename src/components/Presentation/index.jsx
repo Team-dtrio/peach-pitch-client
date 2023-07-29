@@ -14,19 +14,22 @@ import LoadingModal from "../Shared/Modal/LoadingModal";
 import useAuthRedirect from "../../hooks/useAuthRedirect";
 
 function useGetAllSlidesQuery(userId, presentationId, callback) {
-  const query = useQuery({
-    queryKey: ["slides"],
-    queryFn: async () => {
+  const query = useQuery(
+    ["slides"],
+    async () => {
       const response = await axiosInstance.get(
         `/users/${userId}/presentations/${presentationId}/slides`,
       );
 
-      return response;
+      return response.data;
     },
-    onSuccess: ({ data }) => {
-      callback(data.slides);
+    {
+      onSuccess: (data) => {
+        callback(data.slides);
+        query.refetch();
+      },
     },
-  });
+  );
 
   return query;
 }

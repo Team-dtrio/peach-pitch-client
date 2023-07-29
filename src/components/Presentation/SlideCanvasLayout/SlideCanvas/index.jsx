@@ -11,17 +11,16 @@ function SlideCanvas({
   return (
     <Canvas spec={canvasSpec}>
       {objects &&
-        objects.map((object) => {
-          return (
-            <Object
-              key={object._id}
-              spec={object}
-              pointedObject={pointedObject}
-              onObjectClick={pointObject}
-              onObjectMouseDown={handleMouseDown}
-            />
-          );
-        })}
+        objects.map((object) => (
+          <Object
+            key={object._id}
+            spec={object}
+            pointedObject={pointedObject}
+            onObjectClick={pointObject}
+            onObjectMouseDown={handleMouseDown}
+          />
+        ))}
+
     </Canvas>
   );
 }
