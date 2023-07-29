@@ -26,7 +26,7 @@ function SlideCanvasLayout() {
   const user = getUser();
 
   const { data } = useGetAllObjectsQuery(user._id, presentationId, slideId);
-  console.log(data);
+
   const { selectObject, selectedObjectId } = useContext(ObjectContext);
 
   return (

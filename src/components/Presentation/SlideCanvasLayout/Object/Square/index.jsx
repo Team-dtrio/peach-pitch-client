@@ -32,10 +32,8 @@ function Square({ id, type }) {
   const isSelected = id === selectedObjectId && type === selectedObjectType;
 
   const handleSquareClick = (event) => {
-    console.log(`Before selecting square with id: ${id}, type: ${type}`);
     event.stopPropagation();
     selectObject(id, type);
-    console.log(`After selecting square with id: ${id}, type: ${type}`);
   };
 
   const onVertexDrag = useCallback(

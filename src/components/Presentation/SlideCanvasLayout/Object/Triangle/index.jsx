@@ -11,7 +11,6 @@ const StyledTriangle = styled.div`
   background: ${(props) => props.spec.fillColor};
   top: ${(props) => props.spec.y}px;
   left: ${(props) => props.spec.x}px;
-  cursor: move;
 `;
 
 const initialTriangleSpec = {
@@ -31,12 +30,10 @@ function Triangle({ id, type }) {
     useContext(ObjectContext);
 
   const isSelected = id === selectedObjectId && type === selectedObjectType;
-  console.log(isSelected);
 
   const handleTriangleClick = (event) => {
     event.stopPropagation();
     selectObject(id, type);
-    console.log("Triangle: ", id, type);
   };
 
   const onVertexDrag = useCallback(
