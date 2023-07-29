@@ -37,12 +37,10 @@ function getUser() {
 
 function ShapeSelector({ onShapeSelect }) {
   const user = getUser();
-  const [_, setType] = useState("");
   const { presentationId, slideId } = useParams();
   const { mutate } = useCreateObjectMutation(slideId);
 
   function onButtonClick(type) {
-    setType(type);
     mutate({ userId: user._id, presentationId, slideId, type });
     onShapeSelect(type);
   }
