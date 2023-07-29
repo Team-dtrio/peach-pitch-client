@@ -10,7 +10,7 @@ function ColorEditor() {
       <Container>
         <Label>테두리</Label>
         <Palette type="color" />
-    </Container>
+      </Container>
     </Wrapper>
   );
 }

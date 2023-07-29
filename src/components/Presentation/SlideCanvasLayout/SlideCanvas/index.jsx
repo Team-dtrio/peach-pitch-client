@@ -5,22 +5,7 @@ function SlideCanvas({ canvasSpec, objects }) {
   return (
     <Canvas spec={canvasSpec}>
       {objects &&
-        objects.map((object) => {
-          const objectSpec = {
-            x: object.coordinates.x,
-            y: object.coordinates.y,
-            width: object.dimensions.width,
-            height: object.dimensions.height,
-          };
-
-          return (
-            <Object
-              key={object._id}
-              type={object.type}
-              objectSpec={objectSpec}
-            />
-          );
-        })}
+        objects.map((object) => <Object key={object._id} type={object.type} />)}
     </Canvas>
   );
 }
