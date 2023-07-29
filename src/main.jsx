@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider } from "styled-components";
 import GlobalStyle from "./styles/GlobalStyle";
+import { ObjectProvider } from "./Contexts/Objectcontext";
 
 import App from "./App";
 import appTheme from "./styles/appTheme";
@@ -24,7 +25,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <BrowserRouter>
         <ThemeProvider theme={appTheme}>
           <GlobalStyle />
-          <App />
+          <ObjectProvider>
+            <App />
+          </ObjectProvider>
         </ThemeProvider>
       </BrowserRouter>
     </QueryClientProvider>

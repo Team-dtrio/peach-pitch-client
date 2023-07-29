@@ -1,11 +1,22 @@
 import { styled } from "styled-components";
-import Object from "../../PresentationHeader/Object";
+import Object from "../Object";
 
-function SlideCanvas({ canvasSpec, objects }) {
+function SlideCanvas({ canvasSpec, objects, selectObject, selectedObjectId }) {
   return (
     <Canvas spec={canvasSpec}>
       {objects &&
-        objects.map((object) => <Object key={object._id} type={object.type} />)}
+        objects.map((object) => {
+          console.log(`Object id: ${object._id}, type: ${object.type}`);
+          return (
+            <Object
+              key={object._id}
+              id={object._id}
+              type={object.type}
+              selectObject={selectObject}
+              selectedObjectId={selectedObjectId}
+            />
+          );
+        })}
     </Canvas>
   );
 }

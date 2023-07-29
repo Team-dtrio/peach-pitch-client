@@ -1,18 +1,20 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
 import Boundary from "../Boundary";
+import { ObjectContext } from "../../../../../Contexts/Objectcontext";
 
-const StyledSquare = styled.div`
+const StyledTriangle = styled.div`
   position: absolute;
-  left: ${(props) => props.spec.x}px;
-  top: ${(props) => props.spec.y}px;
   width: ${(props) => props.spec.width}px;
   height: ${(props) => props.spec.height}px;
-  background-color: ${(props) => props.spec.fillColor};
-  border: 1px solid ${(props) => props.spec.borderColor};
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  background: ${(props) => props.spec.fillColor};
+  top: ${(props) => props.spec.y}px;
+  left: ${(props) => props.spec.x}px;
+  cursor: move;
 `;
 
-const initialSquareSpec = {
+const initialTriangleSpec = {
   x: 100,
   y: 100,
   width: 100,
@@ -21,37 +23,44 @@ const initialSquareSpec = {
   borderColor: "#000000",
 };
 
-function Square() {
-  const [isSelected, setIsSelected] = useState(false);
+function Triangle({ id, type }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
-  const [squareSpec, setSquareSpec] = useState(initialSquareSpec);
+  const [triangleSpec, setTriangleSpec] = useState(initialTriangleSpec);
 
-  const handleSquareClick = () => {
-    setIsSelected(!isSelected);
+  const { selectedObjectId, selectedObjectType, selectObject } =
+    useContext(ObjectContext);
+
+  const isSelected = id === selectedObjectId && type === selectedObjectType;
+  console.log(isSelected);
+
+  const handleTriangleClick = (event) => {
+    event.stopPropagation();
+    selectObject(id, type);
+    console.log("Triangle: ", id, type);
   };
 
   const onVertexDrag = useCallback(
-    (draggedVertexIndex) => (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    (draggedVertexIndex) => (event) => {
+      event.preventDefault();
+      event.stopPropagation();
 
-      const initialPosition = { x: e.clientX, y: e.clientY };
-      const initialSpec = { ...squareSpec };
+      const initialPosition = { x: event.clientX, y: event.clientY };
+      const initialSpec = { ...triangleSpec };
 
-      const moveHandler = (moveEvent) => {
+      function moveHandler(moveEvent) {
         const newPosition = {
           x: moveEvent.clientX,
           y: moveEvent.clientY,
         };
 
-        let newSquareSpec = { ...squareSpec };
+        let newTriangleSpec = { ...triangleSpec };
         const heightChange = newPosition.y - initialPosition.y;
         const widthChange = newPosition.x - initialPosition.x;
 
         switch (draggedVertexIndex) {
           case 0:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height - heightChange,
               x: newPosition.x,
@@ -59,50 +68,50 @@ function Square() {
             };
             break;
           case 2:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               width: initialSpec.width + widthChange,
               height: initialSpec.height - heightChange,
               y: newPosition.y,
             };
             break;
           case 4:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               width: initialSpec.width + widthChange,
               height: initialSpec.height + heightChange,
             };
             break;
           case 6:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height + heightChange,
               x: newPosition.x,
             };
             break;
           case 1:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               height: Math.max(10, initialSpec.height - heightChange),
               y: newPosition.y,
             };
             break;
           case 5:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               height: Math.max(10, initialSpec.height + heightChange),
             };
             break;
           case 3:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               width: Math.max(10, initialSpec.width + widthChange),
             };
             break;
           case 7:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               width: Math.max(10, initialSpec.width - widthChange),
               x: newPosition.x,
             };
@@ -111,8 +120,8 @@ function Square() {
             break;
         }
 
-        setSquareSpec(newSquareSpec);
-      };
+        setTriangleSpec(newTriangleSpec);
+      }
 
       document.addEventListener("mousemove", moveHandler);
       document.addEventListener(
@@ -123,55 +132,55 @@ function Square() {
         { once: true },
       );
     },
-    [squareSpec],
+    [triangleSpec],
   );
 
-  const onSquareDrag = (e) => {
-    e.stopPropagation();
+  function onTriangleDrag(event) {
+    event.stopPropagation();
 
     const initialPosition = {
-      x: e.clientX - squareSpec.x,
-      y: e.clientY - squareSpec.y,
+      x: event.clientX - triangleSpec.x,
+      y: event.clientY - triangleSpec.y,
     };
 
-    const moveHandler = (moveEvent) => {
-      setSquareSpec((prevSpec) => ({
+    function moveHandler(moveEvent) {
+      setTriangleSpec((prevSpec) => ({
         ...prevSpec,
         x: moveEvent.clientX - initialPosition.x,
         y: moveEvent.clientY - initialPosition.y,
       }));
-    };
+    }
 
-    const upHandler = () => {
+    function upHandler() {
       document.removeEventListener("mousemove", moveHandler);
       document.removeEventListener("mouseup", upHandler);
-    };
+    }
 
     document.addEventListener("mousemove", moveHandler);
     document.addEventListener("mouseup", upHandler);
-  };
+  }
 
   useEffect(() => {
     const offset = { x: 1, y: 1 };
 
     const baseVertices = [
-      { x: squareSpec.x, y: squareSpec.y },
-      { x: squareSpec.x + squareSpec.width / 2, y: squareSpec.y },
-      { x: squareSpec.x + squareSpec.width, y: squareSpec.y },
+      { x: triangleSpec.x, y: triangleSpec.y },
+      { x: triangleSpec.x + triangleSpec.width / 2, y: triangleSpec.y },
+      { x: triangleSpec.x + triangleSpec.width, y: triangleSpec.y },
       {
-        x: squareSpec.x + squareSpec.width,
-        y: squareSpec.y + squareSpec.height / 2,
+        x: triangleSpec.x + triangleSpec.width,
+        y: triangleSpec.y + triangleSpec.height / 2,
       },
       {
-        x: squareSpec.x + squareSpec.width,
-        y: squareSpec.y + squareSpec.height,
+        x: triangleSpec.x + triangleSpec.width,
+        y: triangleSpec.y + triangleSpec.height,
       },
       {
-        x: squareSpec.x + squareSpec.width / 2,
-        y: squareSpec.y + squareSpec.height,
+        x: triangleSpec.x + triangleSpec.width / 2,
+        y: triangleSpec.y + triangleSpec.height,
       },
-      { x: squareSpec.x, y: squareSpec.y + squareSpec.height },
-      { x: squareSpec.x, y: squareSpec.y + squareSpec.height / 2 },
+      { x: triangleSpec.x, y: triangleSpec.y + triangleSpec.height },
+      { x: triangleSpec.x, y: triangleSpec.y + triangleSpec.height / 2 },
     ];
 
     const updatedBoundaryVertices = baseVertices.map((vertex) => ({
@@ -180,12 +189,12 @@ function Square() {
     }));
 
     setBoundaryVertices(updatedBoundaryVertices);
-  }, [squareSpec]);
+  }, [triangleSpec]);
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-    <div onClick={handleSquareClick} onMouseDown={onSquareDrag}>
-      <StyledSquare spec={squareSpec} />
+    <div onClick={handleTriangleClick} onMouseDown={onTriangleDrag}>
+      <StyledTriangle spec={triangleSpec} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}
@@ -196,4 +205,4 @@ function Square() {
   );
 }
 
-export default Square;
+export default Triangle;

@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
 import Boundary from "../Boundary";
+import { ObjectContext } from "../../../../../Contexts/Objectcontext";
 
 const StyledTextBox = styled.div`
   position: absolute;
@@ -58,24 +59,29 @@ const initialTextBoxSpec = {
   fontStyle: "normal",
 };
 
-function Textbox() {
-  const [isSelected, setIsSelected] = useState(false);
+function Textbox({ id, type }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [textBoxSpec, setTextBoxSpec] = useState(initialTextBoxSpec);
 
-  const handleTextBoxClick = () => {
-    setIsSelected(!isSelected);
+  const { selectedObjectId, selectedObjectType, selectObject } =
+    useContext(ObjectContext);
+
+  const isSelected = id === selectedObjectId && type === selectedObjectType;
+
+  const handleTextBoxClick = (event) => {
+    event.stopPropagation();
+    selectObject(id, type);
   };
 
   const onVertexDrag = useCallback(
-    (draggedVertexIndex) => (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    (draggedVertexIndex) => (event) => {
+      event.preventDefault();
+      event.stopPropagation();
 
-      const initialPosition = { x: e.clientX, y: e.clientY };
+      const initialPosition = { x: event.clientX, y: event.clientY };
       const initialSpec = { ...textBoxSpec };
 
-      const moveHandler = (moveEvent) => {
+      function moveHandler(moveEvent) {
         const newPosition = {
           x: moveEvent.clientX,
           y: moveEvent.clientY,
@@ -149,7 +155,7 @@ function Textbox() {
         }
 
         setTextBoxSpec(newTextBoxSpec);
-      };
+      }
 
       document.addEventListener("mousemove", moveHandler);
       document.addEventListener(
@@ -163,30 +169,30 @@ function Textbox() {
     [textBoxSpec],
   );
 
-  const onTextBoxDrag = (e) => {
-    e.stopPropagation();
+  function onTextBoxDrag(event) {
+    event.stopPropagation();
 
     const initialPosition = {
-      x: e.clientX - textBoxSpec.x,
-      y: e.clientY - textBoxSpec.y,
+      x: event.clientX - textBoxSpec.x,
+      y: event.clientY - textBoxSpec.y,
     };
 
-    const moveHandler = (moveEvent) => {
+    function moveHandler(moveEvent) {
       setTextBoxSpec((prevSpec) => ({
         ...prevSpec,
         x: moveEvent.clientX - initialPosition.x,
         y: moveEvent.clientY - initialPosition.y,
       }));
-    };
+    }
 
-    const upHandler = () => {
+    function upHandler() {
       document.removeEventListener("mousemove", moveHandler);
       document.removeEventListener("mouseup", upHandler);
-    };
+    }
 
     document.addEventListener("mousemove", moveHandler);
     document.addEventListener("mouseup", upHandler);
-  };
+  }
 
   useEffect(() => {
     const offset = { x: 1, y: 1 };

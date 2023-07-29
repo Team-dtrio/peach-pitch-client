@@ -4,18 +4,18 @@ import Textbox from "./Textbox";
 import Square from "./Square";
 import Image from "./Image";
 
-function Object({ type, objectSpec }) {
+function Object({ type, objectSpec, id }) {
   switch (type.toLowerCase()) {
     case "circle":
-      return <Circle spec={objectSpec} />;
+      return <Circle spec={objectSpec} id={id} />;
     case "triangle":
-      return <Triangle spec={objectSpec} />;
+      return <Triangle spec={objectSpec} id={id} />;
     case "textbox":
-      return <Textbox spec={objectSpec} />;
+      return <Textbox spec={objectSpec} id={id} />;
     case "square":
-      return <Square spec={objectSpec} />;
+      return <Square spec={objectSpec} id={id} />;
     case "image":
-      return <Image spec={objectSpec} />;
+      return <Image spec={objectSpec} id={id} />;
     default:
       return null;
   }

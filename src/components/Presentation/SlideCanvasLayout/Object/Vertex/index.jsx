@@ -1,9 +1,9 @@
 function Vertex(props) {
   const { position, size, onVertexDrag, cursorType } = props;
 
-  const handleMouseDown = (e) => {
-    e.stopPropagation();
-    onVertexDrag(e);
+  const handleMouseDown = (event) => {
+    event.stopPropagation();
+    onVertexDrag(event);
   };
 
   const styles = {

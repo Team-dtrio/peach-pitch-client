@@ -21,7 +21,7 @@ function Boundary(props) {
         x2={nextVertex.x}
         y2={nextVertex.y}
         stroke="red"
-        strokeWidth="2"
+        strokeWidth="1"
       />
     );
   });
@@ -39,7 +39,7 @@ function Boundary(props) {
 
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    <div onMouseDown={(e) => e.stopPropagation()}>
+    <div onMouseDown={(event) => event.stopPropagation()}>
       <svg
         style={{
           position: "absolute",

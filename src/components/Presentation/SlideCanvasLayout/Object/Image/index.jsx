@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
 import Boundary from "../Boundary";
+import { ObjectContext } from "../../../../../Contexts/Objectcontext";
 
 const StyledImageBox = styled.div`
   position: absolute;
@@ -36,24 +37,29 @@ const initialImageSpec = {
   src: "https://picsum.photos/200/300", // mock image
 };
 
-function Image() {
-  const [isSelected, setIsSelected] = useState(false);
+function Image({ id, type }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [imageSpec, setImageSpec] = useState(initialImageSpec);
 
-  const handleImageClick = () => {
-    setIsSelected(!isSelected);
+  const { selectedObjectId, selectedObjectType, selectObject } =
+    useContext(ObjectContext);
+
+  const isSelected = id === selectedObjectId && type === selectedObjectType;
+
+  const handleImageClick = (event) => {
+    event.stopPropagation();
+    selectObject(id, type);
   };
 
   const onVertexDrag = useCallback(
-    (draggedVertexIndex) => (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    (draggedVertexIndex) => (event) => {
+      event.preventDefault();
+      event.stopPropagation();
 
-      const initialPosition = { x: e.clientX, y: e.clientY };
+      const initialPosition = { x: event.clientX, y: event.clientY };
       const initialSpec = { ...imageSpec };
 
-      const moveHandler = (moveEvent) => {
+      function moveHandler(moveEvent) {
         const newPosition = {
           x: moveEvent.clientX,
           y: moveEvent.clientY,
@@ -127,7 +133,7 @@ function Image() {
         }
 
         setImageSpec(newImageSpec);
-      };
+      }
 
       document.addEventListener("mousemove", moveHandler);
       document.addEventListener(
@@ -141,31 +147,31 @@ function Image() {
     [imageSpec],
   );
 
-  const onImageDrag = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
+  function onImageDrag(event) {
+    event.stopPropagation();
+    event.preventDefault();
 
     const initialPosition = {
-      x: e.clientX - imageSpec.x,
-      y: e.clientY - imageSpec.y,
+      x: event.clientX - imageSpec.x,
+      y: event.clientY - imageSpec.y,
     };
 
-    const moveHandler = (moveEvent) => {
+    function moveHandler(moveEvent) {
       setImageSpec((prevSpec) => ({
         ...prevSpec,
         x: moveEvent.clientX - initialPosition.x,
         y: moveEvent.clientY - initialPosition.y,
       }));
-    };
+    }
 
-    const upHandler = () => {
+    function upHandler() {
       document.removeEventListener("mousemove", moveHandler);
       document.removeEventListener("mouseup", upHandler);
-    };
+    }
 
     document.addEventListener("mousemove", moveHandler);
     document.addEventListener("mouseup", upHandler);
-  };
+  }
 
   useEffect(() => {
     const offset = { x: 1, y: 1 };

@@ -1,8 +1,10 @@
+import { useContext } from "react";
 import { styled } from "styled-components";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../services/axios";
 import SlideCanvas from "./SlideCanvas";
+import { ObjectContext } from "../../../Contexts/Objectcontext";
 
 function useGetAllObjectsQuery(userId, presentationId, slideId) {
   return useQuery(["objects", slideId], async () => {
@@ -24,6 +26,8 @@ function SlideCanvasLayout() {
   const user = getUser();
 
   const { data } = useGetAllObjectsQuery(user._id, presentationId, slideId);
+  console.log(data);
+  const { selectObject, selectedObjectId } = useContext(ObjectContext);
 
   return (
     <Wrapper>
@@ -36,6 +40,8 @@ function SlideCanvasLayout() {
             scaleY: 1,
           }}
           objects={data && data.objects ? data.objects : []}
+          selectObject={selectObject}
+          selectedObjectId={selectedObjectId}
         />
       </EntireLayout>
     </Wrapper>
