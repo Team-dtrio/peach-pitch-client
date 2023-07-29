@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { styled } from "styled-components";
 import ObjectCreator from "./ObjectCreator";
-import DropDownMenu from "./ObjectCreator/components/DropDownMenu";
 
 function PresentationHeader() {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,7 +8,6 @@ function PresentationHeader() {
   return (
     <Wrapper>
       <ObjectCreator handleShape={() => setIsOpen(!isOpen)} />
-      {isOpen && <DropDownMenu />}
     </Wrapper>
   );
 }

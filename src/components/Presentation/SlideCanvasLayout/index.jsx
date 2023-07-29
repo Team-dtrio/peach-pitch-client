@@ -1,44 +1,18 @@
-import { useState, useEffect, useCallback } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useContext } from "react";
 import { styled } from "styled-components";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../services/axios";
-
 import SlideCanvas from "./SlideCanvas";
+import { ObjectContext } from "../../../Contexts/ObjectContext";
 
-function useGetPresentationQuery(userId, presentationId, slideId, callback) {
-  const query = useQuery({
-    queryKey: ["presentation"],
-    queryFn: async () => {
-      const response = await axiosInstance.get(
-        `/users/${userId}/presentations/${presentationId}`,
-      );
-
-      return response;
-    },
-    onSuccess: ({ data }) => {
-      const { presentation } = data;
-      const currentSlide = presentation.slides.find(
-        (slide) => slide._id === slideId,
-      );
-      const currentObjects = currentSlide.objects.map(
-        ({ type, _id, coordinates, dimensions }) => ({
-          type,
-          _id,
-          x: coordinates.x,
-          y: coordinates.y,
-          width: dimensions.width,
-          height: dimensions.height,
-        }),
-      );
-
-      callback(currentObjects);
-
-      query.refetch();
-    },
+function useGetAllObjectsQuery(userId, presentationId, slideId) {
+  return useQuery(["objects", slideId], async () => {
+    const { data } = await axiosInstance.get(
+      `/users/${userId}/presentations/${presentationId}/slides/${slideId}/objects`,
+    );
+    return data;
   });
-
-  return query;
 }
 
 function getUser() {
@@ -48,49 +22,12 @@ function getUser() {
 }
 
 function SlideCanvasLayout() {
-  const user = getUser();
   const { presentationId, slideId } = useParams();
-  const [currentObjects, setCurrentObjects] = useState([]);
-  const [currentObject, setCurrentObject] = useState({});
-  const [dragging, setDragging] = useState(false);
+  const user = getUser();
 
-  useGetPresentationQuery(user._id, presentationId, slideId, setCurrentObjects);
+  const { data } = useGetAllObjectsQuery(user._id, presentationId, slideId);
 
-  function pointObject(object) {
-    setCurrentObject(object);
-  }
-
-  function handleMouseDown(object) {
-    setCurrentObject(object);
-    setDragging(true);
-  }
-
-  const handleMouseMove = useCallback(
-    (event) => {
-      if (dragging) {
-        setCurrentObject((prev) => ({
-          ...prev,
-          x: currentObject.x + event.movementX,
-          y: currentObject.y + event.movementY,
-        }));
-      }
-    },
-    [dragging, currentObject],
-  );
-
-  const handleMouseUp = useCallback(() => {
-    setDragging(false);
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [handleMouseMove, handleMouseUp]);
+  const { selectObject, selectedObjectId } = useContext(ObjectContext);
 
   return (
     <Wrapper>
@@ -102,11 +39,9 @@ function SlideCanvasLayout() {
             scaleX: 1,
             scaleY: 1,
           }}
-          objects={currentObjects}
-          pointedObject={currentObject}
-          pointObject={pointObject}
-          handleMouseDown={handleMouseDown}
-          handleMouseUp={handleMouseUp}
+          objects={data && data.objects ? data.objects : []}
+          selectObject={selectObject}
+          selectedObjectId={selectedObjectId}
         />
       </EntireLayout>
     </Wrapper>
