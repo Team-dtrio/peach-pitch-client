@@ -1,26 +1,26 @@
 import { styled } from "styled-components";
-import Object from "../../../Object";
+import Object from "../../PresentationHeader/Object";
 
-function SlideCanvas({
-  canvasSpec,
-  objects,
-  pointedObject,
-  pointObject,
-  handleMouseDown,
-}) {
+function SlideCanvas({ canvasSpec, objects }) {
   return (
     <Canvas spec={canvasSpec}>
       {objects &&
-        objects.map((object) => (
-          <Object
-            key={object._id}
-            spec={object}
-            pointedObject={pointedObject}
-            onObjectClick={pointObject}
-            onObjectMouseDown={handleMouseDown}
-          />
-        ))}
+        objects.map((object) => {
+          const objectSpec = {
+            x: object.coordinates.x,
+            y: object.coordinates.y,
+            width: object.dimensions.width,
+            height: object.dimensions.height,
+          };
 
+          return (
+            <Object
+              key={object._id}
+              type={object.type}
+              objectSpec={objectSpec}
+            />
+          );
+        })}
     </Canvas>
   );
 }

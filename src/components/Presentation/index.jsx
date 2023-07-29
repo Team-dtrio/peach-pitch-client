@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { styled } from "styled-components";
 
@@ -14,22 +14,19 @@ import LoadingModal from "../Shared/Modal/LoadingModal";
 import useAuthRedirect from "../../hooks/useAuthRedirect";
 
 function useGetAllSlidesQuery(userId, presentationId, callback) {
-  const query = useQuery(
-    ["slides"],
-    async () => {
+  const query = useQuery({
+    queryKey: ["slides"],
+    queryFn: async () => {
       const response = await axiosInstance.get(
         `/users/${userId}/presentations/${presentationId}/slides`,
       );
 
-      return response.data;
+      return response;
     },
-    {
-      onSuccess: (data) => {
-        callback(data.slides);
-        query.refetch();
-      },
+    onSuccess: ({ data }) => {
+      callback(data.slides);
     },
-  );
+  });
 
   return query;
 }
@@ -43,7 +40,6 @@ function getUser() {
 function Presentation() {
   const user = getUser();
   const [slides, setSlides] = useState([]);
-  const { state } = useLocation();
   const { presentationId } = useParams();
   const { isLoading } = useGetAllSlidesQuery(
     user._id,
@@ -64,7 +60,7 @@ function Presentation() {
       </MainHeader>
       <Section>
         <SlideNavigator slides={slides} />
-        <SlideCanvasLayout objects={state?.objects} />
+        <SlideCanvasLayout />
         <ObjectEditor />
       </Section>
     </Wrapper>
@@ -73,7 +69,7 @@ function Presentation() {
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-rows: 20vh 80vh;
+  grid-template-rows: 15vh 85vh;
 `;
 const Section = styled.section`
   display: grid;

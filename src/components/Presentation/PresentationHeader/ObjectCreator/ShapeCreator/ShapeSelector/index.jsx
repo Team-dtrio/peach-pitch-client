@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { styled } from "styled-components";
-import axiosInstance from "../../../../../services/axios";
+import axiosInstance from "../../../../../../services/axios";
 
-import rectangleUrl from "../../../../../assets/icon-rectangle.svg";
-import squareUrl from "../../../../../assets/icon-square.svg";
-import circleUrl from "../../../../../assets/icon-circle.svg";
+import rectangleUrl from "../../../../../../assets/icon-rectangle.svg";
+import squareUrl from "../../../../../../assets/icon-square.svg";
+import circleUrl from "../../../../../../assets/icon-circle.svg";
 
-function useCreateObjectMutation() {
+function useCreateObjectMutation(slideIdParam) {
+  const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async ({ userId, presentationId, slideId, type }) => {
       const { data } = await axiosInstance.post(
@@ -19,6 +20,9 @@ function useCreateObjectMutation() {
       );
 
       return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["objects", slideIdParam]);
     },
   });
 
@@ -31,16 +35,16 @@ function getUser() {
   return loggedInUser;
 }
 
-function DropDownMenu() {
+function ShapeSelector({ onShapeSelect }) {
   const user = getUser();
   const [_, setType] = useState("");
-  const { mutate } = useCreateObjectMutation();
   const { presentationId, slideId } = useParams();
+  const { mutate } = useCreateObjectMutation(slideId);
 
   function onButtonClick(type) {
     setType(type);
-
     mutate({ userId: user._id, presentationId, slideId, type });
+    onShapeSelect(type);
   }
 
   return (
@@ -84,4 +88,4 @@ const Image = styled.img`
   }
 `;
 
-export default DropDownMenu;
+export default ShapeSelector;

@@ -54,8 +54,13 @@ function NewPresentationModal({ toggleModal }) {
           onChange={(ev) => setTitle(ev.target.value)}
         />
         <ButtonContainer>
-          <button onClick={toggleModal}>닫기</button>
-          <button onClick={() => mutate({ userId: user._id, title })}>
+          <button type="button" onClick={toggleModal}>
+            닫기
+          </button>
+          <button
+            type="button"
+            onClick={() => mutate({ userId: user._id, title })}
+          >
             생성
           </button>
         </ButtonContainer>

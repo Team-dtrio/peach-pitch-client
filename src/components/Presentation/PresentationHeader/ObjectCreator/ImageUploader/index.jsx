@@ -1,11 +1,22 @@
-import { styled } from "styled-components";
+import { useState } from "react";
+import styled from "styled-components";
 import imageUploaderUrl from "../../../../../assets/oc-icon-picture.svg";
+import UploadModal from "./UploadModal";
 
 function ImageUploader() {
+  const [showModal, setShowModal] = useState(false);
+
+  const handleClick = () => {
+    setShowModal(!showModal);
+  };
+
   return (
-    <Button>
-      <Image src={imageUploaderUrl} />
-    </Button>
+    <div>
+      <Button onClick={handleClick}>
+        <Image src={imageUploaderUrl} />
+      </Button>
+      {showModal && <UploadModal setShowModal={setShowModal} />}
+    </div>
   );
 }
 
