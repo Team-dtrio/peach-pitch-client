@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
 import Boundary from "../Boundary";
-import { ObjectContext } from "../../../../../Contexts/Objectcontext";
+import { ObjectContext } from "../../../../../Contexts/ObjectContext";
 
 const StyledCircle = styled.div`
   position: absolute;

@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../services/axios";
 import SlideCanvas from "./SlideCanvas";
-import { ObjectContext } from "../../../Contexts/Objectcontext";
+import { ObjectContext } from "../../../Contexts/ObjectContext";
 
 function useGetAllObjectsQuery(userId, presentationId, slideId) {
   return useQuery(["objects", slideId], async () => {
