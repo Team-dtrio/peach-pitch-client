@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import SlideCanvas from "../SlideCanvasLayout/SlideCanvas";
@@ -7,35 +7,21 @@ import axiosInstance from "../../../services/axios";
 
 function getUser() {
   const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
+
   return loggedInUser;
 }
 const user = getUser();
 const userId = user._id;
 
-function useGetAllSlidesQuery() {
-  const { presentationId } = useParams();
-  const query = useQuery({
-    queryKey: ["slides"],
-    queryFn: async () => {
-      const response = await axiosInstance.get(
-        `/users/${userId}/presentations/${presentationId}/slides`,
-      );
-      return response.data.slides;
-    },
-  });
-
-  return query;
-}
-
-function SlideNavigator() {
+function SlideNavigator({ slides }) {
   const { presentationId } = useParams();
   const [selectedSlideId, setSelectedSlideId] = useState(null);
-
-  const { data = {}, isLoading } = useGetAllSlidesQuery(userId, presentationId);
-
-  const slidesState = data.data.slides;
-
+  const [slidesState, setSlidesState] = useState(slides);
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    setSlidesState(slides);
+  }, [slides]);
 
   const useAddSlideMutation = useMutation({
     mutationFn: async () => {
@@ -45,7 +31,7 @@ function SlideNavigator() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries("slides");
+      queryClient.invalidateQueries("presentations");
     },
   });
 
@@ -57,7 +43,7 @@ function SlideNavigator() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries("slides");
+      queryClient.invalidateQueries("presentations");
     },
   });
 
@@ -70,7 +56,7 @@ function SlideNavigator() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries("slides");
+      queryClient.invalidateQueries("presentations");
     },
   });
 
@@ -81,7 +67,6 @@ function SlideNavigator() {
   });
 
   function handleContextMenu(event, id) {
-    event.preventDefault();
     setSelectedSlideId(id);
     setContextMenu({
       visible: true,
@@ -147,18 +132,16 @@ function SlideNavigator() {
       targetSlideId,
     );
 
+    setSlidesState(newSlides);
+
     const newOrder = newSlides.map((slide) => slide._id);
 
     await useUpdateSlideOrderMutation.mutateAsync({ newOrder });
   }
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <Wrapper>
-      {slidesState.map((slide) => {
+      {slides.map((slide) => {
         const thumbnailObjects = slide.objects.map(
           ({ type, _id, coordinates, dimensions }) => ({
             type,

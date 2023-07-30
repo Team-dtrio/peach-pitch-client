@@ -1,11 +1,52 @@
+import { useContext } from "react";
 import { styled } from "styled-components";
+import { useParams } from "react-router-dom";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { ObjectContext } from "../../../../Contexts/ObjectContext";
+import axiosInstance from "../../../../services/axios";
 
 function EffectEditor() {
+  const queryClient = useQueryClient();
+  const { selectedObjectId } = useContext(ObjectContext);
+
+  function getUser() {
+    const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
+
+    return loggedInUser;
+  }
+  const user = getUser();
+  const userId = user._id;
+  const objectId = selectedObjectId;
+  const { presentationId, slideId } = useParams();
+
+  const useAddAnimationMutation = useMutation({
+    mutationFn: async (type) => {
+      const response = await axiosInstance.post(
+        `/users/${userId}/presentations/${presentationId}/slides/${slideId}/objects/${objectId}/animations`,
+        { animationType: type },
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries("presentations");
+    },
+  });
+
+  function handleSubmit(type) {
+    useAddAnimationMutation.mutate(type);
+  }
+
   return (
     <List>
-      <Button>fade in</Button>
-      <Button>block wipe</Button>
-      <Button>3d flip</Button>
+      <Button onClick={() => handleSubmit("fade-in")} value="fade-in">
+        fade in
+      </Button>
+      <Button onClick={() => handleSubmit("block-wipe")} value="block-wipe">
+        block wipe
+      </Button>
+      <Button onClick={() => handleSubmit("3d-flip")} value="3d-flip">
+        3d flip
+      </Button>
     </List>
   );
 }
