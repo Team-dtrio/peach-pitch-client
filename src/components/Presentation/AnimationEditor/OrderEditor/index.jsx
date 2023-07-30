@@ -131,7 +131,7 @@ const List = styled.div`
   background-color: #dfdfdf;
   width: 90%;
   height: 50px;
-  padding: 5px 10px;
+  padding: 10px 5px;
   margin: 10px;
   border-radius: 10px;
   &:hover {
