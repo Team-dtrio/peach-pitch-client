@@ -4,8 +4,8 @@ import Textbox from "./Textbox";
 import Square from "./Square";
 import Image from "./Image";
 
-function Object({ type, objectSpec, id }) {
-  switch (type.toLowerCase()) {
+function Object({ objectSpec, id }) {
+  switch (objectSpec.type.toLowerCase()) {
     case "circle":
       return <Circle spec={objectSpec} id={id} />;
     case "triangle":

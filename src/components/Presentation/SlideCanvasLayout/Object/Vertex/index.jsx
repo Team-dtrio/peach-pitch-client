@@ -1,6 +1,4 @@
-function Vertex(props) {
-  const { position, size, onVertexDrag, cursorType } = props;
-
+function Vertex({ position, size, onVertexDrag, cursorType }) {
   const handleMouseDown = (event) => {
     event.stopPropagation();
     onVertexDrag(event);
@@ -17,8 +15,9 @@ function Vertex(props) {
     cursor: cursorType,
   };
 
-  // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-  return <div style={styles} onMouseDown={handleMouseDown} />;
+  return (
+    <div style={styles} onMouseDown={handleMouseDown} aria-hidden="true" />
+  );
 }
 
 export default Vertex;

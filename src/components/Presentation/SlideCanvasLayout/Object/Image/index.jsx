@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
 import Boundary from "../Boundary";
-import { ObjectContext } from "../../../../../Contexts/ObjectContext";
+import { ObjectContext } from "../../../../../contexts/ObjectContext";
 
 const StyledImageBox = styled.div`
   position: absolute;
-  left: ${(props) => props.spec.x}px;
-  top: ${(props) => props.spec.y}px;
-  width: ${(props) => props.spec.width}px;
-  height: ${(props) => props.spec.height}px;
-  border: 1px solid ${(props) => props.spec.borderColor};
+  left: ${({ spec }) => spec.x}px;
+  top: ${({ spec }) => spec.y}px;
+  width: ${({ spec }) => spec.width}px;
+  height: ${({ spec }) => spec.height}px;
+  border: 1px solid ${({ spec }) => spec.borderColor};
   user-select: none;
 `;
 
@@ -27,28 +27,19 @@ function StyledImageComponent({ spec }) {
   );
 }
 
-const initialImageSpec = {
-  x: 100,
-  y: 100,
-  width: 200,
-  height: 200,
-  borderColor: "#000000",
-  innerColor: "#FFFFFF",
-  src: "https://picsum.photos/200/300", // mock image
-};
-
-function Image({ id, type }) {
+function Image({ id, spec }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
-  const [imageSpec, setImageSpec] = useState(initialImageSpec);
+  const [imageSpec, setImageSpec] = useState(spec);
 
   const { selectedObjectId, selectedObjectType, selectObject } =
     useContext(ObjectContext);
 
-  const isSelected = id === selectedObjectId && type === selectedObjectType;
+  const isSelected =
+    id === selectedObjectId && spec.type === selectedObjectType;
 
   const handleImageClick = (event) => {
     event.stopPropagation();
-    selectObject(id, type);
+    selectObject(id, spec.type);
   };
 
   const onVertexDrag = useCallback(
@@ -205,8 +196,11 @@ function Image({ id, type }) {
   }, [imageSpec]);
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-    <div onClick={handleImageClick} onMouseDown={onImageDrag}>
+    <div
+      onClick={handleImageClick}
+      onMouseDown={onImageDrag}
+      aria-hidden="true"
+    >
       <StyledImageComponent spec={imageSpec} />
       {isSelected && (
         <Boundary

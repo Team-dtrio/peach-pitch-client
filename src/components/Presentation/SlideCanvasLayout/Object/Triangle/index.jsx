@@ -1,39 +1,32 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
 import Boundary from "../Boundary";
-import { ObjectContext } from "../../../../../Contexts/ObjectContext";
+import { ObjectContext } from "../../../../../contexts/ObjectContext";
 
 const StyledTriangle = styled.div`
   position: absolute;
-  width: ${(props) => props.spec.width}px;
-  height: ${(props) => props.spec.height}px;
+  width: ${({ spec }) => spec.width}px;
+  height: ${({ spec }) => spec.height}px;
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  background: ${(props) => props.spec.fillColor};
-  top: ${(props) => props.spec.y}px;
-  left: ${(props) => props.spec.x}px;
+  background-color: ${({ spec }) => spec.fillColor};
+  border: 1px solid ${({ spec }) => spec.borderColor};
+  top: ${({ spec }) => spec.y}px;
+  left: ${({ spec }) => spec.x}px;
 `;
 
-const initialTriangleSpec = {
-  x: 100,
-  y: 100,
-  width: 100,
-  height: 100,
-  fillColor: "#000000",
-  borderColor: "#000000",
-};
-
-function Triangle({ id, type }) {
+function Triangle({ id, spec }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
-  const [triangleSpec, setTriangleSpec] = useState(initialTriangleSpec);
+  const [triangleSpec, setTriangleSpec] = useState(spec);
 
   const { selectedObjectId, selectedObjectType, selectObject } =
     useContext(ObjectContext);
 
-  const isSelected = id === selectedObjectId && type === selectedObjectType;
+  const isSelected =
+    id === selectedObjectId && spec.type === selectedObjectType;
 
   const handleTriangleClick = (event) => {
     event.stopPropagation();
-    selectObject(id, type);
+    selectObject(id, spec.type);
   };
 
   const onVertexDrag = useCallback(
@@ -189,8 +182,11 @@ function Triangle({ id, type }) {
   }, [triangleSpec]);
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-    <div onClick={handleTriangleClick} onMouseDown={onTriangleDrag}>
+    <div
+      onClick={handleTriangleClick}
+      onMouseDown={onTriangleDrag}
+      aria-hidden="true"
+    >
       <StyledTriangle spec={triangleSpec} />
       {isSelected && (
         <Boundary

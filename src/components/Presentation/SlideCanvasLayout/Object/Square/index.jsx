@@ -1,39 +1,31 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
 import Boundary from "../Boundary";
-import { ObjectContext } from "../../../../../Contexts/ObjectContext";
+import { ObjectContext } from "../../../../../contexts/ObjectContext";
 
 const StyledSquare = styled.div`
   position: absolute;
-  left: ${(props) => props.spec.x}px;
-  top: ${(props) => props.spec.y}px;
-  width: ${(props) => props.spec.width}px;
-  height: ${(props) => props.spec.height}px;
-  background-color: ${(props) => props.spec.fillColor};
-  border: 1px solid ${(props) => props.spec.borderColor};
+  left: ${({ spec }) => spec.x}px;
+  top: ${({ spec }) => spec.y}px;
+  width: ${({ spec }) => spec.width}px;
+  height: ${({ spec }) => spec.height}px;
+  background-color: ${({ spec }) => spec.fillColor};
+  border: 1px solid ${({ spec }) => spec.borderColor};
 `;
 
-const initialSquareSpec = {
-  x: 100,
-  y: 100,
-  width: 100,
-  height: 100,
-  fillColor: "#000000",
-  borderColor: "#000000",
-};
-
-function Square({ id, type }) {
+function Square({ id, spec }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
-  const [squareSpec, setSquareSpec] = useState(initialSquareSpec);
+  const [squareSpec, setSquareSpec] = useState(spec);
 
   const { selectedObjectId, selectedObjectType, selectObject } =
     useContext(ObjectContext);
 
-  const isSelected = id === selectedObjectId && type === selectedObjectType;
+  const isSelected =
+    id === selectedObjectId && spec.type === selectedObjectType;
 
   const handleSquareClick = (event) => {
     event.stopPropagation();
-    selectObject(id, type);
+    selectObject(id, spec.type);
   };
 
   const onVertexDrag = useCallback(
@@ -189,8 +181,11 @@ function Square({ id, type }) {
   }, [squareSpec]);
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-    <div onClick={handleSquareClick} onMouseDown={onSquareDrag}>
+    <div
+      onClick={handleSquareClick}
+      onMouseDown={onSquareDrag}
+      aria-hidden="true"
+    >
       <StyledSquare spec={squareSpec} />
       {isSelected && (
         <Boundary

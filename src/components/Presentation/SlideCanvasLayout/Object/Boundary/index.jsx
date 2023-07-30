@@ -2,9 +2,7 @@ import Vertex from "../Vertex";
 
 const vertexSize = 7;
 
-function Boundary(props) {
-  const { boundaryVertices, onVertexDrag } = props;
-
+function Boundary({ boundaryVertices, onVertexDrag }) {
   const adjustedVertices = boundaryVertices.map((vertex) => ({
     x: vertex.x - vertexSize / 2,
     y: vertex.y - vertexSize / 2,
@@ -12,10 +10,10 @@ function Boundary(props) {
 
   const svgLines = boundaryVertices.map((vertex, index, vertices) => {
     const nextVertex = vertices[(index + 1) % vertices.length];
+
     return (
       <line
-        // eslint-disable-next-line react/no-array-index-key
-        key={index}
+        key={crypto.randomUUID()}
         x1={vertex.x}
         y1={vertex.y}
         x2={nextVertex.x}
@@ -38,8 +36,7 @@ function Boundary(props) {
   ];
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    <div onMouseDown={(event) => event.stopPropagation()}>
+    <div onMouseDown={(event) => event.stopPropagation()} aria-hidden="true">
       <svg
         style={{
           position: "absolute",
@@ -53,8 +50,7 @@ function Boundary(props) {
       </svg>
       {adjustedVertices.map((vertex, index) => (
         <Vertex
-          // eslint-disable-next-line react/no-array-index-key
-          key={index}
+          key={crypto.randomUUID()}
           position={vertex}
           size={vertexSize}
           onVertexDrag={onVertexDrag(index)}
