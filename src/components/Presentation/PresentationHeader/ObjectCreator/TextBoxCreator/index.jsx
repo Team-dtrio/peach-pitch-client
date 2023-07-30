@@ -18,6 +18,7 @@ function useCreateObjectMutation(slideIdParam) {
       return data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries("slides");
       queryClient.invalidateQueries(["objects", slideIdParam]);
     },
   });
