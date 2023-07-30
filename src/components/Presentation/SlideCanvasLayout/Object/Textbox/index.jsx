@@ -1,16 +1,17 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
 import Boundary from "../Boundary";
-import { ObjectContext } from "../../../../../Contexts/ObjectContext";
+import { ObjectContext } from "../../../../../contexts/ObjectContext";
 
 const StyledTextBox = styled.div`
   position: absolute;
-  left: ${(props) => props.spec.x}px;
-  top: ${(props) => props.spec.y}px;
-  width: ${(props) => props.spec.width}px;
-  height: ${(props) => props.spec.height}px;
-  border: 1px solid ${(props) => props.spec.borderColor};
-  background-color: ${(props) => props.spec.innerColor};
+  left: ${({ spec }) => spec.x}px;
+  top: ${({ spec }) => spec.y}px;
+  width: ${({ spec }) => spec.width}px;
+  height: ${({ spec }) => spec.height}px;
+  text-align: ${({ spec }) => spec.textAlign};
+  border: 1px solid ${({ spec }) => spec.borderColor};
+  background-color: ${({ spec }) => spec.innerColor};
   user-select: none;
 `;
 
@@ -20,57 +21,37 @@ const EditableDiv = styled.div`
   border: none;
   overflow: auto;
   outline: none;
-  color: ${(props) => props.spec.textColor};
-  text-align: ${(props) => props.spec.textAlign};
-  font-size: ${(props) => props.spec.fontSize}px;
-  font-family: ${(props) => props.spec.fontFamily};
-  font-style: ${(props) =>
-    props.spec.fontStyle.includes("italic") ? "italic" : "normal"};
-  font-weight: ${(props) =>
-    props.spec.fontStyle.includes("bold") ? "bold" : "normal"};
-  text-decoration: ${(props) =>
-    props.spec.fontStyle.includes("underline") ? "underline" : "none"};
-  text-decoration: ${(props) =>
-    props.spec.fontStyle.includes("strikeThrough") ? "line-through" : "none"};
+  color: ${({ spec }) => spec.textColor};
+  font-size: ${({ spec }) => spec.fontSize}px;
+  font-family: ${({ spec }) => spec.fontFamily};
+  font-style: ${({ spec }) => spec.fontStyle};
+  font-weight: 400;
+  text-decoration: ${({ spec }) => spec.fontStyle};
 `;
 
 function EditableTextBox({ spec }) {
   return (
     <StyledTextBox spec={spec}>
       <EditableDiv spec={spec} contentEditable>
-        {spec.text}
+        {spec.content}
       </EditableDiv>
     </StyledTextBox>
   );
 }
 
-const initialTextBoxSpec = {
-  x: 100,
-  y: 100,
-  width: 200,
-  height: 100,
-  borderColor: "#000000",
-  innerColor: "#FFFFFF",
-  content: "New Textbox",
-  fontSize: 14,
-  fontFamily: "Arial",
-  textAlign: "left",
-  textColor: "#000000",
-  fontStyle: "normal",
-};
-
-function Textbox({ id, type }) {
+function Textbox({ id, spec }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
-  const [textBoxSpec, setTextBoxSpec] = useState(initialTextBoxSpec);
+  const [textBoxSpec, setTextBoxSpec] = useState(spec);
 
   const { selectedObjectId, selectedObjectType, selectObject } =
     useContext(ObjectContext);
 
-  const isSelected = id === selectedObjectId && type === selectedObjectType;
+  const isSelected =
+    id === selectedObjectId && spec.type === selectedObjectType;
 
   const handleTextBoxClick = (event) => {
     event.stopPropagation();
-    selectObject(id, type);
+    selectObject(id, spec.type);
   };
 
   const onVertexDrag = useCallback(
@@ -226,8 +207,11 @@ function Textbox({ id, type }) {
   }, [textBoxSpec]);
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-    <div onClick={handleTextBoxClick} onMouseDown={onTextBoxDrag}>
+    <div
+      onClick={handleTextBoxClick}
+      onMouseDown={onTextBoxDrag}
+      aria-hidden="true"
+    >
       <EditableTextBox spec={textBoxSpec} />
       {isSelected && (
         <Boundary

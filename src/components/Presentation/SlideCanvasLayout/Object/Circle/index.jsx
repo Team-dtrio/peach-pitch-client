@@ -1,39 +1,32 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
 import Boundary from "../Boundary";
-import { ObjectContext } from "../../../../../Contexts/ObjectContext";
+import { ObjectContext } from "../../../../../contexts/ObjectContext";
 
 const StyledCircle = styled.div`
   position: absolute;
-  left: ${(props) => props.spec.x}px;
-  top: ${(props) => props.spec.y}px;
-  width: ${(props) => props.spec.size}px;
-  height: ${(props) => props.spec.size}px;
-  background-color: ${(props) => props.spec.fillColor};
-  border: 1px solid ${(props) => props.spec.borderColor};
-  border-radius: 50%;
+  left: ${({ spec }) => spec.x}px;
+  top: ${({ spec }) => spec.y}px;
+  width: ${({ spec }) => spec.width}px;
+  height: ${({ spec }) => spec.height}px;
+  background-color: ${({ spec }) => spec.fillColor};
+  border: 1px solid ${({ spec }) => spec.borderColor};
+  border-radius: 100%;
 `;
 
-const initialCircleSpec = {
-  x: 150,
-  y: 150,
-  size: 100,
-  fillColor: "#000000",
-  borderColor: "#000000",
-};
-
-function Circle({ id, type }) {
+function Circle({ id, spec }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
-  const [circleSpec, setCircleSpec] = useState(initialCircleSpec);
+  const [circleSpec, setCircleSpec] = useState(spec);
 
   const { selectedObjectId, selectedObjectType, selectObject } =
     useContext(ObjectContext);
 
-  const isSelected = id === selectedObjectId && type === selectedObjectType;
+  const isSelected =
+    id === selectedObjectId && spec.type === selectedObjectType;
 
   const handleCircleClick = (event) => {
     event.stopPropagation();
-    selectObject(id, type);
+    selectObject(id, spec.type);
   };
 
   const onVertexDrag = useCallback(
@@ -59,28 +52,28 @@ function Circle({ id, type }) {
           case 4:
             newCircleSpec = {
               ...newCircleSpec,
-              size: initialSpec.size + 2 * widthChange,
+              size: initialSpec.width + 2 * widthChange,
             };
             break;
           case 2:
           case 6:
             newCircleSpec = {
               ...newCircleSpec,
-              size: initialSpec.size + 2 * heightChange,
+              size: initialSpec.height + 2 * heightChange,
             };
             break;
           case 1:
           case 5:
             newCircleSpec = {
               ...newCircleSpec,
-              size: initialSpec.size - 2 * heightChange,
+              size: initialSpec.height - 2 * heightChange,
             };
             break;
           case 3:
           case 7:
             newCircleSpec = {
               ...newCircleSpec,
-              size: initialSpec.size - 2 * widthChange,
+              size: initialSpec.width - 2 * widthChange,
             };
             break;
           default:
@@ -132,22 +125,22 @@ function Circle({ id, type }) {
 
     const baseVertices = [
       { x: circleSpec.x, y: circleSpec.y },
-      { x: circleSpec.x + circleSpec.size / 2, y: circleSpec.y },
-      { x: circleSpec.x + circleSpec.size, y: circleSpec.y },
+      { x: circleSpec.x + circleSpec.width / 2, y: circleSpec.y },
+      { x: circleSpec.x + circleSpec.width, y: circleSpec.y },
       {
-        x: circleSpec.x + circleSpec.size,
-        y: circleSpec.y + circleSpec.size / 2,
+        x: circleSpec.x + circleSpec.width,
+        y: circleSpec.y + circleSpec.height / 2,
       },
       {
-        x: circleSpec.x + circleSpec.size,
-        y: circleSpec.y + circleSpec.size,
+        x: circleSpec.x + circleSpec.width,
+        y: circleSpec.y + circleSpec.height,
       },
       {
-        x: circleSpec.x + circleSpec.size / 2,
-        y: circleSpec.y + circleSpec.size,
+        x: circleSpec.x + circleSpec.width / 2,
+        y: circleSpec.y + circleSpec.height,
       },
-      { x: circleSpec.x, y: circleSpec.y + circleSpec.size },
-      { x: circleSpec.x, y: circleSpec.y + circleSpec.size / 2 },
+      { x: circleSpec.x, y: circleSpec.y + circleSpec.width },
+      { x: circleSpec.x, y: circleSpec.y + circleSpec.height / 2 },
     ];
 
     const updatedBoundaryVertices = baseVertices.map((vertex) => ({
@@ -159,8 +152,11 @@ function Circle({ id, type }) {
   }, [circleSpec]);
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-    <div onClick={handleCircleClick} onMouseDown={onCircleDrag}>
+    <div
+      onClick={handleCircleClick}
+      onMouseDown={onCircleDrag}
+      aria-hidden="true"
+    >
       <StyledCircle spec={circleSpec} />
       {isSelected && (
         <Boundary

@@ -7,17 +7,24 @@ function MyPresentation({ presentations }) {
     <Section>
       <h2>내 프레젠테이션</h2>
       <Container>
-        {presentations.map((presentation, index) => {
+        {presentations.map((presentation) => {
           const { objects } = presentation.slides[0];
           const thumbnailObjects = objects.map(
-            ({ type, _id, coordinates, dimensions }) => {
+            (
+              { _id, type, coordinates, dimensions, currentAnimation },
+              index,
+            ) => {
+              const features = objects[index][type];
+
               return {
-                type,
                 _id,
+                type,
                 x: coordinates.x,
                 y: coordinates.y,
                 width: dimensions.width,
                 height: dimensions.height,
+                currentAnimation,
+                ...features,
               };
             },
           );

@@ -160,14 +160,24 @@ function SlideNavigator() {
     <Wrapper>
       {slidesState.map((slide) => {
         const thumbnailObjects = slide.objects.map(
-          ({ type, _id, coordinates, dimensions }) => ({
-            type,
-            _id,
-            x: coordinates.x,
-            y: coordinates.y,
-            width: dimensions.width,
-            height: dimensions.height,
-          }),
+          (
+            { type, _id, coordinates, dimensions, currentAnimation },
+            index,
+            object,
+          ) => {
+            const features = object[index][type];
+
+            return {
+              type,
+              _id,
+              x: coordinates.x,
+              y: coordinates.y,
+              width: dimensions.width,
+              height: dimensions.height,
+              currentAnimation,
+              ...features,
+            };
+          },
         );
 
         return (
@@ -209,7 +219,6 @@ function SlideNavigator() {
 const Wrapper = styled.section`
   width: 100%;
   background-color: #f1efef;
-  max-height: 95%;
   overflow-y: auto;
 `;
 const ContextMenu = styled.div`

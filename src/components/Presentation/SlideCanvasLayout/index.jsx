@@ -1,17 +1,40 @@
 import { useContext } from "react";
-import { styled } from "styled-components";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { styled } from "styled-components";
+import { ObjectContext } from "../../../contexts/ObjectContext";
 import axiosInstance from "../../../services/axios";
+
 import SlideCanvas from "./SlideCanvas";
-import { ObjectContext } from "../../../Contexts/ObjectContext";
 
 function useGetAllObjectsQuery(userId, presentationId, slideId) {
   return useQuery(["objects", slideId], async () => {
     const { data } = await axiosInstance.get(
       `/users/${userId}/presentations/${presentationId}/slides/${slideId}/objects`,
     );
-    return data;
+
+    const normalizedObjects = data.objects.map(
+      (
+        { _id, type, coordinates, dimensions, currentAnimation },
+        index,
+        objects,
+      ) => {
+        const features = objects[index][type];
+
+        return {
+          _id,
+          type,
+          x: coordinates.x,
+          y: coordinates.y,
+          width: dimensions.width,
+          height: dimensions.height,
+          currentAnimation,
+          ...features,
+        };
+      },
+    );
+
+    return normalizedObjects;
   });
 }
 
@@ -25,8 +48,11 @@ function SlideCanvasLayout() {
   const { presentationId, slideId } = useParams();
   const user = getUser();
 
-  const { data } = useGetAllObjectsQuery(user._id, presentationId, slideId);
-
+  const { data = [] } = useGetAllObjectsQuery(
+    user._id,
+    presentationId,
+    slideId,
+  );
   const { selectObject, selectedObjectId } = useContext(ObjectContext);
 
   return (
@@ -39,7 +65,7 @@ function SlideCanvasLayout() {
             scaleX: 1,
             scaleY: 1,
           }}
-          objects={data && data.objects ? data.objects : []}
+          objects={data}
           selectObject={selectObject}
           selectedObjectId={selectedObjectId}
         />
