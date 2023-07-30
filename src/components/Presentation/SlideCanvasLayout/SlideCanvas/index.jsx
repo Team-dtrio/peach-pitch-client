@@ -1,19 +1,21 @@
 import { styled } from "styled-components";
+import { useRef } from "react";
+
 import Object from "../Object";
 
-function SlideCanvas({ canvasSpec, objects, selectObject, selectedObjectId }) {
+function SlideCanvas({ canvasSpec, objects, onObjectRightClick }) {
+  const canvasRef = useRef(null);
+
   return (
-    <Canvas spec={canvasSpec}>
-      {objects &&
-        objects.map((object) => (
-          <Object
-            key={object._id}
-            id={object._id}
-            type={object.type}
-            selectObject={selectObject}
-            selectedObjectId={selectedObjectId}
-          />
-        ))}
+    <Canvas ref={canvasRef} spec={canvasSpec}>
+      {objects.map((object) => (
+        <Object
+          key={object._id}
+          id={object._id}
+          objectSpec={object}
+          onRightClick={onObjectRightClick}
+        />
+      ))}
     </Canvas>
   );
 }
