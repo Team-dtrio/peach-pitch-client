@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import SlideCanvas from "../SlideCanvasLayout/SlideCanvas";
@@ -7,21 +7,35 @@ import axiosInstance from "../../../services/axios";
 
 function getUser() {
   const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
-
   return loggedInUser;
 }
 const user = getUser();
 const userId = user._id;
 
-function SlideNavigator({ slides }) {
+function useGetAllSlidesQuery() {
+  const { presentationId } = useParams();
+  const query = useQuery({
+    queryKey: ["slides"],
+    queryFn: async () => {
+      const response = await axiosInstance.get(
+        `/users/${userId}/presentations/${presentationId}/slides`,
+      );
+      return response.data.slides;
+    },
+  });
+
+  return query;
+}
+
+function SlideNavigator() {
   const { presentationId } = useParams();
   const [selectedSlideId, setSelectedSlideId] = useState(null);
-  const [slidesState, setSlidesState] = useState(slides);
-  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    setSlidesState(slides);
-  }, [slides]);
+  const { data = {}, isLoading } = useGetAllSlidesQuery(userId, presentationId);
+
+  const slidesState = data.data.slides;
+
+  const queryClient = useQueryClient();
 
   const useAddSlideMutation = useMutation({
     mutationFn: async () => {
@@ -31,7 +45,7 @@ function SlideNavigator({ slides }) {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries("presentations");
+      queryClient.invalidateQueries("slides");
     },
   });
 
@@ -43,7 +57,7 @@ function SlideNavigator({ slides }) {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries("presentations");
+      queryClient.invalidateQueries("slides");
     },
   });
 
@@ -56,7 +70,7 @@ function SlideNavigator({ slides }) {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries("presentations");
+      queryClient.invalidateQueries("slides");
     },
   });
 
@@ -67,6 +81,7 @@ function SlideNavigator({ slides }) {
   });
 
   function handleContextMenu(event, id) {
+    event.preventDefault();
     setSelectedSlideId(id);
     setContextMenu({
       visible: true,
@@ -132,16 +147,18 @@ function SlideNavigator({ slides }) {
       targetSlideId,
     );
 
-    setSlidesState(newSlides);
-
     const newOrder = newSlides.map((slide) => slide._id);
 
     await useUpdateSlideOrderMutation.mutateAsync({ newOrder });
   }
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Wrapper>
-      {slides.map((slide) => {
+      {slidesState.map((slide) => {
         const thumbnailObjects = slide.objects.map(
           ({ type, _id, coordinates, dimensions }) => ({
             type,

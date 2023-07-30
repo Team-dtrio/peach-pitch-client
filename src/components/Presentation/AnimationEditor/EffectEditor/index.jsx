@@ -32,19 +32,19 @@ function EffectEditor() {
     },
   });
 
-  function handleSubmit(type) {
+  function handleClick(type) {
     useAddAnimationMutation.mutate(type);
   }
 
   return (
     <List>
-      <Button onClick={() => handleSubmit("fade-in")} value="fade-in">
+      <Button onClick={() => handleClick("fade-in")} value="fade-in">
         fade in
       </Button>
-      <Button onClick={() => handleSubmit("block-wipe")} value="block-wipe">
+      <Button onClick={() => handleClick("block-wipe")} value="block-wipe">
         block wipe
       </Button>
-      <Button onClick={() => handleSubmit("3d-flip")} value="3d-flip">
+      <Button onClick={() => handleClick("3d-flip")} value="3d-flip">
         3d flip
       </Button>
     </List>
