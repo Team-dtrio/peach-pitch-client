@@ -52,28 +52,28 @@ function Circle({ id, spec }) {
           case 4:
             newCircleSpec = {
               ...newCircleSpec,
-              size: initialSpec.width + 2 * widthChange,
+              width: initialSpec.width + 2 * widthChange,
             };
             break;
           case 2:
           case 6:
             newCircleSpec = {
               ...newCircleSpec,
-              size: initialSpec.height + 2 * heightChange,
+              height: initialSpec.height + 2 * heightChange,
             };
             break;
           case 1:
           case 5:
             newCircleSpec = {
               ...newCircleSpec,
-              size: initialSpec.height - 2 * heightChange,
+              height: initialSpec.height - 2 * heightChange,
             };
             break;
           case 3:
           case 7:
             newCircleSpec = {
               ...newCircleSpec,
-              size: initialSpec.width - 2 * widthChange,
+              width: initialSpec.width - 2 * widthChange,
             };
             break;
           default:

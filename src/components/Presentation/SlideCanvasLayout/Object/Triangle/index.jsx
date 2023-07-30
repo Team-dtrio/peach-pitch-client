@@ -8,23 +8,15 @@ const StyledTriangle = styled.div`
   width: ${({ spec }) => spec.width}px;
   height: ${({ spec }) => spec.height}px;
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  background: ${({ spec }) => spec.fillColor};
+  background-color: ${({ spec }) => spec.fillColor};
+  border: 1px solid ${({ spec }) => spec.borderColor};
   top: ${({ spec }) => spec.y}px;
   left: ${({ spec }) => spec.x}px;
 `;
 
-const initialTriangleSpec = {
-  x: 100,
-  y: 100,
-  width: 100,
-  height: 100,
-  fillColor: "#000000",
-  borderColor: "#000000",
-};
-
 function Triangle({ id, spec }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
-  const [triangleSpec, setTriangleSpec] = useState(initialTriangleSpec);
+  const [triangleSpec, setTriangleSpec] = useState(spec);
 
   const { selectedObjectId, selectedObjectType, selectObject } =
     useContext(ObjectContext);
