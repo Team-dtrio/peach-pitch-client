@@ -106,31 +106,39 @@ function OrderEditor() {
   return (
     <div>
       {animationSequence.map((animation) => {
-        const relatedObject = data.slide.objects.find(
+        const targetObject = data.slide.objects.find(
           (object) => object._id === animation.objectId,
         );
-        const objectType = relatedObject ? relatedObject.type : "Not found";
+        const objectType = targetObject.type;
         return (
-          <List
-            key={animation.objectId}
-            draggable="true"
-            onDragStart={(event) => handleDragStart(event, animation.objectId)}
-            onDragOver={handleDragOver}
-            onDrop={(event) => handleDrop(event, animation.objectId)}
-          >
-            <Item>{animation.animationEffect}</Item>
-            <Item>{objectType}</Item>
-          </List>
+          <Wrapper>
+            <List
+              key={animation.objectId}
+              draggable="true"
+              onDragStart={(event) =>
+                handleDragStart(event, animation.objectId)
+              }
+              onDragOver={handleDragOver}
+              onDrop={(event) => handleDrop(event, animation.objectId)}
+            >
+              <Item>{animation.animationEffect}</Item>
+              <Item>{objectType}</Item>
+            </List>
+          </Wrapper>
         );
       })}
     </div>
   );
 }
 
+const Wrapper = styled.div`
+  overflow-y: auto;
+  align-items: center;
+`;
+
 const List = styled.div`
   background-color: #dfdfdf;
   width: 90%;
-  height: 50px;
   padding: 10px 5px;
   margin: 10px;
   border-radius: 10px;
@@ -141,6 +149,7 @@ const List = styled.div`
 `;
 
 const Item = styled.div`
+  height: 10px;
   padding: 5px 10px;
   border-radius: 10px;
 `;
