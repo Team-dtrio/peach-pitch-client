@@ -28,7 +28,7 @@ function EffectEditor() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries("presentations");
+      queryClient.invalidateQueries("slides");
     },
   });
 
