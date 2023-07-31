@@ -10,7 +10,7 @@ function Object({ objectSpec, id, onRightClick }) {
     onRightClick(event, id);
   }
 
-  switch (objectSpec.type.toLowerCase()) {
+  switch (objectSpec?.type.toLowerCase()) {
     case "circle":
       return (
         <Circle spec={objectSpec} id={id} onContextMenu={handleRightClick} />
