@@ -14,7 +14,7 @@ const userId = user._id;
 
 function useGetSlidesQuery() {
   const { presentationId, slideId } = useParams();
-  const { data } = useQuery(["presentations", slideId], async () => {
+  const { data } = useQuery(["slides", slideId], async () => {
     const response = await axiosInstance.get(
       `/users/${userId}/presentations/${presentationId}/slides/${slideId}/`,
     );
@@ -61,7 +61,7 @@ function ArrangeEditor() {
       ),
     {
       onSuccess: async () => {
-        await queryClient.invalidateQueries("presentation");
+        await queryClient.invalidateQueries("slides");
       },
     },
   );
