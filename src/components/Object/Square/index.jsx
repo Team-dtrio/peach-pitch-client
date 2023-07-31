@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Boundary from "../Boundary";
 import { ObjectContext } from "../../../contexts/ObjectContext";
 import animations from "../../../styles/animations";
@@ -13,10 +13,22 @@ const StyledSquare = styled.div`
   background-color: ${({ spec }) => spec.fillColor};
   border: 1px solid ${({ spec }) => spec.borderColor};
   animation: ${({ spec }) => animations[spec.currentAnimation]} 2s linear;
-  animation-play-state: paused;
+  /* ${({ isActive }) =>
+    isActive === undefined &&
+    css`
+      animation-duration: 0s;
+    `}
+  ${({ isActive }) =>
+    isActive
+      ? css`
+          animation-play-state: running;
+        `
+      : css`
+          animation-play-state: paused;
+        `}; */
 `;
 
-function Square({ id, spec }) {
+function Square({ id, spec, isActive }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [squareSpec, setSquareSpec] = useState(spec);
 
@@ -189,7 +201,7 @@ function Square({ id, spec }) {
       onMouseDown={onSquareDrag}
       aria-hidden="true"
     >
-      <StyledSquare spec={squareSpec} />
+      <StyledSquare spec={squareSpec} isActive={isActive} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}

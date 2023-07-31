@@ -21,8 +21,13 @@ function ScreenShowCanvas({
       {nonAnimatedObjects.map((object) => (
         <Object key={object._id} id={object._id} objectSpec={object} />
       ))}
-      {animatedObjects.map((object) => (
-        <Object key={object._id} id={object._id} objectSpec={object} />
+      {animatedObjects.map((object, animationIndex) => (
+        <Object
+          key={object._id}
+          id={object._id}
+          objectSpec={object}
+          isAnimationActive={animationIndex === activeAnimationIndex}
+        />
       ))}
     </Canvas>
   );

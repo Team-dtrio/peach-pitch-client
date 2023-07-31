@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Boundary from "../Boundary";
 import { ObjectContext } from "../../../contexts/ObjectContext";
 
@@ -11,8 +11,21 @@ const StyledTextBox = styled.div`
   height: ${({ spec }) => spec.height}px;
   text-align: ${({ spec }) => spec.textAlign};
   border: 1px dashed ${({ spec }) => spec.borderColor};
-  background-color: ${({ spec }) => spec.innerColor};
+  background-color: ${({ spec }) => spec.fillColor};
   user-select: none;
+  ${({ isActive }) =>
+    isActive === undefined &&
+    css`
+      animation-duration: 0s;
+    `}
+  ${({ isActive }) =>
+    isActive
+      ? css`
+          animation-play-state: running;
+        `
+      : css`
+          animation-play-state: paused;
+        `};
 `;
 
 const EditableDiv = styled.div`
@@ -29,9 +42,9 @@ const EditableDiv = styled.div`
   text-decoration: ${({ spec }) => spec.fontStyle};
 `;
 
-function EditableTextBox({ spec }) {
+function EditableTextBox({ spec, isActive }) {
   return (
-    <StyledTextBox spec={spec}>
+    <StyledTextBox spec={spec} isActive={isActive}>
       <EditableDiv spec={spec} contentEditable>
         {spec.content}
       </EditableDiv>
@@ -39,7 +52,7 @@ function EditableTextBox({ spec }) {
   );
 }
 
-function Textbox({ id, spec }) {
+function Textbox({ id, spec, isActive }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [textBoxSpec, setTextBoxSpec] = useState(spec);
 
@@ -212,7 +225,7 @@ function Textbox({ id, spec }) {
       onMouseDown={onTextBoxDrag}
       aria-hidden="true"
     >
-      <EditableTextBox spec={textBoxSpec} />
+      <EditableTextBox spec={textBoxSpec} isActive={isActive} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}

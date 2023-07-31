@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Boundary from "../Boundary";
 import { ObjectContext } from "../../../contexts/ObjectContext";
 
@@ -12,9 +12,22 @@ const StyledTriangle = styled.div`
   border: 1px solid ${({ spec }) => spec.borderColor};
   top: ${({ spec }) => spec.y}px;
   left: ${({ spec }) => spec.x}px;
+  ${({ isActive }) =>
+    isActive === undefined &&
+    css`
+      animation-duration: 0s;
+    `}
+  ${({ isActive }) =>
+    isActive
+      ? css`
+          animation-play-state: running;
+        `
+      : css`
+          animation-play-state: paused;
+        `};
 `;
 
-function Triangle({ id, spec }) {
+function Triangle({ id, spec, isActive }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [triangleSpec, setTriangleSpec] = useState(spec);
 
@@ -187,7 +200,7 @@ function Triangle({ id, spec }) {
       onMouseDown={onTriangleDrag}
       aria-hidden="true"
     >
-      <StyledTriangle spec={triangleSpec} />
+      <StyledTriangle spec={triangleSpec} isActive={isActive} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}

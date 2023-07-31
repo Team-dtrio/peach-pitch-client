@@ -1,4 +1,4 @@
-import PresentationCanvas from "./ScreenShowCanvas";
+import ScreenShowCanvas from "./ScreenShowCanvas";
 
 function ScreenShowLayout({ slides, activeSlideIndex, activeAnimationIndex }) {
   return (
@@ -33,7 +33,7 @@ function ScreenShowLayout({ slides, activeSlideIndex, activeAnimationIndex }) {
         );
 
         return (
-          <PresentationCanvas
+          <ScreenShowCanvas
             key={slide._id}
             nonAnimatedObjects={nonAnimatedObjects}
             animatedObjects={animatedObjects}

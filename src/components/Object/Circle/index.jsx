@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Boundary from "../Boundary";
 import { ObjectContext } from "../../../contexts/ObjectContext";
 import animations from "../../../styles/animations";
@@ -14,10 +14,22 @@ const StyledCircle = styled.div`
   border: 1px solid ${({ spec }) => spec.borderColor};
   border-radius: 100%;
   animation: ${({ spec }) => animations[spec.currentAnimation]} 2s linear;
-  animation-play-state: paused;
+  ${({ isActive }) =>
+    isActive === undefined &&
+    css`
+      animation-duration: 0s;
+    `}
+  ${({ isActive }) =>
+    isActive
+      ? css`
+          animation-play-state: running;
+        `
+      : css`
+          animation-play-state: paused;
+        `};
 `;
 
-function Circle({ id, spec }) {
+function Circle({ id, spec, isActive }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [circleSpec, setCircleSpec] = useState(spec);
 
@@ -160,7 +172,7 @@ function Circle({ id, spec }) {
       onMouseDown={onCircleDrag}
       aria-hidden="true"
     >
-      <StyledCircle spec={circleSpec} />
+      <StyledCircle spec={circleSpec} isActive={isActive} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}

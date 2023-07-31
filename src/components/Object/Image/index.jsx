@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Boundary from "../Boundary";
 import { ObjectContext } from "../../../contexts/ObjectContext";
 
@@ -11,6 +11,19 @@ const StyledImageBox = styled.div`
   height: ${({ spec }) => spec.height}px;
   border: 1px solid ${({ spec }) => spec.borderColor};
   user-select: none;
+  ${({ isActive }) =>
+    isActive === undefined &&
+    css`
+      animation-duration: 0s;
+    `}
+  ${({ isActive }) =>
+    isActive
+      ? css`
+          animation-play-state: running;
+        `
+      : css`
+          animation-play-state: paused;
+        `};
 `;
 
 const StyledImage = styled.img`
@@ -19,15 +32,15 @@ const StyledImage = styled.img`
   object-fit: cover;
 `;
 
-function StyledImageComponent({ spec }) {
+function StyledImageComponent({ spec, isActive }) {
   return (
-    <StyledImageBox spec={spec}>
+    <StyledImageBox spec={spec} isActive={isActive}>
       <StyledImage src={spec.src} alt="" />
     </StyledImageBox>
   );
 }
 
-function Image({ id, spec }) {
+function Image({ id, spec, isActive }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [imageSpec, setImageSpec] = useState(spec);
 
@@ -201,7 +214,7 @@ function Image({ id, spec }) {
       onMouseDown={onImageDrag}
       aria-hidden="true"
     >
-      <StyledImageComponent spec={imageSpec} />
+      <StyledImageComponent spec={imageSpec} isActive={isActive} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}
