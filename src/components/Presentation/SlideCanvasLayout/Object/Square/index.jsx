@@ -13,7 +13,7 @@ const StyledSquare = styled.div`
   border: 1px solid ${({ spec }) => spec.borderColor};
 `;
 
-function Square({ id, spec, isActive }) {
+function Square({ id, spec }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [squareSpec, setSquareSpec] = useState(spec);
 
@@ -186,7 +186,7 @@ function Square({ id, spec, isActive }) {
       onMouseDown={onSquareDrag}
       aria-hidden="true"
     >
-      <StyledSquare spec={squareSpec} isActive={isActive} />
+      <StyledSquare spec={squareSpec} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}

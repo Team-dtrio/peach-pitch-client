@@ -19,15 +19,15 @@ const StyledImage = styled.img`
   object-fit: cover;
 `;
 
-function StyledImageComponent({ spec, isActive }) {
+function StyledImageComponent({ spec }) {
   return (
-    <StyledImageBox spec={spec} isActive={isActive}>
+    <StyledImageBox spec={spec}>
       <StyledImage src={spec.src} alt="" />
     </StyledImageBox>
   );
 }
 
-function Image({ id, spec, isActive }) {
+function Image({ id, spec }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [imageSpec, setImageSpec] = useState(spec);
 
@@ -201,7 +201,7 @@ function Image({ id, spec, isActive }) {
       onMouseDown={onImageDrag}
       aria-hidden="true"
     >
-      <StyledImageComponent spec={imageSpec} isActive={isActive} />
+      <StyledImageComponent spec={imageSpec} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}

@@ -14,7 +14,7 @@ const StyledTriangle = styled.div`
   left: ${({ spec }) => spec.x}px;
 `;
 
-function Triangle({ id, spec, isActive }) {
+function Triangle({ id, spec }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [triangleSpec, setTriangleSpec] = useState(spec);
 
@@ -187,7 +187,7 @@ function Triangle({ id, spec, isActive }) {
       onMouseDown={onTriangleDrag}
       aria-hidden="true"
     >
-      <StyledTriangle spec={triangleSpec} isActive={isActive} />
+      <StyledTriangle spec={triangleSpec} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}

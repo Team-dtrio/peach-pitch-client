@@ -14,7 +14,7 @@ const StyledCircle = styled.div`
   border-radius: 100%;
 `;
 
-function Circle({ id, spec, isActive }) {
+function Circle({ id, spec }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [circleSpec, setCircleSpec] = useState(spec);
 
@@ -157,7 +157,7 @@ function Circle({ id, spec, isActive }) {
       onMouseDown={onCircleDrag}
       aria-hidden="true"
     >
-      <StyledCircle spec={circleSpec} isActive={isActive} />
+      <StyledCircle spec={circleSpec} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}

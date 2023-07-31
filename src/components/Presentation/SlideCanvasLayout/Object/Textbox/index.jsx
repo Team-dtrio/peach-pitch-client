@@ -29,9 +29,9 @@ const EditableDiv = styled.div`
   text-decoration: ${({ spec }) => spec.fontStyle};
 `;
 
-function EditableTextBox({ spec, isActive }) {
+function EditableTextBox({ spec }) {
   return (
-    <StyledTextBox spec={spec} isActive={isActive}>
+    <StyledTextBox spec={spec}>
       <EditableDiv spec={spec} contentEditable>
         {spec.content}
       </EditableDiv>
@@ -39,7 +39,7 @@ function EditableTextBox({ spec, isActive }) {
   );
 }
 
-function Textbox({ id, spec, isActive }) {
+function Textbox({ id, spec }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [textBoxSpec, setTextBoxSpec] = useState(spec);
 
@@ -212,7 +212,7 @@ function Textbox({ id, spec, isActive }) {
       onMouseDown={onTextBoxDrag}
       aria-hidden="true"
     >
-      <EditableTextBox spec={textBoxSpec} isActive={isActive} />
+      <EditableTextBox spec={textBoxSpec} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}
