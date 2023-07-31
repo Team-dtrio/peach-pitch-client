@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import Boundary from "../Boundary";
-import { ObjectContext } from "../../../contexts/ObjectContext";
-import animations from "../../../styles/animations";
+import { ObjectContext } from "../../../../../contexts/ObjectContext";
 
 const StyledCircle = styled.div`
   position: absolute;
@@ -13,20 +12,6 @@ const StyledCircle = styled.div`
   background-color: ${({ spec }) => spec.fillColor};
   border: 1px solid ${({ spec }) => spec.borderColor};
   border-radius: 100%;
-  animation: ${({ spec }) => animations[spec.currentAnimation]} 2s linear;
-  ${({ isActive }) =>
-    isActive === undefined &&
-    css`
-      animation-duration: 0s;
-    `}
-  ${({ isActive }) =>
-    isActive
-      ? css`
-          animation-play-state: running;
-        `
-      : css`
-          animation-play-state: paused;
-        `};
 `;
 
 function Circle({ id, spec, isActive }) {

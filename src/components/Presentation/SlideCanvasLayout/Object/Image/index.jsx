@@ -1,60 +1,35 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import Boundary from "../Boundary";
-import { ObjectContext } from "../../../contexts/ObjectContext";
+import { ObjectContext } from "../../../../../contexts/ObjectContext";
 
-const StyledTextBox = styled.div`
+const StyledImageBox = styled.div`
   position: absolute;
   left: ${({ spec }) => spec.x}px;
   top: ${({ spec }) => spec.y}px;
   width: ${({ spec }) => spec.width}px;
   height: ${({ spec }) => spec.height}px;
-  text-align: ${({ spec }) => spec.textAlign};
-  border: 1px dashed ${({ spec }) => spec.borderColor};
-  background-color: ${({ spec }) => spec.fillColor};
+  border: 1px solid ${({ spec }) => spec.borderColor};
   user-select: none;
-  ${({ isActive }) =>
-    isActive === undefined &&
-    css`
-      animation-duration: 0s;
-    `}
-  ${({ isActive }) =>
-    isActive
-      ? css`
-          animation-play-state: running;
-        `
-      : css`
-          animation-play-state: paused;
-        `};
 `;
 
-const EditableDiv = styled.div`
+const StyledImage = styled.img`
   width: 100%;
   height: 100%;
-  border: none;
-  overflow: auto;
-  outline: none;
-  color: ${({ spec }) => spec.textColor};
-  font-size: ${({ spec }) => spec.fontSize}px;
-  font-family: ${({ spec }) => spec.fontFamily};
-  font-style: ${({ spec }) => spec.fontStyle};
-  font-weight: 400;
-  text-decoration: ${({ spec }) => spec.fontStyle};
+  object-fit: cover;
 `;
 
-function EditableTextBox({ spec, isActive }) {
+function StyledImageComponent({ spec, isActive }) {
   return (
-    <StyledTextBox spec={spec} isActive={isActive}>
-      <EditableDiv spec={spec} contentEditable>
-        {spec.content}
-      </EditableDiv>
-    </StyledTextBox>
+    <StyledImageBox spec={spec} isActive={isActive}>
+      <StyledImage src={spec.src} alt="" />
+    </StyledImageBox>
   );
 }
 
-function Textbox({ id, spec, isActive }) {
+function Image({ id, spec, isActive }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
-  const [textBoxSpec, setTextBoxSpec] = useState(spec);
+  const [imageSpec, setImageSpec] = useState(spec);
 
   const { selectedObjectId, selectedObjectType, selectObject } =
     useContext(ObjectContext);
@@ -62,7 +37,7 @@ function Textbox({ id, spec, isActive }) {
   const isSelected =
     id === selectedObjectId && spec.type === selectedObjectType;
 
-  const handleTextBoxClick = (event) => {
+  const handleImageClick = (event) => {
     event.stopPropagation();
     selectObject(id, spec.type);
   };
@@ -73,7 +48,7 @@ function Textbox({ id, spec, isActive }) {
       event.stopPropagation();
 
       const initialPosition = { x: event.clientX, y: event.clientY };
-      const initialSpec = { ...textBoxSpec };
+      const initialSpec = { ...imageSpec };
 
       function moveHandler(moveEvent) {
         const newPosition = {
@@ -81,14 +56,14 @@ function Textbox({ id, spec, isActive }) {
           y: moveEvent.clientY,
         };
 
-        let newTextBoxSpec = { ...textBoxSpec };
+        let newImageSpec = { ...imageSpec };
         const heightChange = newPosition.y - initialPosition.y;
         const widthChange = newPosition.x - initialPosition.x;
 
         switch (draggedVertexIndex) {
           case 0:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newImageSpec = {
+              ...newImageSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height - heightChange,
               x: newPosition.x,
@@ -96,50 +71,50 @@ function Textbox({ id, spec, isActive }) {
             };
             break;
           case 2:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newImageSpec = {
+              ...newImageSpec,
               width: initialSpec.width + widthChange,
               height: initialSpec.height - heightChange,
               y: newPosition.y,
             };
             break;
           case 4:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newImageSpec = {
+              ...newImageSpec,
               width: initialSpec.width + widthChange,
               height: initialSpec.height + heightChange,
             };
             break;
           case 6:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newImageSpec = {
+              ...newImageSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height + heightChange,
               x: newPosition.x,
             };
             break;
           case 1:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newImageSpec = {
+              ...newImageSpec,
               height: Math.max(10, initialSpec.height - heightChange),
               y: newPosition.y,
             };
             break;
           case 5:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newImageSpec = {
+              ...newImageSpec,
               height: Math.max(10, initialSpec.height + heightChange),
             };
             break;
           case 3:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newImageSpec = {
+              ...newImageSpec,
               width: Math.max(10, initialSpec.width + widthChange),
             };
             break;
           case 7:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newImageSpec = {
+              ...newImageSpec,
               width: Math.max(10, initialSpec.width - widthChange),
               x: newPosition.x,
             };
@@ -148,7 +123,7 @@ function Textbox({ id, spec, isActive }) {
             break;
         }
 
-        setTextBoxSpec(newTextBoxSpec);
+        setImageSpec(newImageSpec);
       }
 
       document.addEventListener("mousemove", moveHandler);
@@ -160,19 +135,20 @@ function Textbox({ id, spec, isActive }) {
         { once: true },
       );
     },
-    [textBoxSpec],
+    [imageSpec],
   );
 
-  function onTextBoxDrag(event) {
+  function onImageDrag(event) {
     event.stopPropagation();
+    event.preventDefault();
 
     const initialPosition = {
-      x: event.clientX - textBoxSpec.x,
-      y: event.clientY - textBoxSpec.y,
+      x: event.clientX - imageSpec.x,
+      y: event.clientY - imageSpec.y,
     };
 
     function moveHandler(moveEvent) {
-      setTextBoxSpec((prevSpec) => ({
+      setImageSpec((prevSpec) => ({
         ...prevSpec,
         x: moveEvent.clientX - initialPosition.x,
         y: moveEvent.clientY - initialPosition.y,
@@ -192,23 +168,23 @@ function Textbox({ id, spec, isActive }) {
     const offset = { x: 1, y: 1 };
 
     const baseVertices = [
-      { x: textBoxSpec.x, y: textBoxSpec.y },
-      { x: textBoxSpec.x + textBoxSpec.width / 2, y: textBoxSpec.y },
-      { x: textBoxSpec.x + textBoxSpec.width, y: textBoxSpec.y },
+      { x: imageSpec.x, y: imageSpec.y },
+      { x: imageSpec.x + imageSpec.width / 2, y: imageSpec.y },
+      { x: imageSpec.x + imageSpec.width, y: imageSpec.y },
       {
-        x: textBoxSpec.x + textBoxSpec.width,
-        y: textBoxSpec.y + textBoxSpec.height / 2,
+        x: imageSpec.x + imageSpec.width,
+        y: imageSpec.y + imageSpec.height / 2,
       },
       {
-        x: textBoxSpec.x + textBoxSpec.width,
-        y: textBoxSpec.y + textBoxSpec.height,
+        x: imageSpec.x + imageSpec.width,
+        y: imageSpec.y + imageSpec.height,
       },
       {
-        x: textBoxSpec.x + textBoxSpec.width / 2,
-        y: textBoxSpec.y + textBoxSpec.height,
+        x: imageSpec.x + imageSpec.width / 2,
+        y: imageSpec.y + imageSpec.height,
       },
-      { x: textBoxSpec.x, y: textBoxSpec.y + textBoxSpec.height },
-      { x: textBoxSpec.x, y: textBoxSpec.y + textBoxSpec.height / 2 },
+      { x: imageSpec.x, y: imageSpec.y + imageSpec.height },
+      { x: imageSpec.x, y: imageSpec.y + imageSpec.height / 2 },
     ];
 
     const updatedBoundaryVertices = baseVertices.map((vertex) => ({
@@ -217,15 +193,15 @@ function Textbox({ id, spec, isActive }) {
     }));
 
     setBoundaryVertices(updatedBoundaryVertices);
-  }, [textBoxSpec]);
+  }, [imageSpec]);
 
   return (
     <div
-      onClick={handleTextBoxClick}
-      onMouseDown={onTextBoxDrag}
+      onClick={handleImageClick}
+      onMouseDown={onImageDrag}
       aria-hidden="true"
     >
-      <EditableTextBox spec={textBoxSpec} isActive={isActive} />
+      <StyledImageComponent spec={imageSpec} isActive={isActive} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}
@@ -236,4 +212,4 @@ function Textbox({ id, spec, isActive }) {
   );
 }
 
-export default Textbox;
+export default Image;

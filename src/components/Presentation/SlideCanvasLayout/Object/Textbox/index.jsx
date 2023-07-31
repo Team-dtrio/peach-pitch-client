@@ -1,35 +1,47 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import Boundary from "../Boundary";
-import { ObjectContext } from "../../../contexts/ObjectContext";
+import { ObjectContext } from "../../../../../contexts/ObjectContext";
 
-const StyledTriangle = styled.div`
+const StyledTextBox = styled.div`
   position: absolute;
+  left: ${({ spec }) => spec.x}px;
+  top: ${({ spec }) => spec.y}px;
   width: ${({ spec }) => spec.width}px;
   height: ${({ spec }) => spec.height}px;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  text-align: ${({ spec }) => spec.textAlign};
+  border: 1px dashed ${({ spec }) => spec.borderColor};
   background-color: ${({ spec }) => spec.fillColor};
-  border: 1px solid ${({ spec }) => spec.borderColor};
-  top: ${({ spec }) => spec.y}px;
-  left: ${({ spec }) => spec.x}px;
-  ${({ isActive }) =>
-    isActive === undefined &&
-    css`
-      animation-duration: 0s;
-    `}
-  ${({ isActive }) =>
-    isActive
-      ? css`
-          animation-play-state: running;
-        `
-      : css`
-          animation-play-state: paused;
-        `};
+  user-select: none;
 `;
 
-function Triangle({ id, spec, isActive }) {
+const EditableDiv = styled.div`
+  width: 100%;
+  height: 100%;
+  border: none;
+  overflow: auto;
+  outline: none;
+  color: ${({ spec }) => spec.textColor};
+  font-size: ${({ spec }) => spec.fontSize}px;
+  font-family: ${({ spec }) => spec.fontFamily};
+  font-style: ${({ spec }) => spec.fontStyle};
+  font-weight: 400;
+  text-decoration: ${({ spec }) => spec.fontStyle};
+`;
+
+function EditableTextBox({ spec, isActive }) {
+  return (
+    <StyledTextBox spec={spec} isActive={isActive}>
+      <EditableDiv spec={spec} contentEditable>
+        {spec.content}
+      </EditableDiv>
+    </StyledTextBox>
+  );
+}
+
+function Textbox({ id, spec, isActive }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
-  const [triangleSpec, setTriangleSpec] = useState(spec);
+  const [textBoxSpec, setTextBoxSpec] = useState(spec);
 
   const { selectedObjectId, selectedObjectType, selectObject } =
     useContext(ObjectContext);
@@ -37,7 +49,7 @@ function Triangle({ id, spec, isActive }) {
   const isSelected =
     id === selectedObjectId && spec.type === selectedObjectType;
 
-  const handleTriangleClick = (event) => {
+  const handleTextBoxClick = (event) => {
     event.stopPropagation();
     selectObject(id, spec.type);
   };
@@ -48,7 +60,7 @@ function Triangle({ id, spec, isActive }) {
       event.stopPropagation();
 
       const initialPosition = { x: event.clientX, y: event.clientY };
-      const initialSpec = { ...triangleSpec };
+      const initialSpec = { ...textBoxSpec };
 
       function moveHandler(moveEvent) {
         const newPosition = {
@@ -56,14 +68,14 @@ function Triangle({ id, spec, isActive }) {
           y: moveEvent.clientY,
         };
 
-        let newTriangleSpec = { ...triangleSpec };
+        let newTextBoxSpec = { ...textBoxSpec };
         const heightChange = newPosition.y - initialPosition.y;
         const widthChange = newPosition.x - initialPosition.x;
 
         switch (draggedVertexIndex) {
           case 0:
-            newTriangleSpec = {
-              ...newTriangleSpec,
+            newTextBoxSpec = {
+              ...newTextBoxSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height - heightChange,
               x: newPosition.x,
@@ -71,50 +83,50 @@ function Triangle({ id, spec, isActive }) {
             };
             break;
           case 2:
-            newTriangleSpec = {
-              ...newTriangleSpec,
+            newTextBoxSpec = {
+              ...newTextBoxSpec,
               width: initialSpec.width + widthChange,
               height: initialSpec.height - heightChange,
               y: newPosition.y,
             };
             break;
           case 4:
-            newTriangleSpec = {
-              ...newTriangleSpec,
+            newTextBoxSpec = {
+              ...newTextBoxSpec,
               width: initialSpec.width + widthChange,
               height: initialSpec.height + heightChange,
             };
             break;
           case 6:
-            newTriangleSpec = {
-              ...newTriangleSpec,
+            newTextBoxSpec = {
+              ...newTextBoxSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height + heightChange,
               x: newPosition.x,
             };
             break;
           case 1:
-            newTriangleSpec = {
-              ...newTriangleSpec,
+            newTextBoxSpec = {
+              ...newTextBoxSpec,
               height: Math.max(10, initialSpec.height - heightChange),
               y: newPosition.y,
             };
             break;
           case 5:
-            newTriangleSpec = {
-              ...newTriangleSpec,
+            newTextBoxSpec = {
+              ...newTextBoxSpec,
               height: Math.max(10, initialSpec.height + heightChange),
             };
             break;
           case 3:
-            newTriangleSpec = {
-              ...newTriangleSpec,
+            newTextBoxSpec = {
+              ...newTextBoxSpec,
               width: Math.max(10, initialSpec.width + widthChange),
             };
             break;
           case 7:
-            newTriangleSpec = {
-              ...newTriangleSpec,
+            newTextBoxSpec = {
+              ...newTextBoxSpec,
               width: Math.max(10, initialSpec.width - widthChange),
               x: newPosition.x,
             };
@@ -123,7 +135,7 @@ function Triangle({ id, spec, isActive }) {
             break;
         }
 
-        setTriangleSpec(newTriangleSpec);
+        setTextBoxSpec(newTextBoxSpec);
       }
 
       document.addEventListener("mousemove", moveHandler);
@@ -135,19 +147,19 @@ function Triangle({ id, spec, isActive }) {
         { once: true },
       );
     },
-    [triangleSpec],
+    [textBoxSpec],
   );
 
-  function onTriangleDrag(event) {
+  function onTextBoxDrag(event) {
     event.stopPropagation();
 
     const initialPosition = {
-      x: event.clientX - triangleSpec.x,
-      y: event.clientY - triangleSpec.y,
+      x: event.clientX - textBoxSpec.x,
+      y: event.clientY - textBoxSpec.y,
     };
 
     function moveHandler(moveEvent) {
-      setTriangleSpec((prevSpec) => ({
+      setTextBoxSpec((prevSpec) => ({
         ...prevSpec,
         x: moveEvent.clientX - initialPosition.x,
         y: moveEvent.clientY - initialPosition.y,
@@ -167,23 +179,23 @@ function Triangle({ id, spec, isActive }) {
     const offset = { x: 1, y: 1 };
 
     const baseVertices = [
-      { x: triangleSpec.x, y: triangleSpec.y },
-      { x: triangleSpec.x + triangleSpec.width / 2, y: triangleSpec.y },
-      { x: triangleSpec.x + triangleSpec.width, y: triangleSpec.y },
+      { x: textBoxSpec.x, y: textBoxSpec.y },
+      { x: textBoxSpec.x + textBoxSpec.width / 2, y: textBoxSpec.y },
+      { x: textBoxSpec.x + textBoxSpec.width, y: textBoxSpec.y },
       {
-        x: triangleSpec.x + triangleSpec.width,
-        y: triangleSpec.y + triangleSpec.height / 2,
+        x: textBoxSpec.x + textBoxSpec.width,
+        y: textBoxSpec.y + textBoxSpec.height / 2,
       },
       {
-        x: triangleSpec.x + triangleSpec.width,
-        y: triangleSpec.y + triangleSpec.height,
+        x: textBoxSpec.x + textBoxSpec.width,
+        y: textBoxSpec.y + textBoxSpec.height,
       },
       {
-        x: triangleSpec.x + triangleSpec.width / 2,
-        y: triangleSpec.y + triangleSpec.height,
+        x: textBoxSpec.x + textBoxSpec.width / 2,
+        y: textBoxSpec.y + textBoxSpec.height,
       },
-      { x: triangleSpec.x, y: triangleSpec.y + triangleSpec.height },
-      { x: triangleSpec.x, y: triangleSpec.y + triangleSpec.height / 2 },
+      { x: textBoxSpec.x, y: textBoxSpec.y + textBoxSpec.height },
+      { x: textBoxSpec.x, y: textBoxSpec.y + textBoxSpec.height / 2 },
     ];
 
     const updatedBoundaryVertices = baseVertices.map((vertex) => ({
@@ -192,15 +204,15 @@ function Triangle({ id, spec, isActive }) {
     }));
 
     setBoundaryVertices(updatedBoundaryVertices);
-  }, [triangleSpec]);
+  }, [textBoxSpec]);
 
   return (
     <div
-      onClick={handleTriangleClick}
-      onMouseDown={onTriangleDrag}
+      onClick={handleTextBoxClick}
+      onMouseDown={onTextBoxDrag}
       aria-hidden="true"
     >
-      <StyledTriangle spec={triangleSpec} isActive={isActive} />
+      <EditableTextBox spec={textBoxSpec} isActive={isActive} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}
@@ -211,4 +223,4 @@ function Triangle({ id, spec, isActive }) {
   );
 }
 
-export default Triangle;
+export default Textbox;

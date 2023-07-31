@@ -27,7 +27,6 @@ function ScreenShowLayout({ slides, activeSlideIndex, activeAnimationIndex }) {
         const nonAnimatedObjects = objects.filter(
           (object) => !object.currentAnimation,
         );
-
         const animatedObjects = slide.animationSequence.map((element) =>
           objects.find((object) => object._id === element.objectId),
         );

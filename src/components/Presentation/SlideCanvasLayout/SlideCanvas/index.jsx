@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 
-import Object from "../../../Object";
+import Object from "../Object";
 
 function SlideCanvas({ canvasSpec, objects }) {
   return (

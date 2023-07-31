@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { styled } from "styled-components";
-import Object from "../../../Object";
+import DynamicObject from "../DynamicObject";
 
 function ScreenShowCanvas({
   nonAnimatedObjects,
@@ -19,10 +19,10 @@ function ScreenShowCanvas({
   return (
     <Canvas ref={canvasRef}>
       {nonAnimatedObjects.map((object) => (
-        <Object key={object._id} id={object._id} objectSpec={object} />
+        <DynamicObject key={object._id} id={object._id} objectSpec={object} />
       ))}
       {animatedObjects.map((object, animationIndex) => (
-        <Object
+        <DynamicObject
           key={object._id}
           id={object._id}
           objectSpec={object}

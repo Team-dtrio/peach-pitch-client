@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import Boundary from "../Boundary";
-import { ObjectContext } from "../../../contexts/ObjectContext";
-import animations from "../../../styles/animations";
+import { ObjectContext } from "../../../../../contexts/ObjectContext";
 
 const StyledSquare = styled.div`
   position: absolute;
@@ -12,20 +11,6 @@ const StyledSquare = styled.div`
   height: ${({ spec }) => spec.height}px;
   background-color: ${({ spec }) => spec.fillColor};
   border: 1px solid ${({ spec }) => spec.borderColor};
-  animation: ${({ spec }) => animations[spec.currentAnimation]} 2s linear;
-  /* ${({ isActive }) =>
-    isActive === undefined &&
-    css`
-      animation-duration: 0s;
-    `}
-  ${({ isActive }) =>
-    isActive
-      ? css`
-          animation-play-state: running;
-        `
-      : css`
-          animation-play-state: paused;
-        `}; */
 `;
 
 function Square({ id, spec, isActive }) {
