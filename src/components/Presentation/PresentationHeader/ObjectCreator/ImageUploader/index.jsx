@@ -22,7 +22,7 @@ function ImageUploader() {
 
 const Button = styled.button`
   background-color: transparent;
-  margin: 0 30px;
+  margin: 7px 30px;
   border: 0;
   cursor: pointer;
 `;
