@@ -1,8 +1,6 @@
-import { useContext } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { styled } from "styled-components";
-import { ObjectContext } from "../../../contexts/ObjectContext";
 import axiosInstance from "../../../services/axios";
 
 import SlideCanvas from "./SlideCanvas";
@@ -53,7 +51,6 @@ function SlideCanvasLayout() {
     presentationId,
     slideId,
   );
-  const { selectObject, selectedObjectId } = useContext(ObjectContext);
 
   return (
     <Wrapper>
@@ -66,8 +63,6 @@ function SlideCanvasLayout() {
             scaleY: 1,
           }}
           objects={data}
-          selectObject={selectObject}
-          selectedObjectId={selectedObjectId}
         />
       </EntireLayout>
     </Wrapper>

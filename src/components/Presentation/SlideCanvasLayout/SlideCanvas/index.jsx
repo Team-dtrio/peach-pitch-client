@@ -1,13 +1,10 @@
 import { styled } from "styled-components";
-import { useRef } from "react";
 
-import Object from "../Object";
+import Object from "../../../Object";
 
 function SlideCanvas({ canvasSpec, objects }) {
-  const canvasRef = useRef(null);
-
   return (
-    <Canvas ref={canvasRef} spec={canvasSpec}>
+    <Canvas spec={canvasSpec}>
       {objects.map((object) => (
         <Object key={object._id} id={object._id} objectSpec={object} />
       ))}

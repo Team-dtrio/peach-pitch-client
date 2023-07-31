@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
 import Boundary from "../Boundary";
-import { ObjectContext } from "../../../../../contexts/ObjectContext";
+import { ObjectContext } from "../../../contexts/ObjectContext";
+import animations from "../../../styles/animations";
 
 const StyledCircle = styled.div`
   position: absolute;
@@ -12,6 +13,8 @@ const StyledCircle = styled.div`
   background-color: ${({ spec }) => spec.fillColor};
   border: 1px solid ${({ spec }) => spec.borderColor};
   border-radius: 100%;
+  animation: ${({ spec }) => animations[spec.currentAnimation]} 2s linear;
+  animation-play-state: paused;
 `;
 
 function Circle({ id, spec }) {
@@ -26,7 +29,7 @@ function Circle({ id, spec }) {
 
   const handleCircleClick = (event) => {
     event.stopPropagation();
-    selectObject(id, spec.type);
+    selectObject(id, spec.type, spec);
   };
 
   const onVertexDrag = useCallback(

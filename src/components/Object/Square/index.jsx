@@ -1,47 +1,24 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
 import Boundary from "../Boundary";
-import { ObjectContext } from "../../../../../contexts/ObjectContext";
+import { ObjectContext } from "../../../contexts/ObjectContext";
+import animations from "../../../styles/animations";
 
-const StyledTextBox = styled.div`
+const StyledSquare = styled.div`
   position: absolute;
   left: ${({ spec }) => spec.x}px;
   top: ${({ spec }) => spec.y}px;
   width: ${({ spec }) => spec.width}px;
   height: ${({ spec }) => spec.height}px;
-  text-align: ${({ spec }) => spec.textAlign};
-  border: 1px dashed ${({ spec }) => spec.borderColor};
-  background-color: ${({ spec }) => spec.innerColor};
-  user-select: none;
+  background-color: ${({ spec }) => spec.fillColor};
+  border: 1px solid ${({ spec }) => spec.borderColor};
+  animation: ${({ spec }) => animations[spec.currentAnimation]} 2s linear;
+  animation-play-state: paused;
 `;
 
-const EditableDiv = styled.div`
-  width: 100%;
-  height: 100%;
-  border: none;
-  overflow: auto;
-  outline: none;
-  color: ${({ spec }) => spec.textColor};
-  font-size: ${({ spec }) => spec.fontSize}px;
-  font-family: ${({ spec }) => spec.fontFamily};
-  font-style: ${({ spec }) => spec.fontStyle};
-  font-weight: 400;
-  text-decoration: ${({ spec }) => spec.fontStyle};
-`;
-
-function EditableTextBox({ spec }) {
-  return (
-    <StyledTextBox spec={spec}>
-      <EditableDiv spec={spec} contentEditable>
-        {spec.content}
-      </EditableDiv>
-    </StyledTextBox>
-  );
-}
-
-function Textbox({ id, spec }) {
+function Square({ id, spec }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
-  const [textBoxSpec, setTextBoxSpec] = useState(spec);
+  const [squareSpec, setSquareSpec] = useState(spec);
 
   const { selectedObjectId, selectedObjectType, selectObject } =
     useContext(ObjectContext);
@@ -49,7 +26,7 @@ function Textbox({ id, spec }) {
   const isSelected =
     id === selectedObjectId && spec.type === selectedObjectType;
 
-  const handleTextBoxClick = (event) => {
+  const handleSquareClick = (event) => {
     event.stopPropagation();
     selectObject(id, spec.type);
   };
@@ -60,7 +37,7 @@ function Textbox({ id, spec }) {
       event.stopPropagation();
 
       const initialPosition = { x: event.clientX, y: event.clientY };
-      const initialSpec = { ...textBoxSpec };
+      const initialSpec = { ...squareSpec };
 
       function moveHandler(moveEvent) {
         const newPosition = {
@@ -68,14 +45,14 @@ function Textbox({ id, spec }) {
           y: moveEvent.clientY,
         };
 
-        let newTextBoxSpec = { ...textBoxSpec };
+        let newSquareSpec = { ...squareSpec };
         const heightChange = newPosition.y - initialPosition.y;
         const widthChange = newPosition.x - initialPosition.x;
 
         switch (draggedVertexIndex) {
           case 0:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newSquareSpec = {
+              ...newSquareSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height - heightChange,
               x: newPosition.x,
@@ -83,50 +60,50 @@ function Textbox({ id, spec }) {
             };
             break;
           case 2:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newSquareSpec = {
+              ...newSquareSpec,
               width: initialSpec.width + widthChange,
               height: initialSpec.height - heightChange,
               y: newPosition.y,
             };
             break;
           case 4:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newSquareSpec = {
+              ...newSquareSpec,
               width: initialSpec.width + widthChange,
               height: initialSpec.height + heightChange,
             };
             break;
           case 6:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newSquareSpec = {
+              ...newSquareSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height + heightChange,
               x: newPosition.x,
             };
             break;
           case 1:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newSquareSpec = {
+              ...newSquareSpec,
               height: Math.max(10, initialSpec.height - heightChange),
               y: newPosition.y,
             };
             break;
           case 5:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newSquareSpec = {
+              ...newSquareSpec,
               height: Math.max(10, initialSpec.height + heightChange),
             };
             break;
           case 3:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newSquareSpec = {
+              ...newSquareSpec,
               width: Math.max(10, initialSpec.width + widthChange),
             };
             break;
           case 7:
-            newTextBoxSpec = {
-              ...newTextBoxSpec,
+            newSquareSpec = {
+              ...newSquareSpec,
               width: Math.max(10, initialSpec.width - widthChange),
               x: newPosition.x,
             };
@@ -135,7 +112,7 @@ function Textbox({ id, spec }) {
             break;
         }
 
-        setTextBoxSpec(newTextBoxSpec);
+        setSquareSpec(newSquareSpec);
       }
 
       document.addEventListener("mousemove", moveHandler);
@@ -147,19 +124,19 @@ function Textbox({ id, spec }) {
         { once: true },
       );
     },
-    [textBoxSpec],
+    [squareSpec],
   );
 
-  function onTextBoxDrag(event) {
+  const onSquareDrag = (event) => {
     event.stopPropagation();
 
     const initialPosition = {
-      x: event.clientX - textBoxSpec.x,
-      y: event.clientY - textBoxSpec.y,
+      x: event.clientX - squareSpec.x,
+      y: event.clientY - squareSpec.y,
     };
 
     function moveHandler(moveEvent) {
-      setTextBoxSpec((prevSpec) => ({
+      setSquareSpec((prevSpec) => ({
         ...prevSpec,
         x: moveEvent.clientX - initialPosition.x,
         y: moveEvent.clientY - initialPosition.y,
@@ -173,29 +150,29 @@ function Textbox({ id, spec }) {
 
     document.addEventListener("mousemove", moveHandler);
     document.addEventListener("mouseup", upHandler);
-  }
+  };
 
   useEffect(() => {
     const offset = { x: 1, y: 1 };
 
     const baseVertices = [
-      { x: textBoxSpec.x, y: textBoxSpec.y },
-      { x: textBoxSpec.x + textBoxSpec.width / 2, y: textBoxSpec.y },
-      { x: textBoxSpec.x + textBoxSpec.width, y: textBoxSpec.y },
+      { x: squareSpec.x, y: squareSpec.y },
+      { x: squareSpec.x + squareSpec.width / 2, y: squareSpec.y },
+      { x: squareSpec.x + squareSpec.width, y: squareSpec.y },
       {
-        x: textBoxSpec.x + textBoxSpec.width,
-        y: textBoxSpec.y + textBoxSpec.height / 2,
+        x: squareSpec.x + squareSpec.width,
+        y: squareSpec.y + squareSpec.height / 2,
       },
       {
-        x: textBoxSpec.x + textBoxSpec.width,
-        y: textBoxSpec.y + textBoxSpec.height,
+        x: squareSpec.x + squareSpec.width,
+        y: squareSpec.y + squareSpec.height,
       },
       {
-        x: textBoxSpec.x + textBoxSpec.width / 2,
-        y: textBoxSpec.y + textBoxSpec.height,
+        x: squareSpec.x + squareSpec.width / 2,
+        y: squareSpec.y + squareSpec.height,
       },
-      { x: textBoxSpec.x, y: textBoxSpec.y + textBoxSpec.height },
-      { x: textBoxSpec.x, y: textBoxSpec.y + textBoxSpec.height / 2 },
+      { x: squareSpec.x, y: squareSpec.y + squareSpec.height },
+      { x: squareSpec.x, y: squareSpec.y + squareSpec.height / 2 },
     ];
 
     const updatedBoundaryVertices = baseVertices.map((vertex) => ({
@@ -204,15 +181,15 @@ function Textbox({ id, spec }) {
     }));
 
     setBoundaryVertices(updatedBoundaryVertices);
-  }, [textBoxSpec]);
+  }, [squareSpec]);
 
   return (
     <div
-      onClick={handleTextBoxClick}
-      onMouseDown={onTextBoxDrag}
+      onClick={handleSquareClick}
+      onMouseDown={onSquareDrag}
       aria-hidden="true"
     >
-      <EditableTextBox spec={textBoxSpec} />
+      <StyledSquare spec={squareSpec} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}
@@ -223,4 +200,4 @@ function Textbox({ id, spec }) {
   );
 }
 
-export default Textbox;
+export default Square;

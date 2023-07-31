@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { styled } from "styled-components";
@@ -12,6 +12,7 @@ import ObjectEditor from "./ObjectEditor";
 import PresentationHeader from "./PresentationHeader";
 import LoadingModal from "../Shared/Modal/LoadingModal";
 import useAuthRedirect from "../../hooks/useAuthRedirect";
+import ScreenShowLayout from "./ScreenShowLayout";
 
 function useGetAllSlidesQuery(userId, presentationId, callback) {
   const query = useQuery({
@@ -39,7 +40,10 @@ function getUser() {
 
 function Presentation() {
   const user = getUser();
+  const [isEditMode, setIsEditMode] = useState(true);
   const [slides, setSlides] = useState([]);
+  const [activeSlideIndex, setActiveSlideIndex] = useState(null);
+  const [activeAnimationIndex, setActiveAnimationIndex] = useState(null);
   const { presentationId } = useParams();
   const { isLoading } = useGetAllSlidesQuery(
     user._id,
@@ -47,7 +51,56 @@ function Presentation() {
     setSlides,
   );
 
+  function handlePlay(index) {
+    setIsEditMode(false);
+    setActiveSlideIndex(index);
+    setActiveAnimationIndex(-1);
+  }
+
+  const handleKeyDown = useCallback(
+    (event) => {
+      switch (event.key) {
+        case "ArrowRight":
+          if (
+            activeAnimationIndex <
+            slides[activeSlideIndex].animationSequence.length
+          ) {
+            setActiveAnimationIndex(activeAnimationIndex + 1);
+          }
+
+          if (
+            activeAnimationIndex ===
+              slides[activeSlideIndex].animationSequence.length &&
+            activeSlideIndex < slides.length - 1
+          ) {
+            setActiveSlideIndex(activeSlideIndex + 1);
+          }
+          break;
+        case "ArrowLeft":
+          if (activeAnimationIndex > 0) {
+            setActiveAnimationIndex(activeAnimationIndex - 1);
+          }
+
+          if (activeSlideIndex > 0) {
+            setActiveSlideIndex(activeSlideIndex - 1);
+          }
+          break;
+        default:
+          break;
+      }
+    },
+    [activeSlideIndex, activeAnimationIndex, slides],
+  );
+
   useAuthRedirect(user);
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [activeSlideIndex, handleKeyDown, slides.length]);
 
   if (isLoading) {
     return <LoadingModal />;
@@ -56,13 +109,20 @@ function Presentation() {
   return (
     <Wrapper>
       <MainHeader userInfo={user}>
-        <PresentationHeader />
+        <PresentationHeader handlePlay={() => handlePlay(0)} />
       </MainHeader>
       <Section>
         <SlideNavigator slides={slides} />
         <SlideCanvasLayout />
         <ObjectEditor />
       </Section>
+      {!isEditMode && (
+        <ScreenShowLayout
+          slides={slides}
+          activeSlideIndex={activeSlideIndex}
+          activeAnimationIndex={activeAnimationIndex}
+        />
+      )}
     </Wrapper>
   );
 }
@@ -70,10 +130,14 @@ function Presentation() {
 const Wrapper = styled.div`
   display: grid;
   grid-template-rows: 15vh 85vh;
+
+  @media (max-height: 800px) {
+    grid-template-rows: 20vh 80vh;
+  }
 `;
 const Section = styled.section`
   display: grid;
-  grid-template-columns: 20vw 60vw 20vw;
+  grid-template-columns: 1fr 3fr 1fr;
   height: 100%;
 `;
 

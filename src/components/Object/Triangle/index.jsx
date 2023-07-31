@@ -1,35 +1,22 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
 import Boundary from "../Boundary";
-import { ObjectContext } from "../../../../../contexts/ObjectContext";
+import { ObjectContext } from "../../../contexts/ObjectContext";
 
-const StyledImageBox = styled.div`
+const StyledTriangle = styled.div`
   position: absolute;
-  left: ${({ spec }) => spec.x}px;
-  top: ${({ spec }) => spec.y}px;
   width: ${({ spec }) => spec.width}px;
   height: ${({ spec }) => spec.height}px;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  background-color: ${({ spec }) => spec.fillColor};
   border: 1px solid ${({ spec }) => spec.borderColor};
-  user-select: none;
+  top: ${({ spec }) => spec.y}px;
+  left: ${({ spec }) => spec.x}px;
 `;
 
-const StyledImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;
-
-function StyledImageComponent({ spec }) {
-  return (
-    <StyledImageBox spec={spec}>
-      <StyledImage src={spec.src} alt="" />
-    </StyledImageBox>
-  );
-}
-
-function Image({ id, spec }) {
+function Triangle({ id, spec }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
-  const [imageSpec, setImageSpec] = useState(spec);
+  const [triangleSpec, setTriangleSpec] = useState(spec);
 
   const { selectedObjectId, selectedObjectType, selectObject } =
     useContext(ObjectContext);
@@ -37,7 +24,7 @@ function Image({ id, spec }) {
   const isSelected =
     id === selectedObjectId && spec.type === selectedObjectType;
 
-  const handleImageClick = (event) => {
+  const handleTriangleClick = (event) => {
     event.stopPropagation();
     selectObject(id, spec.type);
   };
@@ -48,7 +35,7 @@ function Image({ id, spec }) {
       event.stopPropagation();
 
       const initialPosition = { x: event.clientX, y: event.clientY };
-      const initialSpec = { ...imageSpec };
+      const initialSpec = { ...triangleSpec };
 
       function moveHandler(moveEvent) {
         const newPosition = {
@@ -56,14 +43,14 @@ function Image({ id, spec }) {
           y: moveEvent.clientY,
         };
 
-        let newImageSpec = { ...imageSpec };
+        let newTriangleSpec = { ...triangleSpec };
         const heightChange = newPosition.y - initialPosition.y;
         const widthChange = newPosition.x - initialPosition.x;
 
         switch (draggedVertexIndex) {
           case 0:
-            newImageSpec = {
-              ...newImageSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height - heightChange,
               x: newPosition.x,
@@ -71,50 +58,50 @@ function Image({ id, spec }) {
             };
             break;
           case 2:
-            newImageSpec = {
-              ...newImageSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               width: initialSpec.width + widthChange,
               height: initialSpec.height - heightChange,
               y: newPosition.y,
             };
             break;
           case 4:
-            newImageSpec = {
-              ...newImageSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               width: initialSpec.width + widthChange,
               height: initialSpec.height + heightChange,
             };
             break;
           case 6:
-            newImageSpec = {
-              ...newImageSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height + heightChange,
               x: newPosition.x,
             };
             break;
           case 1:
-            newImageSpec = {
-              ...newImageSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               height: Math.max(10, initialSpec.height - heightChange),
               y: newPosition.y,
             };
             break;
           case 5:
-            newImageSpec = {
-              ...newImageSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               height: Math.max(10, initialSpec.height + heightChange),
             };
             break;
           case 3:
-            newImageSpec = {
-              ...newImageSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               width: Math.max(10, initialSpec.width + widthChange),
             };
             break;
           case 7:
-            newImageSpec = {
-              ...newImageSpec,
+            newTriangleSpec = {
+              ...newTriangleSpec,
               width: Math.max(10, initialSpec.width - widthChange),
               x: newPosition.x,
             };
@@ -123,7 +110,7 @@ function Image({ id, spec }) {
             break;
         }
 
-        setImageSpec(newImageSpec);
+        setTriangleSpec(newTriangleSpec);
       }
 
       document.addEventListener("mousemove", moveHandler);
@@ -135,20 +122,19 @@ function Image({ id, spec }) {
         { once: true },
       );
     },
-    [imageSpec],
+    [triangleSpec],
   );
 
-  function onImageDrag(event) {
+  function onTriangleDrag(event) {
     event.stopPropagation();
-    event.preventDefault();
 
     const initialPosition = {
-      x: event.clientX - imageSpec.x,
-      y: event.clientY - imageSpec.y,
+      x: event.clientX - triangleSpec.x,
+      y: event.clientY - triangleSpec.y,
     };
 
     function moveHandler(moveEvent) {
-      setImageSpec((prevSpec) => ({
+      setTriangleSpec((prevSpec) => ({
         ...prevSpec,
         x: moveEvent.clientX - initialPosition.x,
         y: moveEvent.clientY - initialPosition.y,
@@ -168,23 +154,23 @@ function Image({ id, spec }) {
     const offset = { x: 1, y: 1 };
 
     const baseVertices = [
-      { x: imageSpec.x, y: imageSpec.y },
-      { x: imageSpec.x + imageSpec.width / 2, y: imageSpec.y },
-      { x: imageSpec.x + imageSpec.width, y: imageSpec.y },
+      { x: triangleSpec.x, y: triangleSpec.y },
+      { x: triangleSpec.x + triangleSpec.width / 2, y: triangleSpec.y },
+      { x: triangleSpec.x + triangleSpec.width, y: triangleSpec.y },
       {
-        x: imageSpec.x + imageSpec.width,
-        y: imageSpec.y + imageSpec.height / 2,
+        x: triangleSpec.x + triangleSpec.width,
+        y: triangleSpec.y + triangleSpec.height / 2,
       },
       {
-        x: imageSpec.x + imageSpec.width,
-        y: imageSpec.y + imageSpec.height,
+        x: triangleSpec.x + triangleSpec.width,
+        y: triangleSpec.y + triangleSpec.height,
       },
       {
-        x: imageSpec.x + imageSpec.width / 2,
-        y: imageSpec.y + imageSpec.height,
+        x: triangleSpec.x + triangleSpec.width / 2,
+        y: triangleSpec.y + triangleSpec.height,
       },
-      { x: imageSpec.x, y: imageSpec.y + imageSpec.height },
-      { x: imageSpec.x, y: imageSpec.y + imageSpec.height / 2 },
+      { x: triangleSpec.x, y: triangleSpec.y + triangleSpec.height },
+      { x: triangleSpec.x, y: triangleSpec.y + triangleSpec.height / 2 },
     ];
 
     const updatedBoundaryVertices = baseVertices.map((vertex) => ({
@@ -193,15 +179,15 @@ function Image({ id, spec }) {
     }));
 
     setBoundaryVertices(updatedBoundaryVertices);
-  }, [imageSpec]);
+  }, [triangleSpec]);
 
   return (
     <div
-      onClick={handleImageClick}
-      onMouseDown={onImageDrag}
+      onClick={handleTriangleClick}
+      onMouseDown={onTriangleDrag}
       aria-hidden="true"
     >
-      <StyledImageComponent spec={imageSpec} />
+      <StyledTriangle spec={triangleSpec} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}
@@ -212,4 +198,4 @@ function Image({ id, spec }) {
   );
 }
 
-export default Image;
+export default Triangle;

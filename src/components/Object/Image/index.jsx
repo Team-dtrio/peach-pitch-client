@@ -1,21 +1,35 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
 import Boundary from "../Boundary";
-import { ObjectContext } from "../../../../../contexts/ObjectContext";
+import { ObjectContext } from "../../../contexts/ObjectContext";
 
-const StyledSquare = styled.div`
+const StyledImageBox = styled.div`
   position: absolute;
   left: ${({ spec }) => spec.x}px;
   top: ${({ spec }) => spec.y}px;
   width: ${({ spec }) => spec.width}px;
   height: ${({ spec }) => spec.height}px;
-  background-color: ${({ spec }) => spec.fillColor};
   border: 1px solid ${({ spec }) => spec.borderColor};
+  user-select: none;
 `;
 
-function Square({ id, spec }) {
+const StyledImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+function StyledImageComponent({ spec }) {
+  return (
+    <StyledImageBox spec={spec}>
+      <StyledImage src={spec.src} alt="" />
+    </StyledImageBox>
+  );
+}
+
+function Image({ id, spec }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
-  const [squareSpec, setSquareSpec] = useState(spec);
+  const [imageSpec, setImageSpec] = useState(spec);
 
   const { selectedObjectId, selectedObjectType, selectObject } =
     useContext(ObjectContext);
@@ -23,7 +37,7 @@ function Square({ id, spec }) {
   const isSelected =
     id === selectedObjectId && spec.type === selectedObjectType;
 
-  const handleSquareClick = (event) => {
+  const handleImageClick = (event) => {
     event.stopPropagation();
     selectObject(id, spec.type);
   };
@@ -34,7 +48,7 @@ function Square({ id, spec }) {
       event.stopPropagation();
 
       const initialPosition = { x: event.clientX, y: event.clientY };
-      const initialSpec = { ...squareSpec };
+      const initialSpec = { ...imageSpec };
 
       function moveHandler(moveEvent) {
         const newPosition = {
@@ -42,14 +56,14 @@ function Square({ id, spec }) {
           y: moveEvent.clientY,
         };
 
-        let newSquareSpec = { ...squareSpec };
+        let newImageSpec = { ...imageSpec };
         const heightChange = newPosition.y - initialPosition.y;
         const widthChange = newPosition.x - initialPosition.x;
 
         switch (draggedVertexIndex) {
           case 0:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newImageSpec = {
+              ...newImageSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height - heightChange,
               x: newPosition.x,
@@ -57,50 +71,50 @@ function Square({ id, spec }) {
             };
             break;
           case 2:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newImageSpec = {
+              ...newImageSpec,
               width: initialSpec.width + widthChange,
               height: initialSpec.height - heightChange,
               y: newPosition.y,
             };
             break;
           case 4:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newImageSpec = {
+              ...newImageSpec,
               width: initialSpec.width + widthChange,
               height: initialSpec.height + heightChange,
             };
             break;
           case 6:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newImageSpec = {
+              ...newImageSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height + heightChange,
               x: newPosition.x,
             };
             break;
           case 1:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newImageSpec = {
+              ...newImageSpec,
               height: Math.max(10, initialSpec.height - heightChange),
               y: newPosition.y,
             };
             break;
           case 5:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newImageSpec = {
+              ...newImageSpec,
               height: Math.max(10, initialSpec.height + heightChange),
             };
             break;
           case 3:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newImageSpec = {
+              ...newImageSpec,
               width: Math.max(10, initialSpec.width + widthChange),
             };
             break;
           case 7:
-            newSquareSpec = {
-              ...newSquareSpec,
+            newImageSpec = {
+              ...newImageSpec,
               width: Math.max(10, initialSpec.width - widthChange),
               x: newPosition.x,
             };
@@ -109,7 +123,7 @@ function Square({ id, spec }) {
             break;
         }
 
-        setSquareSpec(newSquareSpec);
+        setImageSpec(newImageSpec);
       }
 
       document.addEventListener("mousemove", moveHandler);
@@ -121,19 +135,20 @@ function Square({ id, spec }) {
         { once: true },
       );
     },
-    [squareSpec],
+    [imageSpec],
   );
 
-  const onSquareDrag = (event) => {
+  function onImageDrag(event) {
     event.stopPropagation();
+    event.preventDefault();
 
     const initialPosition = {
-      x: event.clientX - squareSpec.x,
-      y: event.clientY - squareSpec.y,
+      x: event.clientX - imageSpec.x,
+      y: event.clientY - imageSpec.y,
     };
 
     function moveHandler(moveEvent) {
-      setSquareSpec((prevSpec) => ({
+      setImageSpec((prevSpec) => ({
         ...prevSpec,
         x: moveEvent.clientX - initialPosition.x,
         y: moveEvent.clientY - initialPosition.y,
@@ -147,29 +162,29 @@ function Square({ id, spec }) {
 
     document.addEventListener("mousemove", moveHandler);
     document.addEventListener("mouseup", upHandler);
-  };
+  }
 
   useEffect(() => {
     const offset = { x: 1, y: 1 };
 
     const baseVertices = [
-      { x: squareSpec.x, y: squareSpec.y },
-      { x: squareSpec.x + squareSpec.width / 2, y: squareSpec.y },
-      { x: squareSpec.x + squareSpec.width, y: squareSpec.y },
+      { x: imageSpec.x, y: imageSpec.y },
+      { x: imageSpec.x + imageSpec.width / 2, y: imageSpec.y },
+      { x: imageSpec.x + imageSpec.width, y: imageSpec.y },
       {
-        x: squareSpec.x + squareSpec.width,
-        y: squareSpec.y + squareSpec.height / 2,
+        x: imageSpec.x + imageSpec.width,
+        y: imageSpec.y + imageSpec.height / 2,
       },
       {
-        x: squareSpec.x + squareSpec.width,
-        y: squareSpec.y + squareSpec.height,
+        x: imageSpec.x + imageSpec.width,
+        y: imageSpec.y + imageSpec.height,
       },
       {
-        x: squareSpec.x + squareSpec.width / 2,
-        y: squareSpec.y + squareSpec.height,
+        x: imageSpec.x + imageSpec.width / 2,
+        y: imageSpec.y + imageSpec.height,
       },
-      { x: squareSpec.x, y: squareSpec.y + squareSpec.height },
-      { x: squareSpec.x, y: squareSpec.y + squareSpec.height / 2 },
+      { x: imageSpec.x, y: imageSpec.y + imageSpec.height },
+      { x: imageSpec.x, y: imageSpec.y + imageSpec.height / 2 },
     ];
 
     const updatedBoundaryVertices = baseVertices.map((vertex) => ({
@@ -178,15 +193,15 @@ function Square({ id, spec }) {
     }));
 
     setBoundaryVertices(updatedBoundaryVertices);
-  }, [squareSpec]);
+  }, [imageSpec]);
 
   return (
     <div
-      onClick={handleSquareClick}
-      onMouseDown={onSquareDrag}
+      onClick={handleImageClick}
+      onMouseDown={onImageDrag}
       aria-hidden="true"
     >
-      <StyledSquare spec={squareSpec} />
+      <StyledImageComponent spec={imageSpec} />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}
@@ -197,4 +212,4 @@ function Square({ id, spec }) {
   );
 }
 
-export default Square;
+export default Image;
