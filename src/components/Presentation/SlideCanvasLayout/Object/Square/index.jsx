@@ -52,8 +52,8 @@ function Square({ id, spec, onContextMenu }) {
               ...newSquareSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height - heightChange,
-              x: newPosition.x,
-              y: newPosition.y,
+              x: initialSpec.x + widthChange,
+              y: initialSpec.y + heightChange,
             };
             break;
           case 2:
@@ -61,7 +61,7 @@ function Square({ id, spec, onContextMenu }) {
               ...newSquareSpec,
               width: initialSpec.width + widthChange,
               height: initialSpec.height - heightChange,
-              y: newPosition.y,
+              y: initialSpec.y + heightChange,
             };
             break;
           case 4:
@@ -76,33 +76,33 @@ function Square({ id, spec, onContextMenu }) {
               ...newSquareSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height + heightChange,
-              x: newPosition.x,
+              x: initialSpec.x + widthChange,
             };
             break;
           case 1:
             newSquareSpec = {
               ...newSquareSpec,
-              height: Math.max(10, initialSpec.height - heightChange),
-              y: newPosition.y,
-            };
-            break;
-          case 5:
-            newSquareSpec = {
-              ...newSquareSpec,
-              height: Math.max(10, initialSpec.height + heightChange),
+              height: initialSpec.height - heightChange,
+              y: initialSpec.y + heightChange,
             };
             break;
           case 3:
             newSquareSpec = {
               ...newSquareSpec,
-              width: Math.max(10, initialSpec.width + widthChange),
+              width: initialSpec.width + widthChange,
+            };
+            break;
+          case 5:
+            newSquareSpec = {
+              ...newSquareSpec,
+              height: initialSpec.height + heightChange,
             };
             break;
           case 7:
             newSquareSpec = {
               ...newSquareSpec,
-              width: Math.max(10, initialSpec.width - widthChange),
-              x: newPosition.x,
+              width: initialSpec.width - widthChange,
+              x: initialSpec.x + widthChange,
             };
             break;
           default:
