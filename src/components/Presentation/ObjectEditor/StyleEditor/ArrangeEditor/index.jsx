@@ -72,13 +72,13 @@ function ArrangeEditor() {
     }
   }, [data]);
 
-  const handleDragStart = (event, id) => {
+  function handleDragStart(event, id) {
     event.dataTransfer.setData("text/plain", id);
-  };
+  }
 
-  const handleDragOver = (event) => {
+  function handleDragOver(event) {
     event.preventDefault();
-  };
+  }
 
   async function handleDrop(event, id) {
     event.preventDefault();
