@@ -8,14 +8,17 @@ function SlideCanvas({ canvasSpec, objects, onObjectRightClick }) {
 
   return (
     <Canvas ref={canvasRef} spec={canvasSpec}>
-      {objects.map((object) => (
-        <Object
-          key={object._id}
-          id={object._id}
-          objectSpec={object}
-          onRightClick={onObjectRightClick}
-        />
-      ))}
+      {objects.map((object) => {
+        console.log("Object:", object); // Add this console.log statement
+        return (
+          <Object
+            key={object._id}
+            id={object._id}
+            objectSpec={object}
+            onRightClick={onObjectRightClick}
+          />
+        );
+      })}
     </Canvas>
   );
 }
