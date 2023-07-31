@@ -51,9 +51,9 @@ function Presentation() {
     setSlides,
   );
 
-  function handlePlay(index) {
+  function handlePlay() {
     setIsEditMode(false);
-    setActiveSlideIndex(index);
+    setActiveSlideIndex(0);
     setActiveAnimationIndex(-1);
   }
 
@@ -105,7 +105,7 @@ function Presentation() {
   return (
     <Wrapper>
       <MainHeader userInfo={user}>
-        <PresentationHeader handlePlay={() => handlePlay(0)} />
+        <PresentationHeader handlePlay={handlePlay} />
       </MainHeader>
       <Section>
         <SlideNavigator slides={slides} />

@@ -26,7 +26,7 @@ function Circle({ id, spec }) {
 
   const handleCircleClick = (event) => {
     event.stopPropagation();
-    selectObject(id, spec.type, spec);
+    selectObject(id, spec.type);
   };
 
   const onVertexDrag = useCallback(

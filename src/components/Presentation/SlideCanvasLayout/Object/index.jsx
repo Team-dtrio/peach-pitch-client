@@ -4,20 +4,18 @@ import Textbox from "./Textbox";
 import Square from "./Square";
 import Image from "./Image";
 
-function Object({ id, objectSpec, isAnimationActive }) {
+function Object({ id, objectSpec }) {
   switch (objectSpec?.type.toLowerCase()) {
     case "circle":
-      return <Circle spec={objectSpec} id={id} isActive={isAnimationActive} />;
+      return <Circle spec={objectSpec} id={id} />;
     case "triangle":
-      return (
-        <Triangle spec={objectSpec} id={id} isActive={isAnimationActive} />
-      );
+      return <Triangle spec={objectSpec} id={id} />;
     case "textbox":
-      return <Textbox spec={objectSpec} id={id} isActive={isAnimationActive} />;
+      return <Textbox spec={objectSpec} id={id} />;
     case "square":
-      return <Square spec={objectSpec} id={id} isActive={isAnimationActive} />;
+      return <Square spec={objectSpec} id={id} />;
     case "image":
-      return <Image spec={objectSpec} id={id} isActive={isAnimationActive} />;
+      return <Image spec={objectSpec} id={id} />;
     default:
       return null;
   }
