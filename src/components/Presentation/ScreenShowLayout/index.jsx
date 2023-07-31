@@ -7,10 +7,10 @@ function ScreenShowLayout({ slides, activeSlideIndex, activeAnimationIndex }) {
         const objects = slide.objects.map(
           (
             { _id, type, coordinates, dimensions, currentAnimation },
-            objIndex,
-            object,
+            objectIndex,
+            currentObjects,
           ) => {
-            const features = object[objIndex][type];
+            const features = currentObjects[objectIndex][type];
 
             return {
               _id,
@@ -32,13 +32,19 @@ function ScreenShowLayout({ slides, activeSlideIndex, activeAnimationIndex }) {
         );
 
         return (
-          <ScreenShowCanvas
-            key={slide._id}
-            nonAnimatedObjects={nonAnimatedObjects}
-            animatedObjects={animatedObjects}
-            isSlideActive={slideIndex === activeSlideIndex}
-            activeAnimationIndex={activeAnimationIndex}
-          />
+          <div>
+            {activeSlideIndex === slides.length ? (
+              <div />
+            ) : (
+              <ScreenShowCanvas
+                key={slide._id}
+                nonAnimatedObjects={nonAnimatedObjects}
+                animatedObjects={animatedObjects}
+                isSlideActive={slideIndex === activeSlideIndex}
+                activeAnimationIndex={activeAnimationIndex}
+              />
+            )}
+          </div>
         );
       })}
     </>

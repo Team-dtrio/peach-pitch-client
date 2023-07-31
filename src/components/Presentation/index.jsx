@@ -25,7 +25,7 @@ function useGetAllSlidesQuery(userId, presentationId, callback) {
       return response;
     },
     onSuccess: ({ data }) => {
-      callback(data.slides);
+      callback(data?.slides);
     },
   });
 
@@ -59,28 +59,24 @@ function Presentation() {
 
   const handleKeyDown = useCallback(
     (event) => {
+      const currentAnimationSequence =
+        slides[activeSlideIndex]?.animationSequence;
+
       switch (event.key) {
         case "ArrowRight":
-          if (
-            activeAnimationIndex <
-            slides[activeSlideIndex].animationSequence.length
-          ) {
+          if (activeAnimationIndex < currentAnimationSequence.length) {
             setActiveAnimationIndex(activeAnimationIndex + 1);
           }
 
           if (
-            activeAnimationIndex ===
-              slides[activeSlideIndex].animationSequence.length &&
-            activeSlideIndex < slides.length - 1
+            activeAnimationIndex === currentAnimationSequence.length - 1 &&
+            activeSlideIndex < slides.length
           ) {
             setActiveSlideIndex(activeSlideIndex + 1);
+            setActiveAnimationIndex(-1);
           }
           break;
         case "ArrowLeft":
-          if (activeAnimationIndex > 0) {
-            setActiveAnimationIndex(activeAnimationIndex - 1);
-          }
-
           if (activeSlideIndex > 0) {
             setActiveSlideIndex(activeSlideIndex - 1);
           }
@@ -100,7 +96,7 @@ function Presentation() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [activeSlideIndex, handleKeyDown, slides.length]);
+  }, [activeSlideIndex, handleKeyDown, slides]);
 
   if (isLoading) {
     return <LoadingModal />;

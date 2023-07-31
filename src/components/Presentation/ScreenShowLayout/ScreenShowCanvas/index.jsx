@@ -8,35 +8,34 @@ function ScreenShowCanvas({
   isSlideActive,
   activeAnimationIndex,
 }) {
-  const canvasRef = useRef(null);
+  const screenRef = useRef(null);
 
   useEffect(() => {
-    if (isSlideActive && canvasRef.current.requestFullscreen) {
-      canvasRef.current.requestFullscreen();
+    if (isSlideActive && screenRef.current.requestFullscreen) {
+      screenRef.current.requestFullscreen();
     }
   }, [isSlideActive]);
 
   return (
-    <Canvas ref={canvasRef}>
-      {nonAnimatedObjects.map((object) => (
-        <DynamicObject key={object._id} id={object._id} objectSpec={object} />
-      ))}
-      {animatedObjects.map((object, animationIndex) => (
-        <DynamicObject
-          key={object._id}
-          id={object._id}
-          objectSpec={object}
-          isAnimationActive={animationIndex === activeAnimationIndex}
-        />
-      ))}
-    </Canvas>
+    <Screen ref={screenRef}>
+      {isSlideActive &&
+        nonAnimatedObjects.map((object) => (
+          <DynamicObject key={object._id} objectSpec={object} />
+        ))}
+      {isSlideActive &&
+        animatedObjects.map((object, animationIndex) => (
+          <DynamicObject
+            key={object._id}
+            objectSpec={object}
+            isAnimationActive={animationIndex === activeAnimationIndex}
+          />
+        ))}
+    </Screen>
   );
 }
 
-const Canvas = styled.div`
+const Screen = styled.div`
   position: relative;
-  width: 800px;
-  height: 500px;
   background-color: #fff;
 `;
 

@@ -32,6 +32,7 @@ const animations = {
       left: -100%;
       border-radius: 0;
       border: 0;
+      opacity: 0.1;
     }
 
     25% {
@@ -41,6 +42,7 @@ const animations = {
       width: 100px;
       height: 100px;
       border: 0;
+      opacity: 0.3;
     }
 
     50% {
@@ -50,6 +52,7 @@ const animations = {
       width: 100px;
       height: 100px;
       border: 0;
+      opacity: 0.6;
     }
 
     75% {
@@ -59,6 +62,7 @@ const animations = {
       width: 100px;
       height: 100px;
       border: 0;
+      opacity: 0.8;
     }
 
     100% {
@@ -68,15 +72,18 @@ const animations = {
       width: 100px;
       height: 100px;
       border: 1;
+      opacity: 1;
     }
   `,
   "3d-flip": keyframes`
     from {
       transform: rotateY(0deg);
+      opacity: 0;
     }
 
     to {
-      transform: rotateY(360deg);
+      transform: rotateY(180deg);
+      opacity: 1;
     }
   `,
 };
