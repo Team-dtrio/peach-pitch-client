@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { styled } from "styled-components";
 import { useContext } from "react";
-import { ObjectContext } from "../../../../Contexts/ObjectContext";
+import { ObjectContext } from "../../../../contexts/ObjectContext";
 import axiosInstance from "../../../../services/axios";
 
 function EffectEditor() {
