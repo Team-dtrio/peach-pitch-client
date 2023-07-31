@@ -27,7 +27,7 @@ function StyledImageComponent({ spec }) {
   );
 }
 
-function Image({ id, spec }) {
+function Image({ id, spec, onContextMenu }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [imageSpec, setImageSpec] = useState(spec);
 
@@ -199,6 +199,7 @@ function Image({ id, spec }) {
     <div
       onClick={handleImageClick}
       onMouseDown={onImageDrag}
+      onContextMenu={onContextMenu}
       aria-hidden="true"
     >
       <StyledImageComponent spec={imageSpec} />

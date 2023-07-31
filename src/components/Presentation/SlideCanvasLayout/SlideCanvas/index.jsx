@@ -3,13 +3,18 @@ import { useRef } from "react";
 
 import Object from "../Object";
 
-function SlideCanvas({ canvasSpec, objects }) {
+function SlideCanvas({ canvasSpec, objects, onObjectRightClick }) {
   const canvasRef = useRef(null);
 
   return (
     <Canvas ref={canvasRef} spec={canvasSpec}>
       {objects.map((object) => (
-        <Object key={object._id} id={object._id} objectSpec={object} />
+        <Object
+          key={object._id}
+          id={object._id}
+          objectSpec={object}
+          onRightClick={onObjectRightClick}
+        />
       ))}
     </Canvas>
   );

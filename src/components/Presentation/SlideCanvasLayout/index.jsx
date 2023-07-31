@@ -1,6 +1,6 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { styled } from "styled-components";
 import { ObjectContext } from "../../../contexts/ObjectContext";
 import axiosInstance from "../../../services/axios";
@@ -47,6 +47,7 @@ function getUser() {
 function SlideCanvasLayout() {
   const { presentationId, slideId } = useParams();
   const user = getUser();
+  const queryClient = useQueryClient();
 
   const { data = [] } = useGetAllObjectsQuery(
     user._id,
@@ -55,8 +56,49 @@ function SlideCanvasLayout() {
   );
   const { selectObject, selectedObjectId } = useContext(ObjectContext);
 
+  const mutation = useMutation(
+    (objectId) =>
+      axiosInstance.delete(
+        `/users/${user._id}/presentations/${presentationId}/slides/${slideId}/objects/${objectId}`,
+      ),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("objects");
+      },
+    },
+  );
+
+  const [contextMenu, setContextMenu] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+  });
+
+  const handleRightClick = (e, objectId) => {
+    e.preventDefault();
+    selectObject(objectId);
+    setContextMenu({
+      visible: true,
+      x: e.clientX,
+      y: e.clientY,
+    });
+  };
+
+  const handleContextMenuClose = () => {
+    setContextMenu({
+      visible: false,
+      x: 0,
+      y: 0,
+    });
+  };
+
+  const handleDeleteObject = () => {
+    mutation.mutate(selectedObjectId);
+    handleContextMenuClose();
+  };
+
   return (
-    <Wrapper>
+    <Wrapper onClick={handleContextMenuClose}>
       <EntireLayout>
         <SlideCanvas
           canvasSpec={{
@@ -68,15 +110,39 @@ function SlideCanvasLayout() {
           objects={data}
           selectObject={selectObject}
           selectedObjectId={selectedObjectId}
+          onObjectRightClick={handleRightClick}
         />
       </EntireLayout>
+      {contextMenu.visible && (
+        <ContextMenu style={{ top: contextMenu.y, left: contextMenu.x }}>
+          <MenuItem onClick={handleDeleteObject}>Delete</MenuItem>
+        </ContextMenu>
+      )}
     </Wrapper>
   );
 }
 
+const ContextMenu = styled.div`
+  position: absolute;
+  z-index: 100;
+  background-color: #fff;
+  border: 1px solid #dfdfdf;
+  padding: 10px;
+  border-radius: 5px;
+`;
+
+const MenuItem = styled.div`
+  padding: 5px 10px;
+  &:hover {
+    background-color: #dfdfdf;
+    cursor: pointer;
+  }
+`;
+
 const Wrapper = styled.section`
   margin: auto;
 `;
+
 const EntireLayout = styled.div`
   display: flex;
   justify-content: center;

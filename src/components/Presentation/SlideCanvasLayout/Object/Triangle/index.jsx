@@ -14,7 +14,7 @@ const StyledTriangle = styled.div`
   left: ${({ spec }) => spec.x}px;
 `;
 
-function Triangle({ id, spec }) {
+function Triangle({ id, spec, onContextMenu }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [triangleSpec, setTriangleSpec] = useState(spec);
 
@@ -185,6 +185,7 @@ function Triangle({ id, spec }) {
     <div
       onClick={handleTriangleClick}
       onMouseDown={onTriangleDrag}
+      onContextMenu={onContextMenu}
       aria-hidden="true"
     >
       <StyledTriangle spec={triangleSpec} />
