@@ -5,7 +5,7 @@ import Square from "./Square";
 import Image from "./Image";
 
 function Object({ objectSpec, id }) {
-  switch (objectSpec.type.toLowerCase()) {
+  switch (objectSpec?.type.toLowerCase()) {
     case "circle":
       return <Circle spec={objectSpec} id={id} />;
     case "triangle":
