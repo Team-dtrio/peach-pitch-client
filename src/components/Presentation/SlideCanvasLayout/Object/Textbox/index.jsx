@@ -74,6 +74,7 @@ function EditableTextBox({ spec }) {
       <EditableDiv
         spec={spec}
         contentEditable
+        suppressContentEditableWarning
         onInput={handleTextboxContentChange}
       >
         {spec.content}
