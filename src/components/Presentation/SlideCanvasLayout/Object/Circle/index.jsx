@@ -14,7 +14,7 @@ const StyledCircle = styled.div`
   border-radius: 100%;
 `;
 
-function Circle({ id, spec }) {
+function Circle({ id, spec, onContextMenu }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [circleSpec, setCircleSpec] = useState(spec);
 
@@ -46,34 +46,35 @@ function Circle({ id, spec }) {
         let newCircleSpec = { ...circleSpec };
         const heightChange = newPosition.y - initialPosition.y;
         const widthChange = newPosition.x - initialPosition.x;
+        const change = Math.max(heightChange, widthChange);
 
         switch (draggedVertexIndex) {
           case 0:
-          case 4:
-            newCircleSpec = {
-              ...newCircleSpec,
-              width: initialSpec.width + 2 * widthChange,
-            };
-            break;
           case 2:
+          case 4:
           case 6:
-            newCircleSpec = {
-              ...newCircleSpec,
-              height: initialSpec.height + 2 * heightChange,
-            };
-            break;
           case 1:
-          case 5:
+          case 3:
             newCircleSpec = {
               ...newCircleSpec,
-              height: initialSpec.height - 2 * heightChange,
+              width: initialSpec.width + 2 * change,
+              height: initialSpec.height + 2 * change,
             };
             break;
-          case 3:
           case 7:
             newCircleSpec = {
               ...newCircleSpec,
-              width: initialSpec.width - 2 * widthChange,
+              x: initialSpec.x - change,
+              width: initialSpec.width + 2 * change,
+              height: initialSpec.height + 2 * change,
+            };
+            break;
+          case 5:
+            newCircleSpec = {
+              ...newCircleSpec,
+              x: initialSpec.x - change,
+              width: initialSpec.width + 2 * change,
+              height: initialSpec.height + 2 * change,
             };
             break;
           default:
@@ -155,6 +156,7 @@ function Circle({ id, spec }) {
     <div
       onClick={handleCircleClick}
       onMouseDown={onCircleDrag}
+      onContextMenu={onContextMenu}
       aria-hidden="true"
     >
       <StyledCircle spec={circleSpec} />

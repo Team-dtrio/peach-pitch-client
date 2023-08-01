@@ -22,12 +22,12 @@ const StyledImage = styled.img`
 function StyledImageComponent({ spec }) {
   return (
     <StyledImageBox spec={spec}>
-      <StyledImage src={spec.src} alt="" />
+      <StyledImage src={spec.imageUrl} alt="" />
     </StyledImageBox>
   );
 }
 
-function Image({ id, spec }) {
+function Image({ id, spec, onContextMenu }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [imageSpec, setImageSpec] = useState(spec);
 
@@ -57,67 +57,30 @@ function Image({ id, spec }) {
         };
 
         let newImageSpec = { ...imageSpec };
-        const heightChange = newPosition.y - initialPosition.y;
         const widthChange = newPosition.x - initialPosition.x;
+        const aspectRatio = imageSpec.width / imageSpec.height;
 
         switch (draggedVertexIndex) {
           case 0:
-            newImageSpec = {
-              ...newImageSpec,
-              width: initialSpec.width - widthChange,
-              height: initialSpec.height - heightChange,
-              x: newPosition.x,
-              y: newPosition.y,
-            };
-            break;
-          case 2:
-            newImageSpec = {
-              ...newImageSpec,
-              width: initialSpec.width + widthChange,
-              height: initialSpec.height - heightChange,
-              y: newPosition.y,
-            };
-            break;
-          case 4:
-            newImageSpec = {
-              ...newImageSpec,
-              width: initialSpec.width + widthChange,
-              height: initialSpec.height + heightChange,
-            };
-            break;
           case 6:
             newImageSpec = {
               ...newImageSpec,
               width: initialSpec.width - widthChange,
-              height: initialSpec.height + heightChange,
-              x: newPosition.x,
+              height: (initialSpec.width - widthChange) / aspectRatio,
+            };
+            break;
+          case 2:
+          case 4:
+            newImageSpec = {
+              ...newImageSpec,
+              width: initialSpec.width + widthChange,
+              height: (initialSpec.width + widthChange) / aspectRatio,
             };
             break;
           case 1:
-            newImageSpec = {
-              ...newImageSpec,
-              height: Math.max(10, initialSpec.height - heightChange),
-              y: newPosition.y,
-            };
-            break;
           case 5:
-            newImageSpec = {
-              ...newImageSpec,
-              height: Math.max(10, initialSpec.height + heightChange),
-            };
-            break;
           case 3:
-            newImageSpec = {
-              ...newImageSpec,
-              width: Math.max(10, initialSpec.width + widthChange),
-            };
-            break;
           case 7:
-            newImageSpec = {
-              ...newImageSpec,
-              width: Math.max(10, initialSpec.width - widthChange),
-              x: newPosition.x,
-            };
             break;
           default:
             break;
@@ -199,6 +162,7 @@ function Image({ id, spec }) {
     <div
       onClick={handleImageClick}
       onMouseDown={onImageDrag}
+      onContextMenu={onContextMenu}
       aria-hidden="true"
     >
       <StyledImageComponent spec={imageSpec} />

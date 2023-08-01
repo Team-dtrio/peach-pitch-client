@@ -13,7 +13,7 @@ const StyledSquare = styled.div`
   border: 1px solid ${({ spec }) => spec.borderColor};
 `;
 
-function Square({ id, spec }) {
+function Square({ id, spec, onContextMenu }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [squareSpec, setSquareSpec] = useState(spec);
 
@@ -184,6 +184,7 @@ function Square({ id, spec }) {
     <div
       onClick={handleSquareClick}
       onMouseDown={onSquareDrag}
+      onContextMenu={onContextMenu}
       aria-hidden="true"
     >
       <StyledSquare spec={squareSpec} />

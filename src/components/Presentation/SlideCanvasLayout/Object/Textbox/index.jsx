@@ -39,7 +39,7 @@ function EditableTextBox({ spec }) {
   );
 }
 
-function Textbox({ id, spec }) {
+function Textbox({ id, spec, onContextMenu }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [textBoxSpec, setTextBoxSpec] = useState(spec);
 
@@ -210,6 +210,7 @@ function Textbox({ id, spec }) {
     <div
       onClick={handleTextBoxClick}
       onMouseDown={onTextBoxDrag}
+      onContextMenu={onContextMenu}
       aria-hidden="true"
     >
       <EditableTextBox spec={textBoxSpec} />
