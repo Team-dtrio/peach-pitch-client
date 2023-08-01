@@ -53,7 +53,7 @@ function Triangle({ id, spec, onContextMenu }) {
       const objectId = triangleSpec._id;
       const response = await axiosInstance.put(
         `/users/${userId}/presentations/${presentationId}/slides/${slideId}/objects/${objectId}`,
-        { spec: updatedTriangleSpec },
+        updatedTriangleSpec,
       );
       return response.data;
     },

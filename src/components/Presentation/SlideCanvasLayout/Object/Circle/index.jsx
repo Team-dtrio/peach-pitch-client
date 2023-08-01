@@ -51,7 +51,7 @@ function Circle({ id, spec, onContextMenu }) {
       const objectId = circleSpec._id;
       const response = await axiosInstance.put(
         `/users/${userId}/presentations/${presentationId}/slides/${slideId}/objects/${objectId}`,
-        { spec: updatedCircleSpec },
+        updatedCircleSpec,
       );
 
       return response.data;

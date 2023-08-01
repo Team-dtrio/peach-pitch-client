@@ -43,7 +43,7 @@ function Square({ id, spec, onContextMenu }) {
       const objectId = squareSpec._id;
       const response = await axiosInstance.put(
         `/users/${userId}/presentations/${presentationId}/slides/${slideId}/objects/${objectId}`,
-        { spec: updatedSquareSpec },
+        updatedSquareSpec,
       );
       return response.data;
     },
