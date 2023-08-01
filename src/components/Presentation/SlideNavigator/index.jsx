@@ -197,8 +197,8 @@ function SlideNavigator() {
       })}
       {contextMenu.visible && (
         <ContextMenu style={{ top: contextMenu.y, left: contextMenu.x }}>
-          <MenuItem onClick={handleAddSlide}>추가</MenuItem>
-          <MenuItem onClick={handleDeleteSlide}>삭제</MenuItem>
+          <MenuItem onClick={handleAddSlide}>Add</MenuItem>
+          <MenuItem onClick={handleDeleteSlide}>Delete</MenuItem>
         </ContextMenu>
       )}
     </Wrapper>
