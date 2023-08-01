@@ -1,22 +1,24 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+import { throttle } from "lodash";
 import Boundary from "../Boundary";
 import { ObjectContext } from "../../../../../contexts/ObjectContext";
+import axiosInstance from "../../../../../services/axios";
 
-const StyledTriangle = styled.div`
-  position: absolute;
-  width: ${({ spec }) => spec.width}px;
-  height: ${({ spec }) => spec.height}px;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  background-color: ${({ spec }) => spec.fillColor};
-  border: 1px solid ${({ spec }) => spec.borderColor};
-  top: ${({ spec }) => spec.y}px;
-  left: ${({ spec }) => spec.x}px;
-`;
+function getUser() {
+  const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
+  return loggedInUser;
+}
 
 function Triangle({ id, spec, onContextMenu }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [triangleSpec, setTriangleSpec] = useState(spec);
+  const user = getUser();
+  const userId = user._id;
+  const { presentationId, slideId } = useParams();
+  const queryClient = useQueryClient();
 
   const { selectedObjectId, selectedObjectType, selectObject } =
     useContext(ObjectContext);
@@ -29,6 +31,39 @@ function Triangle({ id, spec, onContextMenu }) {
     selectObject(id, spec.type);
   };
 
+  const updatedTriangleSpec = {
+    type: triangleSpec.type,
+    coordinates: { x: triangleSpec.x, y: triangleSpec.y },
+    dimensions: { width: triangleSpec.width, height: triangleSpec.height },
+    boundaryVertices: triangleSpec.boundaryVerticles,
+    currentAnimation: triangleSpec.currentAnimation,
+    _id: triangleSpec._id,
+    Triangle: {
+      verticles: triangleSpec.verticles,
+      x: triangleSpec.x,
+      y: triangleSpec.y,
+      width: triangleSpec.width,
+      height: triangleSpec.height,
+      fillColor: triangleSpec.fillColor,
+      borderColor: triangleSpec.borderColor,
+    },
+  };
+  const updateTriangleSpec = useMutation(
+    async () => {
+      const objectId = triangleSpec._id;
+      const response = await axiosInstance.put(
+        `/users/${userId}/presentations/${presentationId}/slides/${slideId}/objects/${objectId}`,
+        updatedTriangleSpec,
+      );
+      return response.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("slides");
+      },
+    },
+  );
+
   const onVertexDrag = useCallback(
     (draggedVertexIndex) => (event) => {
       event.preventDefault();
@@ -37,7 +72,7 @@ function Triangle({ id, spec, onContextMenu }) {
       const initialPosition = { x: event.clientX, y: event.clientY };
       const initialSpec = { ...triangleSpec };
 
-      function moveHandler(moveEvent) {
+      const moveHandler = throttle((moveEvent) => {
         const newPosition = {
           x: moveEvent.clientX,
           y: moveEvent.clientY,
@@ -111,7 +146,13 @@ function Triangle({ id, spec, onContextMenu }) {
         }
 
         setTriangleSpec(newTriangleSpec);
-      }
+      }, 200);
+
+      const upHandler = async () => {
+        document.removeEventListener("mousemove", moveHandler);
+        document.removeEventListener("mouseup", upHandler);
+        await updateTriangleSpec.mutateAsync();
+      };
 
       document.addEventListener("mousemove", moveHandler);
       document.addEventListener(
@@ -122,7 +163,7 @@ function Triangle({ id, spec, onContextMenu }) {
         { once: true },
       );
     },
-    [triangleSpec],
+    [triangleSpec, updateTriangleSpec],
   );
 
   function onTriangleDrag(event) {
@@ -133,18 +174,20 @@ function Triangle({ id, spec, onContextMenu }) {
       y: event.clientY - triangleSpec.y,
     };
 
-    function moveHandler(moveEvent) {
+    const moveHandler = throttle((moveEvent) => {
       setTriangleSpec((prevSpec) => ({
         ...prevSpec,
         x: moveEvent.clientX - initialPosition.x,
         y: moveEvent.clientY - initialPosition.y,
       }));
-    }
+    }, 150);
 
-    function upHandler() {
+    const upHandler = async () => {
       document.removeEventListener("mousemove", moveHandler);
       document.removeEventListener("mouseup", upHandler);
-    }
+
+      await updateTriangleSpec.mutateAsync();
+    };
 
     document.addEventListener("mousemove", moveHandler);
     document.addEventListener("mouseup", upHandler);
@@ -202,5 +245,16 @@ function Triangle({ id, spec, onContextMenu }) {
     </div>
   );
 }
+
+const StyledTriangle = styled.div`
+  position: absolute;
+  width: ${({ spec }) => spec.width}px;
+  height: ${({ spec }) => spec.height}px;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  background-color: ${({ spec }) => spec.fillColor};
+  border: 1px solid ${({ spec }) => spec.borderColor};
+  top: ${({ spec }) => spec.y}px;
+  left: ${({ spec }) => spec.x}px;
+`;
 
 export default Triangle;

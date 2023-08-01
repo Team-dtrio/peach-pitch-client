@@ -10,7 +10,7 @@ function getUser() {
   return loggedInUser;
 }
 const user = getUser();
-const userId = user._id;
+const userId = user?._id;
 
 function useGetSlidesQuery() {
   const { presentationId, slideId } = useParams();

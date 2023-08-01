@@ -171,7 +171,7 @@ function OrderEditor() {
             </List>
             {contextMenu.visible && (
               <ContextMenu style={{ top: contextMenu.y, left: contextMenu.x }}>
-                <MenuItem onClick={handleDeleteAnimation}>삭제</MenuItem>
+                <MenuItem onClick={handleDeleteAnimation}>Delete</MenuItem>
               </ContextMenu>
             )}
           </Wrapper>
