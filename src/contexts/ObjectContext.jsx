@@ -5,18 +5,15 @@ const ObjectContext = createContext();
 function ObjectProvider({ children }) {
   const [selectedObjectId, setSelectedObjectId] = useState(null);
   const [selectedObjectType, setSelectedObjectType] = useState(null);
-  const [selectedObject, setSelectedObject] = useState(null);
 
   const selectObject = useCallback(
-    (id, type, spec) => {
+    (id, type) => {
       if (selectedObjectId === id && selectedObjectType === type) {
         setSelectedObjectId(null);
         setSelectedObjectType(null);
-        setSelectedObject(null);
       } else {
         setSelectedObjectId(id);
         setSelectedObjectType(type);
-        setSelectedObject(spec);
       }
     },
     [selectedObjectId, selectedObjectType],
@@ -31,17 +28,10 @@ function ObjectProvider({ children }) {
     () => ({
       selectedObjectId,
       selectedObjectType,
-      selectedObject,
       selectObject,
       deselectObject,
     }),
-    [
-      selectedObjectId,
-      selectedObjectType,
-      selectedObject,
-      selectObject,
-      deselectObject,
-    ],
+    [selectedObjectId, selectedObjectType, selectObject, deselectObject],
   );
 
   return (
