@@ -30,8 +30,7 @@ function MainHeader({ userInfo, children }) {
 }
 
 const Header = styled.header`
-  display: grid;
-  border-bottom: 1px solid #d9d9d9;
+  border-bottom: 1.5px solid ${({ theme }) => theme.color.gray};
 `;
 const Wrapper = styled.div`
   display: flex;

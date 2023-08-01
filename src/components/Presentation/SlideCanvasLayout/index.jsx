@@ -1,7 +1,7 @@
+import { styled } from "styled-components";
 import { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { styled } from "styled-components";
 import { ObjectContext } from "../../../contexts/ObjectContext";
 import axiosInstance from "../../../services/axios";
 
@@ -58,7 +58,6 @@ function SlideCanvasLayout() {
     presentationId,
     slideId,
   );
-  const { selectObject, selectedObjectId } = useContext(ObjectContext);
 
   const mutation = useMutation(
     (objectId) =>
@@ -71,6 +70,8 @@ function SlideCanvasLayout() {
       },
     },
   );
+
+  const { selectedObjectId, selectObject } = useContext(ObjectContext);
 
   const [contextMenu, setContextMenu] = useState({
     visible: false,

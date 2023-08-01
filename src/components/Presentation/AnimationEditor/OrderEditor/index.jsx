@@ -45,6 +45,7 @@ function OrderEditor() {
   const [animationSequence, setAnimationSequence] = useState(null);
   const { presentationId, slideId } = useParams();
   const queryClient = useQueryClient();
+  const [selectedAnimationId, setSelectedAnimationId] = useState(null);
 
   const updateSequenceMutation = useMutation(
     ({ newAnimationSequence }) =>
@@ -91,6 +92,47 @@ function OrderEditor() {
     });
   }
 
+  const useDeleteAnimationMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axiosInstance.delete(
+        `/users/${userId}/presentations/${presentationId}/slides/${slideId}/objects/${selectedAnimationId}/animations/${selectedAnimationId}`,
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries("slides");
+    },
+  });
+
+  const [contextMenu, setContextMenu] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+  });
+
+  function handleContextMenu(event, id) {
+    event.preventDefault();
+    setSelectedAnimationId(id);
+    setContextMenu({
+      visible: true,
+      x: event.clientX,
+      y: event.clientY,
+    });
+  }
+
+  function handleCloseContextMenu() {
+    setContextMenu({ visible: false, x: 0, y: 0 });
+  }
+
+  async function handleDeleteAnimation() {
+    try {
+      await useDeleteAnimationMutation.mutateAsync();
+      handleCloseContextMenu();
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   if (isLoading) {
     return <LoadingModal />;
   }
@@ -120,10 +162,18 @@ function OrderEditor() {
               }
               onDragOver={handleDragOver}
               onDrop={(event) => handleDrop(event, animation.objectId)}
+              onContextMenu={(event) =>
+                handleContextMenu(event, animation.objectId)
+              }
             >
               <Item>{animation.animationEffect}</Item>
               <Item>{objectType}</Item>
             </List>
+            {contextMenu.visible && (
+              <ContextMenu style={{ top: contextMenu.y, left: contextMenu.x }}>
+                <MenuItem onClick={handleDeleteAnimation}>삭제</MenuItem>
+              </ContextMenu>
+            )}
           </Wrapper>
         );
       })}
@@ -152,6 +202,23 @@ const Item = styled.div`
   height: 10px;
   padding: 5px 10px;
   border-radius: 10px;
+`;
+
+const ContextMenu = styled.div`
+  position: absolute;
+  z-index: 100;
+  background-color: #fff;
+  border: 1px solid #dfdfdf;
+  padding: 10px;
+  border-radius: 5px;
+`;
+
+const MenuItem = styled.div`
+  padding: 5px 10px;
+  &:hover {
+    background-color: #dfdfdf;
+    cursor: pointer;
+  }
 `;
 
 export default OrderEditor;
