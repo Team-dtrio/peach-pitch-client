@@ -41,7 +41,7 @@ function MyPresentation({ presentations }) {
                   <DynamicObject key={object._id} objectSpec={object} />
                 ))}
               </Thumbnail>
-              <h3>{presentation.title}</h3>
+              <ThumbnailTitle>{presentation.title}</ThumbnailTitle>
             </StyledLink>
           );
         })}
@@ -73,6 +73,9 @@ const Thumbnail = styled.div`
   height: 25vh;
   background-color: #fff;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+`;
+const ThumbnailTitle = styled.h3`
+  padding-left: 33%;
 `;
 
 export default MyPresentation;
