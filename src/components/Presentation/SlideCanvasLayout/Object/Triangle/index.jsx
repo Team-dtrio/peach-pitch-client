@@ -151,6 +151,10 @@ function Triangle({ id, spec, onContextMenu }) {
   }
 
   useEffect(() => {
+    setTriangleSpec(spec);
+  }, [spec]);
+
+  useEffect(() => {
     const offset = { x: 1, y: 1 };
 
     const baseVertices = [

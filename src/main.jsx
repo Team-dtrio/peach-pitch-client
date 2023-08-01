@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider } from "styled-components";
 import GlobalStyle from "./styles/GlobalStyle";
-import { ObjectProvider } from "./Contexts/ObjectContext";
+import { ObjectProvider } from "./contexts/ObjectContext";
 
 import App from "./App";
 import appTheme from "./styles/appTheme";

@@ -122,6 +122,10 @@ function Circle({ id, spec, onContextMenu }) {
   };
 
   useEffect(() => {
+    setCircleSpec(spec);
+  }, [spec]);
+
+  useEffect(() => {
     const offset = { x: 1, y: 1 };
 
     const baseVertices = [

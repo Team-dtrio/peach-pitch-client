@@ -150,6 +150,10 @@ function Square({ id, spec, onContextMenu }) {
   };
 
   useEffect(() => {
+    setSquareSpec(spec);
+  }, [spec]);
+
+  useEffect(() => {
     const offset = { x: 1, y: 1 };
 
     const baseVertices = [

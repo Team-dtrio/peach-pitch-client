@@ -8,34 +8,38 @@ import axiosInstance from "../../../services/axios";
 import SlideCanvas from "./SlideCanvas";
 
 function useGetAllObjectsQuery(userId, presentationId, slideId) {
-  return useQuery(["objects", slideId], async () => {
-    const { data } = await axiosInstance.get(
-      `/users/${userId}/presentations/${presentationId}/slides/${slideId}/objects`,
-    );
+  return useQuery(
+    ["objects", slideId],
+    async () => {
+      const { data } = await axiosInstance.get(
+        `/users/${userId}/presentations/${presentationId}/slides/${slideId}/objects`,
+      );
 
-    const normalizedObjects = data.objects.map(
-      (
-        { _id, type, coordinates, dimensions, currentAnimation },
-        index,
-        objects,
-      ) => {
-        const features = objects[index][type];
+      const normalizedObjects = data.objects.map(
+        (
+          { _id, type, coordinates, dimensions, currentAnimation },
+          index,
+          objects,
+        ) => {
+          const features = objects[index][type];
 
-        return {
-          _id,
-          type,
-          x: coordinates.x,
-          y: coordinates.y,
-          width: dimensions.width,
-          height: dimensions.height,
-          currentAnimation,
-          ...features,
-        };
-      },
-    );
+          return {
+            _id,
+            type,
+            x: coordinates.x,
+            y: coordinates.y,
+            width: dimensions.width,
+            height: dimensions.height,
+            currentAnimation,
+            ...features,
+          };
+        },
+      );
 
-    return normalizedObjects;
-  });
+      return normalizedObjects;
+    },
+    { staleTime: 0 },
+  );
 }
 
 function getUser() {
@@ -63,7 +67,7 @@ function SlideCanvasLayout() {
       ),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("objects");
+        queryClient.refetchQueries(["objects", slideId]);
       },
     },
   );

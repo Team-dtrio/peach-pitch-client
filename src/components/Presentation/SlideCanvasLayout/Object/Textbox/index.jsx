@@ -1,7 +1,11 @@
-import { useState, useEffect, useCallback, useContext } from "react";
 import styled from "styled-components";
-import Boundary from "../Boundary";
+import { useState, useEffect, useCallback, useContext } from "react";
+import { useParams } from "react-router-dom";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { debounce } from "lodash";
 import { ObjectContext } from "../../../../../contexts/ObjectContext";
+import Boundary from "../Boundary";
+import axiosInstance from "../../../../../services/axios";
 
 const StyledTextBox = styled.div`
   position: absolute;
@@ -10,9 +14,11 @@ const StyledTextBox = styled.div`
   width: ${({ spec }) => spec.width}px;
   height: ${({ spec }) => spec.height}px;
   text-align: ${({ spec }) => spec.textAlign};
-  border: 1px dashed ${({ spec }) => spec.borderColor};
-  background-color: ${({ spec }) => spec.innerColor};
+  border: ${({ spec }) => spec.borderColor};
+  background-color: ${({ spec }) => spec.fillColor};
   user-select: none;
+  padding: 5px;
+  box-sizing: border-box;
 `;
 
 const EditableDiv = styled.div`
@@ -25,21 +31,58 @@ const EditableDiv = styled.div`
   font-size: ${({ spec }) => spec.fontSize}px;
   font-family: ${({ spec }) => spec.fontFamily};
   font-style: ${({ spec }) => spec.fontStyle};
-  font-weight: 400;
-  text-decoration: ${({ spec }) => spec.fontStyle};
+  font-weight: ${({ spec }) => spec.fontWeight};
+  text-decoration: ${({ spec }) => spec.textDecoration};
+  line-height: 1.5;
 `;
 
 function EditableTextBox({ spec }) {
+  const queryClient = useQueryClient();
+  const { selectedObjectId, selectedObjectType } = useContext(ObjectContext);
+
+  function getUser() {
+    const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
+    return loggedInUser;
+  }
+
+  const user = getUser();
+  const userId = user._id;
+  const objectId = selectedObjectId;
+  const { presentationId, slideId } = useParams();
+
+  const textBoxContentMutation = useMutation(
+    (updateData) =>
+      axiosInstance.put(
+        `/users/${userId}/presentations/${presentationId}/slides/${slideId}/objects/${objectId}/`,
+        updateData,
+      ),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["objects", slideId]);
+      },
+    },
+  );
+
+  const handleTextboxContentChange = debounce((event) => {
+    const updateData = {};
+    updateData[selectedObjectType] = { content: event.target.textContent };
+    textBoxContentMutation.mutate(updateData);
+  }, 500);
+
   return (
     <StyledTextBox spec={spec}>
-      <EditableDiv spec={spec} contentEditable>
+      <EditableDiv
+        spec={spec}
+        contentEditable
+        onInput={handleTextboxContentChange}
+      >
         {spec.content}
       </EditableDiv>
     </StyledTextBox>
   );
 }
 
-function Textbox({ id, spec, onContextMenu }) {
+function Textbox({ id, spec, onContextMenu, updateContent }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [textBoxSpec, setTextBoxSpec] = useState(spec);
 
@@ -49,10 +92,18 @@ function Textbox({ id, spec, onContextMenu }) {
   const isSelected =
     id === selectedObjectId && spec.type === selectedObjectType;
 
-  const handleTextBoxClick = (event) => {
+  function handleTextBoxClick(event) {
     event.stopPropagation();
     selectObject(id, spec.type);
-  };
+  }
+
+  function handleContentChange(newContent) {
+    setTextBoxSpec((prevSpec) => ({
+      ...prevSpec,
+      content: newContent,
+    }));
+    updateContent(newContent);
+  }
 
   const onVertexDrag = useCallback(
     (draggedVertexIndex) => (event) => {
@@ -176,6 +227,10 @@ function Textbox({ id, spec, onContextMenu }) {
   }
 
   useEffect(() => {
+    setTextBoxSpec(spec);
+  }, [spec]);
+
+  useEffect(() => {
     const offset = { x: 1, y: 1 };
 
     const baseVertices = [
@@ -213,7 +268,10 @@ function Textbox({ id, spec, onContextMenu }) {
       onContextMenu={onContextMenu}
       aria-hidden="true"
     >
-      <EditableTextBox spec={textBoxSpec} />
+      <EditableTextBox
+        spec={textBoxSpec}
+        onContentChange={handleContentChange}
+      />
       {isSelected && (
         <Boundary
           boundaryVertices={boundaryVertices}

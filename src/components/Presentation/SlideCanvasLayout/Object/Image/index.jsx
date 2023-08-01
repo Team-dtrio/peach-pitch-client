@@ -128,6 +128,10 @@ function Image({ id, spec, onContextMenu }) {
   }
 
   useEffect(() => {
+    setImageSpec(spec);
+  }, [spec]);
+
+  useEffect(() => {
     const offset = { x: 1, y: 1 };
 
     const baseVertices = [
