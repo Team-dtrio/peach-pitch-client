@@ -41,10 +41,10 @@ const Container = styled.div`
 const NewCanvas = styled.div`
   display: grid;
   grid-template-rows: 1fr 1fr 1fr;
-  color: ${({ theme }) => theme.color.app};
-  border: 3px solid ${({ theme }) => theme.color.app};
-  width: 19.5vw;
-  height: 23vh;
+  background: ${({ theme }) => theme.background.main};
+  color: #fff;
+  width: 20vw;
+  height: 25vh;
   font-weight: 600;
   font-size: 2.7rem;
   text-align: center;

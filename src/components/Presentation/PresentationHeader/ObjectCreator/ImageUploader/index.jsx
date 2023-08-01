@@ -1,34 +1,102 @@
-import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import S3 from "aws-sdk/clients/s3";
 import styled from "styled-components";
+
+import axiosInstance from "../../../../../services/axios";
 import imageUploaderUrl from "../../../../../assets/oc-icon-picture.svg";
-import UploadModal from "./UploadModal";
+
+function useCreateObjectMutation(slideIdParam) {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async ({ userId, presentationId, slideId, type, imageUrl }) => {
+      const { data } = await axiosInstance.post(
+        `/users/${userId}/presentations/${presentationId}/slides/${slideId}/objects`,
+        {
+          type,
+          imageUrl,
+        },
+      );
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries("slides");
+      queryClient.invalidateQueries(["objects", slideIdParam]);
+    },
+  });
+
+  return mutation;
+}
+
+function getUser() {
+  const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
+
+  return loggedInUser;
+}
 
 function ImageUploader() {
-  const [showModal, setShowModal] = useState(false);
+  const {
+    VITE_APP_AWS_ACCESS_KEY_ID: accessKeyId,
+    VITE_APP_AWS_SECRET_ACCESS_KEY: secretAccessKey,
+    VITE_APP_AWS_REGION: region,
+    VITE_APP_AWS_S3_BUCKET: bucket,
+  } = import.meta.env;
+  const s3 = new S3({ accessKeyId, secretAccessKey, region });
+  const user = getUser();
+  const { presentationId, slideId } = useParams();
+  const { mutate } = useCreateObjectMutation(slideId);
 
-  const handleClick = () => {
-    setShowModal(!showModal);
-  };
+  function onFileChange(event) {
+    const file = event.target.files[0];
+
+    const params = {
+      Bucket: bucket,
+      Key: file.name,
+      Body: file,
+    };
+
+    s3.upload(params, async (err, data) => {
+      if (err) {
+        throw new Error("Error uploading file:", err);
+      } else {
+        mutate({
+          userId: user._id,
+          presentationId,
+          slideId,
+          type: "Image",
+          imageUrl: data.Location,
+        });
+      }
+    });
+  }
 
   return (
-    <div>
-      <Button onClick={handleClick}>
-        <Image src={imageUploaderUrl} />
-      </Button>
-      {showModal && <UploadModal setShowModal={setShowModal} />}
-    </div>
+    <Input
+      type="file"
+      url={imageUploaderUrl}
+      accept="image/*"
+      onChange={onFileChange}
+    />
   );
 }
 
-const Button = styled.button`
-  background-color: transparent;
-  margin: 7px 30px;
+const Input = styled.input`
+  width: 39px;
+  height: 31px;
+  color: transparent;
+  background-image: url(${({ url }) => url});
+  background-size: cover;
+  background-repeat: no-repeat;
+  transform: scaleY(0.9);
+  margin: 0 30px;
   border: 0;
   cursor: pointer;
-`;
-const Image = styled.img`
-  width: 32px;
-  height: 32px;
+
+  &::file-selector-button {
+    display: none;
+  }
 `;
 
 export default ImageUploader;

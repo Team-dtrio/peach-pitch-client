@@ -21,7 +21,7 @@ const Wrapper = styled.div`
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  padding: 4px 23px;
+  padding: 14px 23px;
   border-top: 1px solid #d9d9d9;
 `;
 const PlayButtonWrapper = styled.div`

@@ -32,7 +32,7 @@ function SlideNavigator() {
   const { presentationId } = useParams();
   const [selectedSlideId, setSelectedSlideId] = useState(null);
 
-  const { data = {}, isLoading } = useGetAllSlidesQuery(userId, presentationId);
+  const { data = {} } = useGetAllSlidesQuery(userId, presentationId);
 
   const slidesState = data?.data?.slides;
 
@@ -115,7 +115,7 @@ function SlideNavigator() {
       await useAddSlideMutation.mutateAsync();
       handleCloseContextMenu();
     } catch (error) {
-      console.error(error);
+      throw new Error(error);
     }
   }
 
@@ -124,7 +124,7 @@ function SlideNavigator() {
       await useDeleteSlideMutation.mutateAsync();
       handleCloseContextMenu();
     } catch (error) {
-      console.error(error);
+      throw new Error(error);
     }
   }
 
@@ -151,10 +151,6 @@ function SlideNavigator() {
     const newOrder = newSlides.map((slide) => slide._id);
 
     await useUpdateSlideOrderMutation.mutateAsync({ newOrder });
-  }
-
-  if (isLoading) {
-    return <div>Loading...</div>;
   }
 
   return (

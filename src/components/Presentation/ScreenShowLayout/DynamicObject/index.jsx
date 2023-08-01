@@ -8,7 +8,9 @@ const BaseComponent = styled.div`
   width: ${({ spec }) => (spec.width / 800) * 100}%;
   height: ${({ spec }) => (spec.height / 500) * 100}%;
   background-color: ${({ spec }) => spec.fillColor};
-  border: 1px solid ${({ spec }) => spec.borderColor};
+  border: 1px solid
+    ${({ spec }) =>
+      spec.type.toLowerCase() === "image" ? "transparent" : spec.borderColor};
   text-align: ${({ spec }) => spec.textAlign};
   animation: ${({ spec }) => animations[spec.currentAnimation]} 2s linear;
   user-select: none;
@@ -54,7 +56,6 @@ const Circle = styled(BaseComponent)`
 
 function DynamicObject({ objectSpec, isAnimationActive }) {
   const components = {
-    Image,
     Square,
     Triangle,
     Circle,
@@ -71,7 +72,24 @@ function DynamicObject({ objectSpec, isAnimationActive }) {
     );
   }
 
-  return <Tag spec={objectSpec} isActive={isAnimationActive} />;
+  switch (objectSpec.type.toLowerCase()) {
+    case "textbox":
+      return (
+        <BaseComponent spec={objectSpec} isActive={isAnimationActive}>
+          <TextBox spec={objectSpec} contentEditable>
+            {objectSpec.content}
+          </TextBox>
+        </BaseComponent>
+      );
+    case "image":
+      return (
+        <BaseComponent spec={objectSpec} isActive={isAnimationActive}>
+          <Image src={objectSpec.imageUrl} spec={objectSpec} alt="image" />
+        </BaseComponent>
+      );
+    default:
+      return <Tag spec={objectSpec} isActive={isAnimationActive} />;
+  }
 }
 
 export default DynamicObject;

@@ -129,7 +129,7 @@ function OrderEditor() {
       await useDeleteAnimationMutation.mutateAsync();
       handleCloseContextMenu();
     } catch (error) {
-      console.error(error);
+      throw new Error(error);
     }
   }
 
