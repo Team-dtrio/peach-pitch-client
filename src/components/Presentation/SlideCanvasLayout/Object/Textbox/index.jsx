@@ -11,7 +11,7 @@ const StyledTextBox = styled.div`
   height: ${({ spec }) => spec.height}px;
   text-align: ${({ spec }) => spec.textAlign};
   border: 1px dashed ${({ spec }) => spec.borderColor};
-  background-color: ${({ spec }) => spec.innerColor};
+  background-color: ${({ spec }) => spec.fillColor};
   user-select: none;
 `;
 
