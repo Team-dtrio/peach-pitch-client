@@ -1,40 +1,11 @@
-import styled from "styled-components";
 import { useState, useEffect, useCallback, useContext } from "react";
-import { useParams } from "react-router-dom";
+import styled from "styled-components";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { debounce } from "lodash";
+import { useParams } from "react-router-dom";
+import { debounce, throttle } from "lodash";
 import { ObjectContext } from "../../../../../contexts/ObjectContext";
 import Boundary from "../Boundary";
 import axiosInstance from "../../../../../services/axios";
-
-const StyledTextBox = styled.div`
-  position: absolute;
-  left: ${({ spec }) => spec.x}px;
-  top: ${({ spec }) => spec.y}px;
-  width: ${({ spec }) => spec.width}px;
-  height: ${({ spec }) => spec.height}px;
-  text-align: ${({ spec }) => spec.textAlign};
-  border: ${({ spec }) => spec.borderColor};
-  background-color: ${({ spec }) => spec.fillColor};
-  user-select: none;
-  padding: 5px;
-  box-sizing: border-box;
-`;
-
-const EditableDiv = styled.div`
-  width: 100%;
-  height: 100%;
-  border: none;
-  overflow: auto;
-  outline: none;
-  color: ${({ spec }) => spec.textColor};
-  font-size: ${({ spec }) => spec.fontSize}px;
-  font-family: ${({ spec }) => spec.fontFamily};
-  font-style: ${({ spec }) => spec.fontStyle};
-  font-weight: ${({ spec }) => spec.fontWeight};
-  text-decoration: ${({ spec }) => spec.textDecoration};
-  line-height: 1.5;
-`;
 
 function EditableTextBox({ spec }) {
   const queryClient = useQueryClient();
@@ -63,7 +34,7 @@ function EditableTextBox({ spec }) {
     },
   );
 
-  const handleTextboxContentChange = debounce((event) => {
+  const handleTextBoxContentChange = debounce((event) => {
     const updateData = {};
     updateData[selectedObjectType] = { content: event.target.textContent };
     textBoxContentMutation.mutate(updateData);
@@ -75,7 +46,7 @@ function EditableTextBox({ spec }) {
         spec={spec}
         contentEditable
         suppressContentEditableWarning
-        onInput={handleTextboxContentChange}
+        onInput={handleTextBoxContentChange}
       >
         {spec.content}
       </EditableDiv>
@@ -87,6 +58,14 @@ function Textbox({ id, spec, onContextMenu, updateContent }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [textBoxSpec, setTextBoxSpec] = useState(spec);
 
+  function getUser() {
+    const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
+    return loggedInUser;
+  }
+  const user = getUser();
+  const userId = user._id;
+  const { presentationId, slideId } = useParams();
+  const queryClient = useQueryClient();
   const { selectedObjectId, selectedObjectType, selectObject } =
     useContext(ObjectContext);
 
@@ -106,6 +85,34 @@ function Textbox({ id, spec, onContextMenu, updateContent }) {
     updateContent(newContent);
   }
 
+  const updatedTextBoxSpec = {
+    type: textBoxSpec.type,
+    coordinates: { x: textBoxSpec.x, y: textBoxSpec.y },
+    dimensions: { width: textBoxSpec.width, height: textBoxSpec.height },
+    boundaryVertices: textBoxSpec.boundaryVerticles,
+    currentAnimation: textBoxSpec.currentAnimation,
+    _id: textBoxSpec._id,
+    Textbox: {
+      fillColor: textBoxSpec.fillColor,
+      borderColor: textBoxSpec.borderColor,
+    },
+  };
+  const updateTextBoxSpec = useMutation(
+    async () => {
+      const objectId = textBoxSpec._id;
+      const response = await axiosInstance.put(
+        `/users/${userId}/presentations/${presentationId}/slides/${slideId}/objects/${objectId}`,
+        updatedTextBoxSpec,
+      );
+      return response.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("slides");
+      },
+    },
+  );
+
   const onVertexDrag = useCallback(
     (draggedVertexIndex) => (event) => {
       event.preventDefault();
@@ -114,7 +121,7 @@ function Textbox({ id, spec, onContextMenu, updateContent }) {
       const initialPosition = { x: event.clientX, y: event.clientY };
       const initialSpec = { ...textBoxSpec };
 
-      function moveHandler(moveEvent) {
+      const moveHandler = throttle((moveEvent) => {
         const newPosition = {
           x: moveEvent.clientX,
           y: moveEvent.clientY,
@@ -188,7 +195,13 @@ function Textbox({ id, spec, onContextMenu, updateContent }) {
         }
 
         setTextBoxSpec(newTextBoxSpec);
-      }
+      }, 200);
+
+      const upHandler = debounce(async () => {
+        document.removeEventListener("mousemove", moveHandler);
+        document.removeEventListener("mouseup", upHandler);
+        await updateTextBoxSpec.mutateAsync();
+      }, 500);
 
       document.addEventListener("mousemove", moveHandler);
       document.addEventListener(
@@ -199,7 +212,7 @@ function Textbox({ id, spec, onContextMenu, updateContent }) {
         { once: true },
       );
     },
-    [textBoxSpec],
+    [textBoxSpec, updateTextBoxSpec],
   );
 
   function onTextBoxDrag(event) {
@@ -210,18 +223,19 @@ function Textbox({ id, spec, onContextMenu, updateContent }) {
       y: event.clientY - textBoxSpec.y,
     };
 
-    function moveHandler(moveEvent) {
+    const moveHandler = throttle((moveEvent) => {
       setTextBoxSpec((prevSpec) => ({
         ...prevSpec,
         x: moveEvent.clientX - initialPosition.x,
         y: moveEvent.clientY - initialPosition.y,
       }));
-    }
+    }, 150);
 
-    function upHandler() {
+    const upHandler = async () => {
       document.removeEventListener("mousemove", moveHandler);
       document.removeEventListener("mouseup", upHandler);
-    }
+      await updateTextBoxSpec.mutateAsync();
+    };
 
     document.addEventListener("mousemove", moveHandler);
     document.addEventListener("mouseup", upHandler);
@@ -282,5 +296,34 @@ function Textbox({ id, spec, onContextMenu, updateContent }) {
     </div>
   );
 }
+
+const StyledTextBox = styled.div`
+  position: absolute;
+  left: ${({ spec }) => spec.x}px;
+  top: ${({ spec }) => spec.y}px;
+  width: ${({ spec }) => spec.width}px;
+  height: ${({ spec }) => spec.height}px;
+  text-align: ${({ spec }) => spec.textAlign};
+  border: ${({ spec }) => spec.borderColor};
+  background-color: ${({ spec }) => spec.fillColor};
+  user-select: none;
+  padding: 5px;
+  box-sizing: border-box;
+`;
+
+const EditableDiv = styled.div`
+  width: 100%;
+  height: 100%;
+  border: none;
+  overflow: auto;
+  outline: none;
+  color: ${({ spec }) => spec.textColor};
+  font-size: ${({ spec }) => spec.fontSize}px;
+  font-family: ${({ spec }) => spec.fontFamily};
+  font-style: ${({ spec }) => spec.fontStyle};
+  font-weight: ${({ spec }) => spec.fontWeight};
+  text-decoration: ${({ spec }) => spec.textDecoration};
+  line-height: 1.5;
+`;
 
 export default Textbox;
