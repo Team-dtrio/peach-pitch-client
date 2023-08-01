@@ -8,27 +8,29 @@ function MyPresentation({ presentations }) {
       <h2>내 프레젠테이션</h2>
       <Container>
         {presentations.map((presentation) => {
-          const { objects } = presentation.slides[0];
-          const thumbnailObjects = objects.map(
-            (
-              { _id, type, coordinates, dimensions, currentAnimation },
-              objectIndex,
-              currentObjects,
-            ) => {
-              const features = currentObjects[objectIndex][type];
+          const { objects = [] } = presentation.slides[0];
+          const thumbnailObjects = objects
+            ?.filter((object) => object !== null)
+            .map(
+              (
+                { _id, type, coordinates, dimensions, currentAnimation },
+                objectIndex,
+                currentObjects,
+              ) => {
+                const features = currentObjects[objectIndex][type];
 
-              return {
-                _id,
-                type,
-                x: coordinates.x,
-                y: coordinates.y,
-                width: dimensions.width,
-                height: dimensions.height,
-                currentAnimation,
-                ...features,
-              };
-            },
-          );
+                return {
+                  _id,
+                  type,
+                  x: coordinates.x,
+                  y: coordinates.y,
+                  width: dimensions.width,
+                  height: dimensions.height,
+                  currentAnimation,
+                  ...features,
+                };
+              },
+            );
 
           return (
             <StyledLink
@@ -37,9 +39,11 @@ function MyPresentation({ presentations }) {
               state={{ objects }}
             >
               <Thumbnail>
-                {thumbnailObjects.map((object) => (
-                  <DynamicObject key={object._id} objectSpec={object} />
-                ))}
+                {thumbnailObjects &&
+                  thumbnailObjects.length > 0 &&
+                  thumbnailObjects.map((object) => (
+                    <DynamicObject key={object._id} objectSpec={object} />
+                  ))}
               </Thumbnail>
               <ThumbnailTitle>{presentation.title}</ThumbnailTitle>
             </StyledLink>
@@ -49,10 +53,10 @@ function MyPresentation({ presentations }) {
     </Section>
   );
 }
-
 const StyledLink = styled(Link)`
   margin-bottom: 10px;
   text-decoration: none;
+  color: #222;
 
   &:visited {
     color: #222;

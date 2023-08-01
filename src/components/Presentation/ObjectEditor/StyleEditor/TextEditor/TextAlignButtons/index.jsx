@@ -2,10 +2,10 @@ import styled from "styled-components";
 import { useCallback } from "react";
 import useTextMutation from "../../../../../../hooks/useTextMutation";
 
-import startUrl from "../../../../../../assets/text-icon-start.svg";
-import centerUrl from "../../../../../../assets/text-icon-center.svg";
-import endUrl from "../../../../../../assets/text-icon-end.svg";
-import fullUrl from "../../../../../../assets/text-icon-full.svg";
+import startUrl from "../../../../../../assets/text-align-left.svg";
+import centerUrl from "../../../../../../assets/text-align-center.svg";
+import endUrl from "../../../../../../assets/text-align-right.svg";
+import fullUrl from "../../../../../../assets/text-align-full.svg";
 
 const List = styled.ul`
   display: grid;
@@ -23,13 +23,16 @@ const Item = styled.li`
   &:nth-last-child(1) {
     border: 0;
   }
+  &:hover {
+    background-color: #dfdfdf;
+    cursor: pointer;
+  }
 `;
 
 const Image = styled.img`
   width: 20px;
   height: 13px;
 `;
-
 function TextAlignButtons() {
   const { mutation: textBoxContentMutation, selectedObjectType } =
     useTextMutation();

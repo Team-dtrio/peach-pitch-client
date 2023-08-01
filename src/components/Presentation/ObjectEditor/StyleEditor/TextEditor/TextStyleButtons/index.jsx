@@ -2,13 +2,13 @@ import styled from "styled-components";
 import { useCallback } from "react";
 import useTextMutation from "../../../../../../hooks/useTextMutation";
 
-import boldUrl from "../../../../../../assets/text-icon-bold.svg";
-import italicUrl from "../../../../../../assets/text-icon-italic.svg";
-import underLineUrl from "../../../../../../assets/text-icon-underline.svg";
+import boldUrl from "../../../../../../assets/text-style-bold.svg";
+import italicUrl from "../../../../../../assets/text-style-italic.svg";
+import underLineUrl from "../../../../../../assets/text-style-underline.svg";
 
 const List = styled.ul`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   text-align: center;
 `;
 
@@ -21,6 +21,10 @@ const Item = styled.li`
 
   &:nth-last-child(1) {
     border: 0;
+  }
+  &:hover {
+    background-color: #dfdfdf;
+    cursor: pointer;
   }
 `;
 

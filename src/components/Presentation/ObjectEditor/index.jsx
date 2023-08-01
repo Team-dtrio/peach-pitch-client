@@ -40,10 +40,15 @@ const Header = styled.header`
   }
 `;
 const StyleButton = styled.button`
-  background-color: #b8b8b8;
+  background-color: #d9d9d9;
   width: 68px;
   height: 30px;
   border: 0;
+
+  &:hover {
+    background-color: #dfe272;
+    cursor: pointer;
+  }
 
   img {
     width: 22px;
@@ -56,6 +61,11 @@ const AniButton = styled.button`
   width: 68px;
   height: 30px;
   border: 0;
+
+  &:hover {
+    background-color: #dfe272;
+    cursor: pointer;
+  }
 
   img {
     width: 30px;
