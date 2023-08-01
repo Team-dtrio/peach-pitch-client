@@ -8,11 +8,7 @@ function useAuthRedirect(user) {
     if (!user) {
       navigate("/login");
     }
-
-    if (history.length < 2) {
-      navigate(-1);
-    }
-  }, []);
+  }, [user, navigate]);
 }
 
 export default useAuthRedirect;

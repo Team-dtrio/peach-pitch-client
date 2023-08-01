@@ -16,8 +16,6 @@ function ObjectCreator({ handleShape }) {
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
-  padding-top: 10px;
-  border-top: 1px solid #d9d9d9;
 `;
 
 export default ObjectCreator;
