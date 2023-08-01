@@ -81,7 +81,7 @@ const ModalBody = styled.section`
   position: absolute;
   display: grid;
   grid-template-rows: 1fr 1fr 0.5fr;
-  top: 50%;
+  top: 50vh;
   left: 50%;
   width: 300px;
   height: 150px;

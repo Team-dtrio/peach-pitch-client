@@ -2,15 +2,16 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { styled } from "styled-components";
-import SlideCanvas from "../SlideCanvasLayout/SlideCanvas";
+
 import axiosInstance from "../../../services/axios";
+import DynamicObject from "../ScreenShowLayout/DynamicObject";
 
 function getUser() {
   const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
   return loggedInUser;
 }
 const user = getUser();
-const userId = user._id;
+const userId = user?._id;
 
 function useGetAllSlidesQuery() {
   const { presentationId } = useParams();
@@ -33,7 +34,7 @@ function SlideNavigator() {
 
   const { data = {}, isLoading } = useGetAllSlidesQuery(userId, presentationId);
 
-  const slidesState = data.data.slides;
+  const slidesState = data?.data?.slides;
 
   const queryClient = useQueryClient();
 
@@ -162,10 +163,10 @@ function SlideNavigator() {
         const thumbnailObjects = slide.objects.map(
           (
             { type, _id, coordinates, dimensions, currentAnimation },
-            index,
-            object,
+            objectIndex,
+            currentObjects,
           ) => {
-            const features = object[index][type];
+            const features = currentObjects[objectIndex][type];
 
             return {
               type,
@@ -181,29 +182,21 @@ function SlideNavigator() {
         );
 
         return (
-          <Link
+          <StyledLink
             key={slide._id}
             to={`/presentations/${presentationId}/${slide._id}`}
-            draggable="true"
             onDragStart={(event) => handleDragStart(event, slide._id)}
             onDragOver={handleDragOver}
             onDrop={(event) => handleDrop(event, slide._id)}
             onContextMenu={(event) => handleContextMenu(event, slide._id)}
             onClick={handleCloseContextMenu}
           >
-            <Thumbnail>
-              <SlideCanvas
-                canvasSpec={{
-                  width: 250,
-                  height: 150,
-                  scaleX: 250 / 800,
-                  scaleY: 150 / 500,
-                  translate: "-100%, -100%",
-                }}
-                objects={thumbnailObjects}
-              />
+            <Thumbnail draggable="true">
+              {thumbnailObjects.map((object) => (
+                <DynamicObject key={object._id} objectSpec={object} />
+              ))}
             </Thumbnail>
-          </Link>
+          </StyledLink>
         );
       })}
       {contextMenu.visible && (
@@ -221,6 +214,15 @@ const Wrapper = styled.section`
   background-color: #f1efef;
   overflow-y: auto;
 `;
+const StyledLink = styled(Link)``;
+const Thumbnail = styled.div`
+  position: relative;
+  margin: 15px auto;
+  width: 90%;
+  height: 180px;
+  background-color: #fff;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+`;
 const ContextMenu = styled.div`
   position: absolute;
   z-index: 100;
@@ -228,9 +230,6 @@ const ContextMenu = styled.div`
   border: 1px solid #dfdfdf;
   padding: 10px;
   border-radius: 5px;
-`;
-const Thumbnail = styled.div`
-  margin: -330px 0;
 `;
 const MenuItem = styled.div`
   padding: 5px 10px;

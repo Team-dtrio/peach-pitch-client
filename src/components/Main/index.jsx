@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { styled } from "styled-components";
 import axiosInstance from "../../services/axios";
 
 import MainHeader from "./MainHeader";
@@ -47,12 +48,16 @@ function Main() {
   return (
     <>
       <MainHeader userInfo={user} />
-      <main>
+      <StyledMain>
         <CreatePresentation userInfo={user} />
         <MyPresentation presentations={presentations} />
-      </main>
+      </StyledMain>
     </>
   );
 }
+
+const StyledMain = styled.main`
+  padding: 0 10px;
+`;
 
 export default Main;

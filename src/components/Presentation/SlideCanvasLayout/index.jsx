@@ -145,9 +145,7 @@ const Wrapper = styled.section`
 `;
 
 const EntireLayout = styled.div`
-  display: flex;
-  justify-content: center;
-  position: relative;
+  margin: auto;
 `;
 
 export default SlideCanvasLayout;

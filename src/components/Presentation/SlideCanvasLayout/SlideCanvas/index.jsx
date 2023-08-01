@@ -26,7 +26,6 @@ const Canvas = styled.div`
     translate(${({ spec }) => spec.translate});
   overflow: hidden;
   background-color: #fff;
-  border: 1px solid #222;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 `;
 

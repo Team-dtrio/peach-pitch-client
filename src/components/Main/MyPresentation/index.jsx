@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { Link } from "react-router-dom";
-import SlideCanvas from "../../Presentation/SlideCanvasLayout/SlideCanvas";
+import DynamicObject from "../../Presentation/ScreenShowLayout/DynamicObject";
 
 function MyPresentation({ presentations }) {
   return (
@@ -12,9 +12,10 @@ function MyPresentation({ presentations }) {
           const thumbnailObjects = objects.map(
             (
               { _id, type, coordinates, dimensions, currentAnimation },
-              index,
+              objectIndex,
+              currentObjects,
             ) => {
-              const features = objects[index][type];
+              const features = currentObjects[objectIndex][type];
 
               return {
                 _id,
@@ -36,18 +37,11 @@ function MyPresentation({ presentations }) {
               state={{ objects }}
             >
               <Thumbnail>
-                <SlideCanvas
-                  canvasSpec={{
-                    width: 250,
-                    height: 150,
-                    scaleX: 250 / 800,
-                    scaleY: 150 / 500,
-                    translate: "-100%, -100%",
-                  }}
-                  objects={thumbnailObjects}
-                />
-                <h3>{presentation.title}</h3>
+                {thumbnailObjects.map((object) => (
+                  <DynamicObject key={object._id} objectSpec={object} />
+                ))}
               </Thumbnail>
+              <h3>{presentation.title}</h3>
             </StyledLink>
           );
         })}
@@ -59,7 +53,6 @@ function MyPresentation({ presentations }) {
 const StyledLink = styled(Link)`
   margin-bottom: 10px;
   text-decoration: none;
-  margin-right: -400px;
 
   &:visited {
     color: #222;
@@ -67,21 +60,19 @@ const StyledLink = styled(Link)`
 `;
 const Section = styled.section`
   padding: 15px 0;
-  padding-left: 30px;
+  padding-left: 50px;
 `;
 const Container = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   margin-bottom: 10px;
 `;
-const Thumbnail = styled.section`
-  display: relative;
-  text-align: center;
-
-  h3 {
-    margin-left: -570px;
-    margin-top: -300px;
-  }
+const Thumbnail = styled.div`
+  position: relative;
+  width: 20vw;
+  height: 25vh;
+  background-color: #fff;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 `;
 
 export default MyPresentation;
