@@ -114,7 +114,7 @@ function SlideNavigator() {
       await useAddSlideMutation.mutateAsync();
       handleCloseContextMenu();
     } catch (error) {
-      console.error(error);
+      throw new Error(error);
     }
   }
 
@@ -123,7 +123,7 @@ function SlideNavigator() {
       await useDeleteSlideMutation.mutateAsync();
       handleCloseContextMenu();
     } catch (error) {
-      console.error(error);
+      throw new Error(error);
     }
   }
 

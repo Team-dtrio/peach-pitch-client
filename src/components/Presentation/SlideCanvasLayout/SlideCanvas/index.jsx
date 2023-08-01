@@ -3,8 +3,6 @@ import { styled } from "styled-components";
 import Object from "../Object";
 
 function SlideCanvas({ canvasSpec, objects, onObjectRightClick }) {
-  const canvasRef = useRef(null);
-
   return (
     <Canvas spec={canvasSpec}>
       {objects.map((object) => (
