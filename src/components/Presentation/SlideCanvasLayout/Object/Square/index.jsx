@@ -11,6 +11,7 @@ function getUser() {
   const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
   return loggedInUser;
 }
+
 function Square({ id, spec, onContextMenu }) {
   const [boundaryVertices, setBoundaryVertices] = useState([]);
   const [squareSpec, setSquareSpec] = useState(spec);
@@ -20,12 +21,15 @@ function Square({ id, spec, onContextMenu }) {
   const queryClient = useQueryClient();
   const { selectedObjectId, selectedObjectType, selectObject } =
     useContext(ObjectContext);
+
   const isSelected =
     id === selectedObjectId && spec.type === selectedObjectType;
+
   const handleSquareClick = (event) => {
     event.stopPropagation();
     selectObject(id, spec.type);
   };
+
   const updatedSquareSpec = {
     type: squareSpec.type,
     coordinates: { x: squareSpec.x, y: squareSpec.y },
@@ -53,20 +57,24 @@ function Square({ id, spec, onContextMenu }) {
       },
     },
   );
+
   const onVertexDrag = useCallback(
     (draggedVertexIndex) => (event) => {
       event.preventDefault();
       event.stopPropagation();
       const initialPosition = { x: event.clientX, y: event.clientY };
       const initialSpec = { ...squareSpec };
+
       const moveHandler = throttle((moveEvent) => {
         const newPosition = {
           x: moveEvent.clientX,
           y: moveEvent.clientY,
         };
+
         let newSquareSpec = { ...squareSpec };
         const heightChange = newPosition.y - initialPosition.y;
         const widthChange = newPosition.x - initialPosition.x;
+
         switch (draggedVertexIndex) {
           case 0:
             newSquareSpec = {
@@ -131,11 +139,13 @@ function Square({ id, spec, onContextMenu }) {
         }
         setSquareSpec(newSquareSpec);
       }, 200);
+
       const upHandler = async () => {
         document.removeEventListener("mousemove", moveHandler);
         document.removeEventListener("mouseup", upHandler);
         await updateSquareSpec.mutateAsync();
       };
+
       document.addEventListener("mousemove", moveHandler);
       document.addEventListener(
         "mouseup",
@@ -147,12 +157,15 @@ function Square({ id, spec, onContextMenu }) {
     },
     [squareSpec, updateSquareSpec],
   );
+
   const onSquareDrag = (event) => {
     event.stopPropagation();
+
     const initialPosition = {
       x: event.clientX - squareSpec.x,
       y: event.clientY - squareSpec.y,
     };
+
     const moveHandler = throttle((moveEvent) => {
       setSquareSpec((prevSpec) => ({
         ...prevSpec,
@@ -160,19 +173,24 @@ function Square({ id, spec, onContextMenu }) {
         y: moveEvent.clientY - initialPosition.y,
       }));
     }, 150);
+
     const upHandler = async () => {
       document.removeEventListener("mousemove", moveHandler);
       document.removeEventListener("mouseup", upHandler);
       await updateSquareSpec.mutateAsync();
     };
+
     document.addEventListener("mousemove", moveHandler);
     document.addEventListener("mouseup", upHandler, { once: true });
   };
+
   useEffect(() => {
     setSquareSpec(spec);
   }, [spec]);
+
   useEffect(() => {
     const offset = { x: 1, y: 1 };
+
     const baseVertices = [
       { x: squareSpec.x, y: squareSpec.y },
       { x: squareSpec.x + squareSpec.width / 2, y: squareSpec.y },
@@ -196,8 +214,10 @@ function Square({ id, spec, onContextMenu }) {
       x: vertex.x + offset.x,
       y: vertex.y + offset.y,
     }));
+
     setBoundaryVertices(updatedBoundaryVertices);
   }, [squareSpec]);
+
   return (
     <div
       onClick={handleSquareClick}
@@ -215,6 +235,7 @@ function Square({ id, spec, onContextMenu }) {
     </div>
   );
 }
+
 const StyledSquare = styled.div`
   position: absolute;
   left: ${({ spec }) => spec.x}px;
@@ -224,4 +245,5 @@ const StyledSquare = styled.div`
   background-color: ${({ spec }) => spec.fillColor};
   border: 1px solid ${({ spec }) => spec.borderColor};
 `;
+
 export default Square;
