@@ -23,18 +23,26 @@ function FontFamilySelect() {
     [selectedObjectType, textBoxContentMutation],
   );
 
+  const fonts = [
+    "Arial",
+    "Courier",
+    "Garamond",
+    "Georgia",
+    "Helvetica",
+    "Lucida Sans",
+    "Tahoma",
+    "Times New Roman",
+    "Trebuchet MS",
+    "Verdana",
+  ];
+
   return (
     <Select onChange={handleFontChange}>
-      <option value="Arial">Arial</option>
-      <option value="Verdana">Verdana</option>
-      <option value="Helvetica">Helvetica</option>
-      <option value="Tahoma">Tahoma</option>
-      <option value="Trebuchet MS">Trebuchet MS</option>
-      <option value="Times New Roman">Times New Roman</option>
-      <option value="Georgia">Georgia</option>
-      <option value="Garamond">Garamond</option>
-      <option value="Courier">Courier</option>
-      <option value="Lucida Sans">Lucida Sans</option>
+      {fonts.map((font) => (
+        <option key={font} value={font}>
+          {font}
+        </option>
+      ))}
     </Select>
   );
 }
