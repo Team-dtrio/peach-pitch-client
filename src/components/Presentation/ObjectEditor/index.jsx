@@ -46,7 +46,7 @@ const StyleButton = styled.button`
   border: 0;
 
   &:hover {
-    background-color: #dfe272;
+    background-color: ${({ theme }) => theme.color.app};
     cursor: pointer;
   }
 
@@ -63,7 +63,7 @@ const AniButton = styled.button`
   border: 0;
 
   &:hover {
-    background-color: #dfe272;
+    background-color: ${({ theme }) => theme.color.app};
     cursor: pointer;
   }
 

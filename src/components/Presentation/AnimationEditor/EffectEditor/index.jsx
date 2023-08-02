@@ -63,7 +63,10 @@ const List = styled.ul`
 `;
 
 const Button = styled.button`
-  padding: 5px 10px;
+  padding: 7px 10px;
+  margin: 3px 0;
+  border: 1px solid #222;
+  border-radius: 5px;
   &:hover {
     background-color: #dfdfdf;
     cursor: pointer;
