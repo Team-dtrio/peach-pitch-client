@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { styled } from "styled-components";
 
 import axiosInstance from "../../../services/axios";
-import DynamicObject from "../ScreenShowLayout/DynamicObject";
+import NonEditableObject from "../ScreenShowLayout/NonEditableObject";
 
 function getUser() {
   const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
@@ -189,7 +189,11 @@ function SlideNavigator() {
           >
             <Thumbnail draggable="true">
               {thumbnailObjects.map((object) => (
-                <DynamicObject key={object._id} objectSpec={object} />
+                <NonEditableObject
+                  key={object._id}
+                  objectSpec={object}
+                  isThumbnail
+                />
               ))}
             </Thumbnail>
           </StyledLink>
@@ -214,8 +218,8 @@ const StyledLink = styled(Link)``;
 const Thumbnail = styled.div`
   position: relative;
   margin: 15px auto;
-  width: 90%;
-  height: 180px;
+  width: 300px;
+  height: 200px;
   background-color: #fff;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 `;

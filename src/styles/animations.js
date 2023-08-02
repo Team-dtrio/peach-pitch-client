@@ -2,88 +2,67 @@ import { keyframes } from "styled-components";
 
 const animations = {
   "fade-in": keyframes`
-    0% {
-      opacity: 0;
-      transform: scale(0);
-    }
-
-    25% {
-      opacity: 0.25;
-      transform: scale(0.25);
-    }
-
-    50% {
-      opacity: 0.5;
-      transform: scale(0.5);
-    }
-
-    75% {
-      opacity: 0.75;
-      transform: scale(0.75);
-    }
-
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-  `,
-  "block-wipe": keyframes`
-    0% {
-      left: -100%;
-      border-radius: 0;
-      border: 0;
-      opacity: 0.1;
-    }
-
-    25% {
-      left: -75%;
-      background-color: #000;
-      border-radius: 0;
-      width: 100px;
-      height: 100px;
-      border: 0;
-      opacity: 0.3;
-    }
-
-    50% {
-      left: -50%;
-      background-color: #000;
-      border-radius: 0;
-      width: 100px;
-      height: 100px;
-      border: 0;
-      opacity: 0.6;
-    }
-
-    75% {
-      left: -25%;
-      background-color: #000;
-      border-radius: 0;
-      width: 100px;
-      height: 100px;
-      border: 0;
-      opacity: 0.8;
-    }
-
-    100% {
-      left: 0;
-      background-color: #000;
-      border-radius: 0;
-      width: 100px;
-      height: 100px;
-      border: 1;
-      opacity: 1;
-    }
-  `,
-  "3d-flip": keyframes`
     from {
-      transform: rotateY(0deg);
       opacity: 0;
     }
 
     to {
-      transform: rotateY(180deg);
       opacity: 1;
+    }
+  `,
+  "block-wipe": keyframes`
+    0%, 60%, 75%, 90%, 100% {
+        transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    }
+
+    0% {
+        opacity: 0;
+        transform: translate3d(-3000px, 0, 0);
+    }
+
+    60% {
+        opacity: 1;
+        transform: translate3d(25px, 0, 0);
+    }
+
+    75% {
+        transform: translate3d(-10px, 0, 0);
+    }
+
+    90% {
+        transform: translate3d(5px, 0, 0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: none;
+    }
+  `,
+  "3d-flip": keyframes`
+    0% {
+      opacity: 0;
+      transform: perspective(400px) rotateY(0);
+      animation-timing-function: ease-out;
+    }
+
+    40% {
+      transform: perspective(400px) translateZ(150px) rotateY(170deg);
+      animation-timing-function: ease-out;
+    }
+
+    50% {
+      transform: perspective(400px) translateZ(150px) rotateY(190deg) scale(1);
+      animation-timing-function: ease-in;
+    }
+
+    80% {
+      transform: perspective(400px) rotateY(360deg) scale(.95);
+      animation-timing-function: ease-in;
+    }
+
+    100% {
+      transform: perspective(400px) scale(1);
+      animation-timing-function: ease-in;
     }
   `,
 };

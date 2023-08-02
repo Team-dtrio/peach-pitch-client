@@ -107,8 +107,8 @@ function SlideCanvasLayout() {
       <EntireLayout>
         <SlideCanvas
           canvasSpec={{
-            width: 800,
-            height: 500,
+            width: 900,
+            height: 600,
             scaleX: 1,
             scaleY: 1,
           }}

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { styled } from "styled-components";
-import DynamicObject from "../DynamicObject";
+import NonEditableObject from "../NonEditableObject";
 
 function ScreenShowCanvas({
   nonAnimatedObjects,
@@ -20,11 +20,11 @@ function ScreenShowCanvas({
     <Screen ref={screenRef}>
       {isSlideActive &&
         nonAnimatedObjects.map((object) => (
-          <DynamicObject key={object._id} objectSpec={object} />
+          <NonEditableObject key={object._id} objectSpec={object} />
         ))}
       {isSlideActive &&
         animatedObjects.map((object, animationIndex) => (
-          <DynamicObject
+          <NonEditableObject
             key={object._id}
             objectSpec={object}
             isAnimationActive={animationIndex === activeAnimationIndex}

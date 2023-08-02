@@ -21,9 +21,11 @@ const Wrapper = styled.div`
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  padding: 14px 23px;
+  padding: 17px 23px;
+  /* padding-top: 20px; */
   border-top: 1px solid #d9d9d9;
 `;
+const Container = styled.div``;
 const PlayButtonWrapper = styled.div`
   display: flex;
   justify-content: end;

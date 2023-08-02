@@ -13,11 +13,7 @@ function getUser() {
 }
 
 function StyledImageComponent({ spec }) {
-  return (
-    <StyledImageBox spec={spec}>
-      <StyledImage src={spec.imageUrl} alt="" />
-    </StyledImageBox>
-  );
+  return <StyledImageBox spec={spec} />;
 }
 
 function Image({ id, spec, onContextMenu }) {
@@ -219,12 +215,15 @@ const StyledImageBox = styled.div`
   height: ${({ spec }) => spec.height}px;
   border: 1px solid ${({ spec }) => spec.borderColor};
   user-select: none;
+  background-image: url(${({ spec }) => spec.imageUrl});
+  background-size: ${({ spec }) => spec.width}px ${({ spec }) => spec.height}px;
+  background-repeat: no-repeat;
 `;
 
-const StyledImage = styled.img`
+const StyledImage = styled.div`
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  /* object-fit: cover; */
 `;
 
 export default Image;

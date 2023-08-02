@@ -3,17 +3,17 @@ import animations from "../../../../styles/animations";
 
 const BaseComponent = styled.div`
   position: absolute;
-  left: ${({ spec }) => (spec.x / 800) * 100}%;
-  top: ${({ spec }) => (spec.y / 500) * 100}%;
-  width: ${({ spec }) => (spec.width / 800) * 100}%;
-  height: ${({ spec }) => (spec.height / 500) * 100}%;
-  background-color: ${({ spec }) => spec.fillColor};
-  border: 1px solid
-    ${({ spec }) =>
-      spec.type.toLowerCase() === "image" ? "transparent" : spec.borderColor};
+  left: ${({ spec }) => (spec.x / 900) * 100}%;
+  top: ${({ spec }) => (spec.y / 600) * 100}%;
+  width: ${({ spec }) => (spec.width / 900) * 100}%;
+  height: ${({ spec }) => (spec.height / 600) * 100}%;
+  background-color: ${({ spec }) =>
+    spec.type.toLowerCase() === "textbox" ? "transparent" : spec.fillColor};
+  border: 1px solid ${({ spec }) => spec.borderColor};
   text-align: ${({ spec }) => spec.textAlign};
   animation: ${({ spec }) => animations[spec.currentAnimation]} 2s linear;
   user-select: none;
+  box-sizing: border-box;
   ${({ isActive }) =>
     isActive === undefined &&
     css`
@@ -31,20 +31,30 @@ const BaseComponent = styled.div`
 const TextBox = styled(BaseComponent)`
   width: 100%;
   height: 100%;
-  border: none;
-  overflow: auto;
-  outline: none;
+  transform: translate(
+    -${({ spec }) => (spec.x / 800) * 100}%,
+    -${({ spec }) => (spec.y / 500) * 100}%
+  );
+  border: 0;
+  outline: 0;
+  overflow: hidden;
   color: ${({ spec }) => spec.textColor};
-  font-size: ${({ spec }) => spec.fontSize}px;
+  background-color: ${({ spec }) => spec.fillColor};
+  font-size: ${({ spec, isThumbnail }) =>
+    isThumbnail ? spec.fontSize / 3 : spec.fontSize * 1.5}px;
   font-family: ${({ spec }) => spec.fontFamily};
   font-style: ${({ spec }) => spec.fontStyle};
-  font-weight: 400;
-  text-decoration: ${({ spec }) => spec.fontStyle};
+  font-weight: ${({ spec }) => spec.fontWeight};
+  text-decoration: ${({ spec }) => spec.textDecoration};
+  line-height: 1.5;
 `;
 const Image = styled(BaseComponent).attrs({ as: "img" })`
+  transform: translate(
+    -${({ spec }) => (spec.x / 800) * 100}%,
+    -${({ spec }) => (spec.y / 500) * 100}%
+  );
   width: 100%;
   height: 100%;
-  object-fit: cover;
 `;
 const Square = styled(BaseComponent)``;
 const Triangle = styled(BaseComponent)`
@@ -54,29 +64,25 @@ const Circle = styled(BaseComponent)`
   border-radius: 100%;
 `;
 
-function DynamicObject({ objectSpec, isAnimationActive }) {
+function NonEditableObject({ objectSpec, isAnimationActive, isThumbnail }) {
   const components = {
     Square,
     Triangle,
     Circle,
+    Image,
   };
   const Tag = components[objectSpec.type] || "div";
-
-  if (objectSpec.type.toLowerCase() === "textbox") {
-    return (
-      <BaseComponent spec={objectSpec} isActive={isAnimationActive}>
-        <TextBox spec={objectSpec} contentEditable>
-          {objectSpec.content}
-        </TextBox>
-      </BaseComponent>
-    );
-  }
 
   switch (objectSpec.type.toLowerCase()) {
     case "textbox":
       return (
         <BaseComponent spec={objectSpec} isActive={isAnimationActive}>
-          <TextBox spec={objectSpec} contentEditable>
+          <TextBox
+            spec={objectSpec}
+            isThumbnail={isThumbnail}
+            contentEditable
+            suppressContentEditableWarning
+          >
             {objectSpec.content}
           </TextBox>
         </BaseComponent>
@@ -92,4 +98,4 @@ function DynamicObject({ objectSpec, isAnimationActive }) {
   }
 }
 
-export default DynamicObject;
+export default NonEditableObject;
