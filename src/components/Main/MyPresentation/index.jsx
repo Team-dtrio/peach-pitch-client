@@ -39,8 +39,7 @@ function MyPresentation({ presentations }) {
               state={{ objects }}
             >
               <Thumbnail>
-                {thumbnailObjects &&
-                  thumbnailObjects.length > 0 &&
+                {thumbnailObjects.length > 0 &&
                   thumbnailObjects.map((object) => (
                     <DynamicObject key={object._id} objectSpec={object} />
                   ))}
