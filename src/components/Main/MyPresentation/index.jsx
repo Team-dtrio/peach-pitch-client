@@ -65,6 +65,13 @@ function MyPresentation({ presentations }) {
       <h2>내 프레젠테이션</h2>
       <Container>
         {presentations.map((presentation) => {
+          if (
+            !presentation ||
+            !presentation.slides ||
+            !presentation.slides[0]
+          ) {
+            return null;
+          }
           const { objects = [] } = presentation.slides[0];
           const thumbnailObjects = objects
             ?.filter((object) => object !== null)
