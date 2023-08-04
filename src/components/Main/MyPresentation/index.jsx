@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { Link } from "react-router-dom";
-import DynamicObject from "../../Presentation/ScreenShowLayout/DynamicObject";
+import NonEditableObject from "../../Presentation/ScreenShowLayout/NonEditableObject";
 
 function MyPresentation({ presentations }) {
   return (
@@ -41,8 +41,15 @@ function MyPresentation({ presentations }) {
               <Thumbnail>
                 {thumbnailObjects.length > 0 &&
                   thumbnailObjects.map((object) => (
-                    <DynamicObject key={object._id} objectSpec={object} />
+                    <NonEditableObject key={object._id} objectSpec={object} />
                   ))}
+                {thumbnailObjects.map((object) => (
+                  <NonEditableObject
+                    key={object._id}
+                    objectSpec={object}
+                    isThumbnail
+                  />
+                ))}
               </Thumbnail>
               <ThumbnailTitle>{presentation.title}</ThumbnailTitle>
             </StyledLink>
@@ -61,6 +68,7 @@ const StyledLink = styled(Link)`
     color: #222;
   }
 `;
+
 const Section = styled.section`
   padding: 15px 0;
   padding-left: 50px;
@@ -78,7 +86,7 @@ const Thumbnail = styled.div`
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 `;
 const ThumbnailTitle = styled.h3`
-  padding-left: 33%;
+  padding-left: 25%;
 `;
 
 export default MyPresentation;
