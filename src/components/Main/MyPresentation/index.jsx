@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { Link, useParams, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import NonEditableObject from "../../Presentation/ScreenShowLayout/NonEditableObject";
