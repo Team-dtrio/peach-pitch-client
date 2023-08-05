@@ -7,6 +7,7 @@ import axiosInstance from "../../../services/axios";
 
 function getUser() {
   const loggedInUser = JSON.parse(localStorage.getItem("userInfo"));
+
   return loggedInUser;
 }
 const user = getUser();
@@ -124,7 +125,7 @@ function MyPresentation({ presentations }) {
         })}
       </Container>
       {contextMenu.visible && (
-        <ContextMenu style={{ top: contextMenu.y, left: contextMenu.x }}>
+        <ContextMenu contextMenu={contextMenu}>
           <MenuItem onClick={handleDeletePresentation}>Delete</MenuItem>
         </ContextMenu>
       )}
@@ -164,6 +165,8 @@ const ThumbnailTitle = styled.h3`
 const ContextMenu = styled.div`
   position: absolute;
   z-index: 100;
+  left: ${({ contextMenu }) => contextMenu.x}px;
+  top: ${({ contextMenu }) => contextMenu.y}px;
   background-color: #fff;
   border: 1px solid #dfdfdf;
   padding: 10px;
