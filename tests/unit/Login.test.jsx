@@ -18,6 +18,10 @@ jest.mock("../../src/services/firebase", () => ({
   firebaseAuth: jest.fn(),
 }));
 
+jest.mock("../../src/services/axios", () => ({
+  create: () => jest.fn(),
+}));
+
 describe("<Login />", () => {
   it("renders the Login component", () => {
     const queryClient = new QueryClient();
