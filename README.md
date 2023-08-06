@@ -26,7 +26,7 @@ PEACHPITCH는 온라인으로 프레젠테이션을 만들고 슬라이드쇼 �
 
 **Server**: Node.js, Express.js, MongoDB, Amazon S3
 
-**Test**: jest, React Testing Library (RTL)
+**Test**: jest, React Testing Library (RTL), supertest
 
 **Deployment**: Netlify, AWS Elastic Beanstalk
 
