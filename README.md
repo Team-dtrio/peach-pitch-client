@@ -81,6 +81,7 @@ PEACHPITCH는 온라인으로 프레젠테이션을 만들고 슬라이드쇼 �
     - 개체 수정 (ObjectEditor)
         - 색 및 폰트 (StyleEditor - ColorEditor, TextEditor) : 김정우
         - z-index (StyleEditor - ArrangeEditor) : 곽나영
+        - 개체의 좌표 및 사이즈 조정 (Object) : 곽나영
     - 애니메이션 효과추가 및 수정(AnimationEditor) : 곽나영
     - 슬라이드 네비게이터(SlideNavigator) : 곽나영
     - 슬라이드 쇼 모드(ScreenShowLayout)와 애니메이션 효과 (Styles) : 문형석
