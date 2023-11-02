@@ -34,9 +34,9 @@ function EditableTextBox({ spec }) {
     },
   );
 
-  const handleTextBoxContentChange = debounce((event) => {
+  const handleTextBoxContentChange = throttle((event) => {
     const updateData = {};
-    updateData[selectedObjectType] = { content: event.target.textContent };
+    updateData[selectedObjectType] = { content: event.target.innerText };
     textBoxContentMutation.mutate(updateData);
   }, 500);
 
@@ -317,6 +317,7 @@ const EditableDiv = styled.div`
   border: none;
   overflow: auto;
   outline: none;
+  white-space: pre-wrap;
   color: ${({ spec }) => spec.textColor};
   font-size: ${({ spec }) => spec.fontSize}px;
   font-family: ${({ spec }) => spec.fontFamily};
