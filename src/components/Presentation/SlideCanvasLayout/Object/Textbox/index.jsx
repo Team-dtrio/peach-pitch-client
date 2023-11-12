@@ -135,40 +135,40 @@ function Textbox({ id, spec, onContextMenu, updateContent }) {
           case 0:
             newTextBoxSpec = {
               ...newTextBoxSpec,
-              width: initialSpec.width - widthChange,
-              height: initialSpec.height - heightChange,
-              x: newPosition.x,
-              y: newPosition.y,
+              width: Math.max(10, initialSpec.width - widthChange),
+              height: Math.max(10, initialSpec.height - heightChange),
+              x: initialSpec.x + widthChange,
+              y: initialSpec.y + heightChange,
             };
             break;
           case 2:
             newTextBoxSpec = {
               ...newTextBoxSpec,
-              width: initialSpec.width + widthChange,
-              height: initialSpec.height - heightChange,
-              y: newPosition.y,
+              width: Math.max(10, initialSpec.width + widthChange),
+              height: Math.max(10, initialSpec.height - heightChange),
+              y: initialSpec.y + heightChange,
             };
             break;
           case 4:
             newTextBoxSpec = {
               ...newTextBoxSpec,
-              width: initialSpec.width + widthChange,
-              height: initialSpec.height + heightChange,
+              width: Math.max(10, initialSpec.width + widthChange),
+              height: Math.max(10, initialSpec.height + heightChange),
             };
             break;
           case 6:
             newTextBoxSpec = {
               ...newTextBoxSpec,
-              width: initialSpec.width - widthChange,
-              height: initialSpec.height + heightChange,
-              x: newPosition.x,
+              width: Math.max(10, initialSpec.width - widthChange),
+              height: Math.max(10, initialSpec.height + heightChange),
+              x: initialSpec.x + widthChange,
             };
             break;
           case 1:
             newTextBoxSpec = {
               ...newTextBoxSpec,
               height: Math.max(10, initialSpec.height - heightChange),
-              y: newPosition.y,
+              y: initialSpec.y + heightChange,
             };
             break;
           case 5:
@@ -187,7 +187,7 @@ function Textbox({ id, spec, onContextMenu, updateContent }) {
             newTextBoxSpec = {
               ...newTextBoxSpec,
               width: Math.max(10, initialSpec.width - widthChange),
-              x: newPosition.x,
+              x: initialSpec.x + widthChange,
             };
             break;
           default:
