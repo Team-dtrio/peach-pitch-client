@@ -78,29 +78,68 @@ function Image({ id, spec, onContextMenu }) {
 
         let newImageSpec = { ...imageSpec };
         const widthChange = newPosition.x - initialPosition.x;
-        const aspectRatio = imageSpec.width / imageSpec.height;
+        const heightChange = newPosition.y - initialPosition.y;
 
         switch (draggedVertexIndex) {
           case 0:
+            newImageSpec = {
+              ...newImageSpec,
+              width: Math.max(10, initialSpec.width - widthChange),
+              height: Math.max(10, initialSpec.height - heightChange),
+              x: initialSpec.x + widthChange,
+              y: initialSpec.y + heightChange,
+            };
+            break;
           case 6:
             newImageSpec = {
               ...newImageSpec,
-              width: initialSpec.width - widthChange,
-              height: (initialSpec.width - widthChange) / aspectRatio,
+              width: Math.max(10, initialSpec.width - widthChange),
+              height: Math.max(10, initialSpec.height + heightChange),
+              x: initialSpec.x + widthChange,
             };
             break;
           case 2:
+            newImageSpec = {
+              ...newImageSpec,
+              width: Math.max(10, initialSpec.width + widthChange),
+              height: Math.max(10, initialSpec.height - heightChange),
+              y: initialSpec.y + heightChange,
+            };
+            break;
           case 4:
             newImageSpec = {
               ...newImageSpec,
-              width: initialSpec.width + widthChange,
-              height: (initialSpec.width + widthChange) / aspectRatio,
+              width: Math.max(10, initialSpec.width + widthChange),
+              height: Math.max(10, initialSpec.height + heightChange),
+              x: initialSpec.x,
+              y: initialSpec.y,
             };
             break;
           case 1:
+            newImageSpec = {
+              ...newImageSpec,
+              height: Math.max(10, initialSpec.height - heightChange),
+              y: initialSpec.y + heightChange,
+            };
+            break;
           case 5:
+            newImageSpec = {
+              ...newImageSpec,
+              height: Math.max(10, initialSpec.height + heightChange),
+            };
+            break;
           case 3:
+            newImageSpec = {
+              ...newImageSpec,
+              width: Math.max(10, initialSpec.width + widthChange),
+            };
+            break;
           case 7:
+            newImageSpec = {
+              ...newImageSpec,
+              width: Math.max(10, initialSpec.width - widthChange),
+              x: initialSpec.x + widthChange,
+            };
             break;
           default:
             break;

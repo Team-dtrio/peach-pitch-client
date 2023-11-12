@@ -88,8 +88,8 @@ function Triangle({ id, spec, onContextMenu }) {
               ...newTriangleSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height - heightChange,
-              x: newPosition.x,
-              y: newPosition.y,
+              x: initialSpec.x + widthChange,
+              y: initialSpec.y + heightChange,
             };
             break;
           case 2:
@@ -97,7 +97,7 @@ function Triangle({ id, spec, onContextMenu }) {
               ...newTriangleSpec,
               width: initialSpec.width + widthChange,
               height: initialSpec.height - heightChange,
-              y: newPosition.y,
+              y: initialSpec.y + heightChange,
             };
             break;
           case 4:
@@ -112,14 +112,14 @@ function Triangle({ id, spec, onContextMenu }) {
               ...newTriangleSpec,
               width: initialSpec.width - widthChange,
               height: initialSpec.height + heightChange,
-              x: newPosition.x,
+              x: initialSpec.x + widthChange,
             };
             break;
           case 1:
             newTriangleSpec = {
               ...newTriangleSpec,
               height: Math.max(10, initialSpec.height - heightChange),
-              y: newPosition.y,
+              y: initialSpec.y + heightChange,
             };
             break;
           case 5:
@@ -138,7 +138,7 @@ function Triangle({ id, spec, onContextMenu }) {
             newTriangleSpec = {
               ...newTriangleSpec,
               width: Math.max(10, initialSpec.width - widthChange),
-              x: newPosition.x,
+              x: initialSpec.x + widthChange,
             };
             break;
           default:
