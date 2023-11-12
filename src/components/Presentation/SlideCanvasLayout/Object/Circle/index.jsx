@@ -85,8 +85,8 @@ function Circle({ id, spec, onContextMenu }) {
           case 0:
             newCircleSpec = {
               ...newCircleSpec,
-              width: initialSpec.width - widthChange,
-              height: initialSpec.height - heightChange,
+              width: Math.max(10, initialSpec.width - widthChange),
+              height: Math.max(10, initialSpec.height - heightChange),
               x: initialSpec.x + widthChange,
               y: initialSpec.y + heightChange,
             };
@@ -94,16 +94,16 @@ function Circle({ id, spec, onContextMenu }) {
           case 1:
             newCircleSpec = {
               ...newCircleSpec,
-              width: initialSpec.width,
-              height: initialSpec.height - heightChange,
+              width: Math.max(10, initialSpec.width),
+              height: Math.max(10, initialSpec.height - heightChange),
               y: initialSpec.y + heightChange,
             };
             break;
           case 2:
             newCircleSpec = {
               ...newCircleSpec,
-              width: initialSpec.width + widthChange,
-              height: initialSpec.height - heightChange,
+              width: Math.max(10, initialSpec.width + widthChange),
+              height: Math.max(10, initialSpec.height - heightChange),
               x: initialSpec.x,
               y: initialSpec.y + heightChange,
             };
@@ -111,16 +111,16 @@ function Circle({ id, spec, onContextMenu }) {
           case 3:
             newCircleSpec = {
               ...newCircleSpec,
-              width: initialSpec.width + widthChange,
-              height: initialSpec.height,
+              width: Math.max(10, initialSpec.width + widthChange),
+              height: Math.max(10, initialSpec.height),
               x: initialSpec.x,
             };
             break;
           case 4:
             newCircleSpec = {
               ...newCircleSpec,
-              width: initialSpec.width + widthChange,
-              height: initialSpec.height + heightChange,
+              width: Math.max(10, initialSpec.width + widthChange),
+              height: Math.max(10, initialSpec.height + heightChange),
               x: initialSpec.x,
               y: initialSpec.y,
             };
@@ -128,24 +128,24 @@ function Circle({ id, spec, onContextMenu }) {
           case 5:
             newCircleSpec = {
               ...newCircleSpec,
-              width: initialSpec.width,
-              height: initialSpec.height + heightChange,
+              width: Math.max(10, initialSpec.width),
+              height: Math.max(10, initialSpec.height + heightChange),
               y: initialSpec.y,
             };
             break;
           case 6:
             newCircleSpec = {
               ...newCircleSpec,
-              width: initialSpec.width - widthChange,
-              height: initialSpec.height + heightChange,
+              width: Math.max(10, initialSpec.width - widthChange),
+              height: Math.max(10, initialSpec.height + heightChange),
               x: initialSpec.x + widthChange,
             };
             break;
           case 7:
             newCircleSpec = {
               ...newCircleSpec,
-              width: initialSpec.width - widthChange,
-              height: initialSpec.height,
+              width: Math.max(10, initialSpec.width - widthChange),
+              height: Math.max(10, initialSpec.height),
               x: initialSpec.x + widthChange,
             };
             break;
