@@ -74,11 +74,19 @@ function ColorEditor() {
     <Wrapper>
       <Container>
         <Label>Fill</Label>
-        <Palette type="color" onChange={handleFillColorChange} />
+        <Palette
+          type="color"
+          onChange={handleFillColorChange}
+          value="#d9d9d9"
+        />
       </Container>
       <Container>
         <Label>Border</Label>
-        <Palette type="color" onChange={handleBorderColorChange} />
+        <Palette
+          type="color"
+          onChange={handleBorderColorChange}
+          value="#d9d9d9"
+        />
       </Container>
     </Wrapper>
   );

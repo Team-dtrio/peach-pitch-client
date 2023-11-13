@@ -32,8 +32,8 @@ const TextBox = styled(BaseComponent)`
   width: 100%;
   height: 100%;
   transform: translate(
-    -${({ spec }) => (spec.x / 800) * 100}%,
-    -${({ spec }) => (spec.y / 500) * 100}%
+    -${({ spec }) => (spec.x / 900) * 100}%,
+    -${({ spec }) => (spec.y / 600) * 100}%
   );
   border: 0;
   outline: 0;
@@ -50,8 +50,8 @@ const TextBox = styled(BaseComponent)`
 `;
 const Image = styled(BaseComponent).attrs({ as: "img" })`
   transform: translate(
-    -${({ spec }) => (spec.x / 800) * 100}%,
-    -${({ spec }) => (spec.y / 500) * 100}%
+    -${({ spec }) => (spec.x / 900) * 100}%,
+    -${({ spec }) => (spec.y / 600) * 100}%
   );
   width: 100%;
   height: 100%;
