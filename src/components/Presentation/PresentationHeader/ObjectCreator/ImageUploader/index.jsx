@@ -76,7 +76,7 @@ function ImageUploader() {
         imageUrl,
       });
     } catch (err) {
-      throw new Error("Error uploading file:", err);
+      throw new Error("Error uploading Image file:", err);
     }
   }
 
