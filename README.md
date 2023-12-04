@@ -114,6 +114,139 @@ PEACHPITCH는 온라인으로 프레젠테이션을 만들고 슬라이드쇼 �
 
 ### 1-3. 반대 방향의 꼭지점을 고정시켜 안정적인 크기 조절 기능 구현하기
 
+<details>
+<summary> Circle 크기 조절 코드 예시</summary>
+
+```javascript
+const onVertexDrag = useCallback(
+  (draggedVertexIndex) => (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const initialPosition = { x: event.clientX, y: event.clientY };
+    const initialSpec = { ...circleSpec };
+
+    const moveHandler = throttle((moveEvent) => {
+      const newPosition = {
+        x: moveEvent.clientX,
+        y: moveEvent.clientY,
+      };
+
+      let newCircleSpec = { ...circleSpec };
+      const heightChange = newPosition.y - initialPosition.y;
+      const widthChange = newPosition.x - initialPosition.x;
+
+      switch (draggedVertexIndex) {
+        case 0:
+          newCircleSpec = {
+            ...newCircleSpec,
+            width: Math.max(10, initialSpec.width - widthChange),
+            height: Math.max(10, initialSpec.height - heightChange),
+            x: initialSpec.x + widthChange,
+            y: initialSpec.y + heightChange,
+          };
+          break;
+        case 1:
+          newCircleSpec = {
+            ...newCircleSpec,
+            width: Math.max(10, initialSpec.width),
+            height: Math.max(10, initialSpec.height - heightChange),
+            y: initialSpec.y + heightChange,
+          };
+          break;
+        case 2:
+          newCircleSpec = {
+            ...newCircleSpec,
+            width: Math.max(10, initialSpec.width + widthChange),
+            height: Math.max(10, initialSpec.height - heightChange),
+            x: initialSpec.x,
+            y: initialSpec.y + heightChange,
+          };
+          break;
+        case 3:
+          newCircleSpec = {
+            ...newCircleSpec,
+            width: Math.max(10, initialSpec.width + widthChange),
+            height: Math.max(10, initialSpec.height),
+            x: initialSpec.x,
+          };
+          break;
+        case 4:
+          newCircleSpec = {
+            ...newCircleSpec,
+            width: Math.max(10, initialSpec.width + widthChange),
+            height: Math.max(10, initialSpec.height + heightChange),
+            x: initialSpec.x,
+            y: initialSpec.y,
+          };
+          break;
+        case 5:
+          newCircleSpec = {
+            ...newCircleSpec,
+            width: Math.max(10, initialSpec.width),
+            height: Math.max(10, initialSpec.height + heightChange),
+            y: initialSpec.y,
+          };
+          break;
+        case 6:
+          newCircleSpec = {
+            ...newCircleSpec,
+            width: Math.max(10, initialSpec.width - widthChange),
+            height: Math.max(10, initialSpec.height + heightChange),
+            x: initialSpec.x + widthChange,
+          };
+          break;
+        case 7:
+          newCircleSpec = {
+            ...newCircleSpec,
+            width: Math.max(10, initialSpec.width - widthChange),
+            height: Math.max(10, initialSpec.height),
+            x: initialSpec.x + widthChange,
+          };
+          break;
+        default:
+          break;
+      }
+
+      setCircleSpec(newCircleSpec);
+    }, 200);
+
+```
+
+</details>
+
+원을 리사이징 하는 꼭지점을 예시로 하여, 크기를 조절할 때 반대편 꼭지점을 고정하는 로직을 살펴보겠습니다.
+<br />
+<br />
+각 case에 해당하는 꼭지점의 순서는 다음과 같습니다.
+<br />
+<img width="200" alt="image" src="https://github.com/team-dtrio/peach-pitch-client/assets/80331804/defcfe55-f66c-426f-af98-f6070f76b0d0">
+
+예를 들어 case 0을 움직이는 경우, case 4에 해당하는 반대편 꼭지점은 움직이지 않고 리사이징 되어야 사용자 경험을 높일 수 있습니다.
+
+이를 위해 case 0에서는 아래와 같이 구현했습니다.
+
+```javascript
+case 0:
+  newCircleSpec = {
+    ...newCircleSpec,
+    width: Math.max(10, initialSpec.width - widthChange),
+    height: Math.max(10, initialSpec.height - heightChange),
+    x: initialSpec.x + widthChange,
+    y: initialSpec.y + heightChange,
+  };
+```
+
+앞서 설정했던 width와 height 계산 식과 함께 x와 y의 좌표를 설정하면, 반대편 꼭지점이 고정된 듯한 효과를 줄 수 있습니다.
+
+즉 꼭지점 0에서 4쪽으로 이동하는 경우를 생각해보면, 시작점의 좌표인 좌측 상단 부가 움직이기 때문에 기존의 좌표에서 x축은 widthChange 만큼, y축은 heightChange 만큼 이동해주면 됩니다.
+
+width와 height는 앞서 구현했던 것 만큼 원래의 너비에서 변화량 만큼을 빼주면 됩니다. 이렇게 좌표와 크기를 각 꼭지점에 맞게 구현함으로써 반대편이 고정된 듯한 효과를 얻을 수 있었습니다.
+
+꼭지점이 아닌 모서리의 경우 x 또는 y 좌표만 변화시킴으로써 반대편 꼭지점 측이 고정된 듯한 효과를 얻을 수 있습니다.
+
+그리고 크기의 최소값은 10으로 설정해두어, 크기가 음수 값이 나오는 경우가 없게 하고 다시 꼭지점을 선택 할 수 있을 만큼의 최소 크기를 지정해두어 사용자 경험을 높였습니다.
+
 ## 2. 슬라이드 구현하기
 
 ### 2-1. ppt 슬라이드, 도형 개체를 순수 자바스크립트로 구현하기
@@ -126,7 +259,9 @@ PEACHPITCH는 온라인으로 프레젠테이션을 만들고 슬라이드쇼 �
 
 ### 2-2. 슬라이드, 미리보기, 재생 모드 동기화하기
 
-피치피치에서는 ppt 슬라이드 모드, 슬라이드 미리보기 모드, 슬라이드 쇼 재생모드로 총 3가지의 모드에서 모두 도형 개체가 보여져야했습니다. 이들에서 모두 동일한 위치와 비율로 도형 개체가 렌더링 되어야합니다. 이를 위해서 DB에 저장된 개체들의 위치와 크기를 이용해서 각 개체의 상대적인 위치를 퍼센트를 기반으로 계산하여 구현했습니다.
+> ppt 슬라이드 모드, 슬라이드 미리보기 모드, 슬라이드 쇼 재생모드로 총 3가지의 모드에서 모두 도형 개체가 보여집니다. 이 들에서 모두 동일한 위치와 비율로 도형 개체가 렌더링 되어야합니다.
+> <br />
+> 이를 위해서 DB에 저장된 개체들의 위치와 크기를 이용해서 각 개체의 상대적인 위치를 퍼센트를 기반으로 계산하여 구현했습니다.
 
 **1) 각 모드에서 도형 개체를 동일한 위치와 비율로 렌더링 하기**
 
@@ -138,9 +273,9 @@ PEACHPITCH는 온라인으로 프레젠테이션을 만들고 슬라이드쇼 �
 
 애니메이션을 구현하기 위해서, 애니메이션이란 무엇이고 어떤 특성을 가지고 있는지 알아보았습니다.
 
-> 애니메이션이란 정적인 이미지를 동적으로 만든 결과물입니다. 즉 프레젠테이션의 애니메이션은 “객체가 어떤 시간에 어떤 상태 인지를 정하는 것”입니다.
+> 애니메이션이란 정적인 이미지를 동적으로 만든 결과물입니다. 즉 프레젠테이션의 애니메이션은 `객체가 어떤 시간에 어떤 상태 인지를 정하는 것`입니다.
 
-third party 라이브러리 없이, 애니메이션을 구현하기 위한 필수 속성인 객체의 “시간”과 “상태”를 동시에 표현할 수 있는 방법을 조사했습니다. **CSS 애니메이션과 @keyframes를 이용하면 프레임이 변함에 따라 CSS 속성이 어떤 값을 가질 지 정할 수 있다**는 것을 알게 되어, 이를 적용해 애니메이션을 구현했습니다.
+third party 라이브러리 없이, 애니메이션을 구현하기 위한 필수 속성인 객체의 `시간`과 `상태`를 동시에 표현할 수 있는 방법을 조사했습니다. **CSS 애니메이션과 @keyframes를 이용하면 프레임이 변함에 따라 CSS 속성이 어떤 값을 가질 지 정할 수 있다**는 것을 알게 되어, 이를 적용해 애니메이션을 구현했습니다.
 
 <br/>
 
@@ -149,7 +284,8 @@ third party 라이브러리 없이, 애니메이션을 구현하기 위한 필�
 keyframes를 활용했지만, 역동감과 생동감이 부족하다는 생각이 들었습니다. CSS 애니메이션의 경로와 속도를 조절하기 위해 CSS에 내재된 Cubic-bezier 함수를 활용했습니다. Cubic-bezier 함수는 4개의 매개변수 (x1, y1, x2, y2)를 사용해서 속도 곡선을 정의합니다. 즉, 시간과 애니메이션 진행 상태와의 관계를 정의합니다. 이를 통해 애니메이션의 속도를 상세하게 조정할 수 있었습니다.
 
 <img width="600" alt="cubic-bezier" src="https://github.com/team-dtrio/peach-pitch-client/assets/72593047/c25fdb71-57e1-4061-85a3-47a734707aed">
-이 그림에서의 상단에서 보듯이, 4가지의 매개변수를 이용해서 보다 상세한 속도 조절이 가능합니다.
+<br />
+이 그림에서의 상단에서 보듯이, 4가지의 매개변수를 이용하면 보다 상세한 속도 조절이 가능합니다.
 
 <br />
 아래는 선형적인 애니메이션과 cubic-bazier를 이용한 애니메이션의 예시입니다.
@@ -169,7 +305,7 @@ keyframes를 활용했지만, 역동감과 생동감이 부족하다는 생각�
 <br/>
 [오른쪽 에니메이션]
 
-- 오른쪽 애니메이션은 cubic-bazier 함수를 이용해 프로젝트의 block-wipe 애니메이션을 구현한 예시입니다. 시작과 끝의 속도가 중간 지점의 속도보다 느리게 이동하며, 보다 생동감있고 역동적이게 애니메이션을 표현할 수 있었습니다.
+- 오른쪽 애니메이션은 cubic-bazier 함수를 이용해 프로젝트에서 block-wipe 애니메이션을 구현한 예시입니다. 시작과 끝의 속도가 중간 지점의 속도보다 느리게 이동하며, 보다 생동감있고 역동적이게 애니메이션을 표현할 수 있었습니다.
 
 ## 3. 프레젠테이션 앱에 적합한 DB 구조는?
 
@@ -237,6 +373,7 @@ MongoDB의 document당 16MB 용량제한과 관련해서는, 이미지는 amazon
 
 <details>
 <summary>프로젝트 기간 : 2023.07.10 ~ 2023.08.04 (총 25일, 기획 및 설계 10일, 개발 및 마무리 15일)</summary>
+<br />
 
 **기획 및 설계 (10일)**
 
@@ -308,5 +445,5 @@ MongoDB의 document당 16MB 용량제한과 관련해서는, 이미지는 amazon
 ## **Our Team**
 
 - 문형석 : [hyn9xc@gmail.com](mailto:hyn9xc@gmail.com)
-- 곽나영 : [ny931118@gmail.com](mailto:ny931118@gmail.com)
+- 곽나영 : [nayeongKwak.dev@gmail.com](mailto:nayeongKwak.dev@gmail.com)
 - 김정우 : [kjw5757@gmail.com](mailto:kjw5757@gmail.com)
