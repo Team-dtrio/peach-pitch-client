@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import S3 from "aws-sdk/clients/s3";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import styled from "styled-components";
 
 import axiosInstance from "../../../../../services/axios";
@@ -43,33 +43,41 @@ function ImageUploader() {
     VITE_APP_AWS_REGION: region,
     VITE_APP_AWS_S3_BUCKET: bucket,
   } = import.meta.env;
-  const s3 = new S3({ accessKeyId, secretAccessKey, region });
+
+  const s3Client = new S3Client({
+    region,
+    credentials: {
+      accessKeyId,
+      secretAccessKey,
+    },
+  });
+
   const user = getUser();
   const { presentationId, slideId } = useParams();
   const { mutate } = useCreateObjectMutation(slideId);
 
-  function onFileChange(event) {
+  async function onFileChange(event) {
     const file = event.target.files[0];
 
-    const params = {
+    const command = new PutObjectCommand({
       Bucket: bucket,
       Key: file.name,
       Body: file,
-    };
-
-    s3.upload(params, async (err, data) => {
-      if (err) {
-        throw new Error("Error uploading file:", err);
-      } else {
-        mutate({
-          userId: user._id,
-          presentationId,
-          slideId,
-          type: "Image",
-          imageUrl: data.Location,
-        });
-      }
     });
+
+    try {
+      await s3Client.send(command);
+      const imageUrl = `https://${bucket}.s3.${region}.amazonaws.com/${file.name}`;
+      mutate({
+        userId: user._id,
+        presentationId,
+        slideId,
+        type: "Image",
+        imageUrl,
+      });
+    } catch (err) {
+      throw new Error("Error uploading Image file:", err);
+    }
   }
 
   return (

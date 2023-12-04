@@ -86,40 +86,40 @@ function Triangle({ id, spec, onContextMenu }) {
           case 0:
             newTriangleSpec = {
               ...newTriangleSpec,
-              width: initialSpec.width - widthChange,
-              height: initialSpec.height - heightChange,
-              x: newPosition.x,
-              y: newPosition.y,
+              width: Math.max(10, initialSpec.width - widthChange),
+              height: Math.max(10, initialSpec.height - heightChange),
+              x: initialSpec.x + widthChange,
+              y: initialSpec.y + heightChange,
             };
             break;
           case 2:
             newTriangleSpec = {
               ...newTriangleSpec,
-              width: initialSpec.width + widthChange,
-              height: initialSpec.height - heightChange,
-              y: newPosition.y,
+              width: Math.max(10, initialSpec.width + widthChange),
+              height: Math.max(10, initialSpec.height - heightChange),
+              y: initialSpec.y + heightChange,
             };
             break;
           case 4:
             newTriangleSpec = {
               ...newTriangleSpec,
-              width: initialSpec.width + widthChange,
-              height: initialSpec.height + heightChange,
+              width: Math.max(10, initialSpec.width + widthChange),
+              height: Math.max(10, initialSpec.height + heightChange),
             };
             break;
           case 6:
             newTriangleSpec = {
               ...newTriangleSpec,
-              width: initialSpec.width - widthChange,
-              height: initialSpec.height + heightChange,
-              x: newPosition.x,
+              width: Math.max(10, initialSpec.width - widthChange),
+              height: Math.max(10, initialSpec.height + heightChange),
+              x: initialSpec.x + widthChange,
             };
             break;
           case 1:
             newTriangleSpec = {
               ...newTriangleSpec,
               height: Math.max(10, initialSpec.height - heightChange),
-              y: newPosition.y,
+              y: initialSpec.y + heightChange,
             };
             break;
           case 5:
@@ -138,7 +138,7 @@ function Triangle({ id, spec, onContextMenu }) {
             newTriangleSpec = {
               ...newTriangleSpec,
               width: Math.max(10, initialSpec.width - widthChange),
-              x: newPosition.x,
+              x: initialSpec.x + widthChange,
             };
             break;
           default:

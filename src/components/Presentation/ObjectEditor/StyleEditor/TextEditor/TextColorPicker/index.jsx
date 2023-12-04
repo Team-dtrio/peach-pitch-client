@@ -28,7 +28,7 @@ function TextColorPicker() {
   return (
     <>
       <Label>Text Color</Label>
-      <Palette type="color" onChange={handleColorChange} />
+      <Palette type="color" onChange={handleColorChange} value="#d9d9d9" />
     </>
   );
 }

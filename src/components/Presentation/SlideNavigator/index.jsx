@@ -187,7 +187,7 @@ function SlideNavigator() {
             onContextMenu={(event) => handleContextMenu(event, slide._id)}
             onClick={handleCloseContextMenu}
           >
-            <Thumbnail draggable="true">
+            <ThumbnailWrapper draggable="true">
               {thumbnailObjects.map((object) => (
                 <NonEditableObject
                   key={object._id}
@@ -195,7 +195,7 @@ function SlideNavigator() {
                   isThumbnail
                 />
               ))}
-            </Thumbnail>
+            </ThumbnailWrapper>
           </StyledLink>
         );
       })}
@@ -213,15 +213,17 @@ const Wrapper = styled.section`
   width: 100%;
   background-color: #f1efef;
   overflow-y: auto;
+  padding: 15px;
 `;
 const StyledLink = styled(Link)``;
-const Thumbnail = styled.div`
+const ThumbnailWrapper = styled.div`
   position: relative;
   margin: 15px auto;
-  width: 300px;
-  height: 200px;
+  width: calc(100% - 30px);
+  padding-bottom: 66.67%;
   background-color: #fff;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  overflow: hidden;
 `;
 const ContextMenu = styled.div`
   position: absolute;

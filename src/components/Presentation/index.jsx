@@ -133,7 +133,7 @@ const Wrapper = styled.div`
 `;
 const Section = styled.section`
   display: grid;
-  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-columns: 1fr 4fr 1fr;
   height: 100%;
 `;
 
